@@ -1,0 +1,357 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(MatchIt)
+library(cem)
+library(ggpubr)
+```
+
+
+
+```{r}
+
+#########################################################################
+###############function to create data set 1
+create.sim1.data <- function(){
+  t = c(rep("C", 25),rep("T", 25),rep("C", 25),rep("T", 25),rep("C", 50))
+  g = c(rep("Paired", 50), rep("Random", 50), rep("Controls", 50))
+  
+  px1c <- runif(25, min = -2, max = 2)
+  px2c <- runif(25, min = -2, max = 2)
+  px1t <- px1c + runif(25, min = -0.05, max = 0.05)
+  px2t <- px2c + runif(25, min = -0.05, max = 0.05)
+  
+  rx1 <- runif(50, min = -2, max = 2)
+  rx2 <- runif(50, min = -8, max = -4)
+  
+  cx1 <- runif(50, min = -6, max = -4)
+  cx2 <- runif(50, min = -8, max = 2)
+  
+  x1 <- c(px1c, px1t, rx1, cx1)
+  x2 <- c(px2c, px2t, rx2, cx2)
+  
+  id <- paste0(t, str_pad(ave(t, t, FUN = seq_along), nchar(length(t)), pad = "0"))
+
+  d <- as.data.frame(list(id=id,x1=x1,x2=x2,t=t,g=g))
+
+  return(d)
+}
+
+#########################################################################
+###############function to create data set 2
+create.sim2.data <- function() {
+    
+    x1 <- c(runif(100, 0,5),runif(100, 1,6))
+    x2 <- c(runif(100, 0,5),runif(100, 1,6))
+    t <- c(rep("C",100),rep("T",100))
+    t.num <- ifelse(t=="C",0,1)
+    y <- 2*ifelse(t=="C",0,1) + x1 + x2 + rnorm(200)
+    id <- paste0(t, str_pad(ave(t,t, FUN = seq_along), nchar(length(t)), pad = "0"))
+    
+    d <- list(id=id,x1=x1,x2=x2,t=t,t.num=t.num,y=y) %>% as.data.frame()
+
+    return(d)
+}
+
+
+```
+
+
+```{r}
+dt <- create.sim2.data()
+
+prop <- (glm(ifelse(dt$t=="C",0,1) ~ x1 + x2, family = "binomial", data=dt))$fitted.values# %>% summary())
+
+dt <- cbind(dt, prop=prop)
+
+tr <- dt$t %>% unique()
+
+df1 <- dt
+df2 <- dt
+
+
+
+
+#keep df1 as the longer dataframe (should usually represent controls)
+# if (nrow(df1) < nrow(df2)) {
+#   df1 <- dt[dt$t==tr[2],]
+#   df2 <- dt[dt$t==tr[1],]
+# }
+
+#rename columns to identify when cross joining
+colnames(df2) <- paste0("s_", colnames(df2))
+
+# full outer join
+df3 <- df1 %>% full_join(df2, by = character()) %>% mutate(p.dist=abs(prop - s_prop)) %>% filter(t!=s_t)
+
+#get the mahalanobis distance over all rows
+# express difference (X1-X2) as atomic row vector
+dm <- as.matrix(df3[,c('x1','x2')]-df3[,c('s_x1','s_x2')])
+
+#covariance matrix
+c <- cov(dt[,c('x1','x2')])
+
+# solve  (covariance matrix) %*% x = d for x
+cov.d <- sapply(1:nrow(df3), function(x) solve(c,dm[x,])) %>% t()
+
+# Mahalanobis calculation forced in two steps
+df3 <- cbind(df3, m.dist = apply(dm*cov.d, 1, sum))
+
+
+
+
+replace = T
+
+if (replace) {
+  p.matches <- df3 %>% group_by(id) %>% slice_min(p.dist) %>% as.data.frame()
+  # p.matches <- cbind(p.matches, p.pair = 1:nrow(p.matches))
+  m.matches <- df3 %>% group_by(id) %>% slice_min(m.dist) %>% as.data.frame() 
+  # m.matches <- cbind(m.matches, m.pair = 1:nrow(m.matches))
+}
+
+
+if (replace != TRUE) {
+  
+  p.matches <- NULL
+  m.matches <- NULL
+  p.ids <- list(id=NULL,s_id=NULL)
+  m.ids <- list(id=NULL,s_id=NULL)
+  
+  for (i in 1:(nrow(df1))) {
+    if (nrow(df3 %>% filter(!s_id %in% m.ids$s_id, !id %in% m.ids$id))!=0) {
+    
+    p <- df3 %>% filter(!s_id %in% p.ids$s_id, !id %in% p.ids$id) %>% 
+          filter(p.dist == min(p.dist)) 
+    p.matches <- rbind(p.matches, p)
+    p.ids <- p.matches[c("id", "s_id")]
+    
+    m <- df3 %>% filter(!s_id %in% m.ids$s_id, !id %in% m.ids$id) %>% 
+          filter(m.dist == min(m.dist)) 
+    m.matches <- rbind(m.matches, m)
+    m.ids <- m.matches[c("id", "s_id")]
+    }
+  }
+}
+
+
+ 
+t1.cols <- colnames(m.matches)[c(1:ncol(df1),ncol(m.matches)-1, ncol(m.matches))]
+t2.cols <- colnames(m.matches)[c((ncol(df1)+1):(ncol(df1)+ncol(df2)), ncol(m.matches)-1, ncol(m.matches))]
+
+t1 <- m.matches[,t1.cols] %>% filter(is.na(id)==F)
+t2 <- m.matches[,t2.cols] %>% filter(is.na(s_id)==F)
+
+colnames(t2) <- t1.cols
+
+t3 <- rbind(t1,t2)
+
+if (nrow(dt[(!dt$id %in% t3$id),])>0 & replace != TRUE) {
+  M.Dist <- rbind(t3, cbind(dt[(!dt$id %in% t3$id),],m.dist=NA, m.pair=NA))
+} else {
+  M.Dist <- t3
+}
+
+t1.cols <- colnames(p.matches)[c(1:ncol(df1),ncol(p.matches)-2, ncol(p.matches))]
+t2.cols <- colnames(p.matches)[c((ncol(df1)+1):(ncol(df1)+ncol(df2)), 
+                                 ncol(p.matches)-2, ncol(p.matches))]
+
+t1 <- p.matches[,t1.cols] %>% filter(is.na(id)==F)
+t2 <- p.matches[,t2.cols] %>% filter(is.na(s_id)==F)
+
+colnames(t2) <- t1.cols
+
+t3 <- rbind(t1,t2)
+
+if (nrow(dt[(!dt$id %in% t3$id),])>0 & replace != TRUE) {
+  P.Dist <- rbind(t3, cbind(dt[(!dt$id %in% t3$id),],p.dist=NA, p.pair=NA))
+} else {
+  P.Dist <- t3
+}
+
+
+FF <- list(M.Dist, P.Dist)
+
+# FF %>% group_by(id) %>% slice_min(c(m.dist,p.dist))
+
+FF
+
+
+m.matches <- m.matches %>% arrange(m.dist) %>% 
+  mutate(rows = seq_along(id), cuts = cut(rows ,breaks=4))
+
+p.matches <- p.matches %>% arrange(m.dist) %>% 
+  mutate(rows = seq_along(id), cuts = cut(rows ,breaks=4))
+
+m.matches$cuts <- cut(m.matches$m.pair,breaks=4)
+p.matches$cuts <- cut(p.matches$p.pair,breaks=4)
+
+
+# 
+# d2$m.cuts <- cut(ceiling(d2$m.ord/2), breaks = 4, labels = b.labs)
+# d2$p.cuts <- cut(ceiling(d2$p.ord/2), breaks = 4, labels = b.labs)
+
+
+# ncol(df2)
+
+# cbind()
+
+# dt %>% left_join(m.matches)
+
+ # view(df3 %>% group_by(id) %>% slice_min(p.dist))
+
+# %>%
+#          group_by(Subject, ST1) %>% 
+#          mutate(diff = abs(P1 - prop)) %>% 
+#          arrange(diff) %>% 
+#          slice(1) %>%
+#          ungroup()
+
+# c <- cov(a[,c('x1','x2')])
+# 
+# df3 %>% mutate(x1.d = x1 - t_x1, x2.d = x2 - t_x2, mah = sum)
+
+
+# cbind(p.matches, p.pair = 1:nrow(p.matches)) #%>% mutate(p.pair=rank(id))
+
+# nrow(df3 %>% filter(!s_id %in% m.ids$s_id, !id %in% m.ids$id))==0
+
+```
+
+
+
+
+```{r}
+
+# df3[i,c('x1','x2')]
+
+# express difference (X1-X2) as atomic row vector
+dm <- as.matrix(df3[,c('x1','x2')]-df3[,c('t_x1','t_x2')])
+
+c <- cov(a[,c('x1','x2')])
+
+# solve  (covariance matrix) %*% x = d for x
+cov.d <- sapply(1:nrow(df3), function(x) solve(c,dm[x,])) %>% t()
+
+# Mahalanobis calculation forced in two steps
+Ma <- apply(dm*cov.d, 1, sum)
+
+
+```
+
+
+```{r}
+
+ggplot(m.matches, aes(x1,x2, color = t)) + 
+  annotate("rect", xmin=0, xmax=5, ymin=0, ymax=5, alpha=0.1, fill="blue") + 
+  annotate("rect", xmin=1, xmax=6, ymin=1, ymax=6, alpha=0.1, fill="red") +
+  scale_color_manual(values=c("blue", "red")) +
+  geom_line(aes(group = m.pair), color = "black") +
+  # geom_segment(aes(x=x1, xend=s_x1, y=x2, yend=s_x2), color = "black") +
+  scale_alpha_manual(values = c(.1,.3,.6,.9)) +#.8,.6,.4,.2)) +
+  geom_point() + 
+  theme_classic() 
+
+
+ggplot(p.matches, aes(x1,x2, color = t)) + 
+  annotate("rect", xmin=0, xmax=5, ymin=0, ymax=5, alpha=0.1, fill="blue") + 
+  annotate("rect", xmin=1, xmax=6, ymin=1, ymax=6, alpha=0.1, fill="red") +
+  scale_color_manual(values=c("blue", "red")) +
+  geom_segment(aes(x=x1, xend=s_x1, y=x2, yend=s_x2), color = "black") +
+  scale_alpha_manual(values = c(.1,.3,.6,.9)) +#.8,.6,.4,.2)) +
+  geom_point() + 
+  theme_classic() 
+
+
+p.matches %>% #filter(t=="T") %>%
+ggplot(aes(x1,x2)) + 
+  annotate("rect", xmin=0, xmax=5, ymin=0, ymax=5, alpha=0.1, fill="blue") + 
+  annotate("rect", xmin=1, xmax=6, ymin=1, ymax=6, alpha=0.1, fill="red") +
+  scale_color_manual(values=c("blue", "red")) +
+  # geom_line(aes(group = p.pair, alpha = cuts), color = "black") +
+  geom_segment(aes(x=x1, xend=s_x1, y=x2, yend=s_x2, alpha = cuts), arrow = arrow(length = unit(.3, "cm")), color = "black") +
+  scale_alpha_manual(values = c(1,.7,.4,.15)) +#.8,.6,.4,.2)) +
+  geom_point(aes(color=t), shape = 22) +
+  geom_point(aes(s_x1,s_x2,color=t), shape = 18) + 
+  theme_classic() 
+
+```
+
+
+
+
+```{r}
+
+ggplot(m.matches, aes(x1,x2, color = t)) + 
+  annotate("rect", xmin=0, xmax=5, ymin=0, ymax=5, alpha=0.1, fill="blue") + 
+  annotate("rect", xmin=1, xmax=6, ymin=1, ymax=6, alpha=0.1, fill="red") +
+  scale_color_manual(values=c("blue", "red")) +
+  # geom_line(aes(group = id), color = "black") +
+  geom_segment(aes(x=x1, xend=s_x1, y=x2, yend=s_x2), color = "black") +
+  scale_alpha_manual(values = c(.1,.3,.6,.9)) +#.8,.6,.4,.2)) +
+  geom_point() + 
+  theme_classic() 
+
+
+ggplot(p.matches, aes(x1,x2, color = t)) + 
+  annotate("rect", xmin=0, xmax=5, ymin=0, ymax=5, alpha=0.1, fill="blue") + 
+  annotate("rect", xmin=1, xmax=6, ymin=1, ymax=6, alpha=0.1, fill="red") +
+  scale_color_manual(values=c("blue", "red")) +
+  geom_segment(aes(x=x1, xend=s_x1, y=x2, yend=s_x2), color = "black") +
+  scale_alpha_manual(values = c(.1,.3,.6,.9)) +#.8,.6,.4,.2)) +
+  geom_point() + 
+  theme_classic() 
+
+
+
+```
+
+
+```{r}
+
+ggplot(m.matches, aes(m.dist, p.dist, color = t)) + geom_point()
+
+ggplot(p.matches, aes(m.dist, p.dist, color = t)) + geom_point()
+
+
+```
+
+
+```{r}
+
+t.func <- function(form, dt, oc){
+  # lm(form, data = dt)
+  # full_join(dt,dt,by=character())   
+  
+  print(dt[oc])
+  
+}
+
+dt <- list(x=c(1:10), z=seq(7,55,5), y=rep(c(0,1),5)) %>% as.data.frame()
+
+t.func(y ~ x + z, dt)
+
+
+a<-y ~ x + z
+
+a.t <- terms(a)
+
+at
+
+t.func(a, dt, y)
+
+dt$y
+
+# lm(y ~ x + z, dt)
+
+full_join(df1,df1,by=character()) %%> filter()
+```
+
+

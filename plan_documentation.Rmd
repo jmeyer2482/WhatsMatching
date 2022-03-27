@@ -1,0 +1,72 @@
+---
+title: "PSM ShinyApp Plan"
+author: "Jason Meyer"
+date: "25/03/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(MatchIt)
+library(cem)
+library(ggpubr)
+library(optmatch)
+library(cobalt)
+library(Hmisc)
+library(tidyverse)
+```
+
+# Shiny app for the exploration of the PSM paradox
+
+Take simulated or pre-existing `R` data sets and use them to generate graphical outputs that provide intuitive insights into how the propensity operates.
+
+Available data sets for this project will use `lalonde` and `nuclearplants` which are used as example data for matching in the `MatchIt` and `optmatch` packages respectively. Additionally, the `FEV` data set from [Vanderbilt Biostatistics Datasets](https://hbiostat.org/data/) has also been included via the `Hmisc` package. 
+
+
+```{r, FEV, include=FALSE}
+
+## quick review of FEV
+# getHdata(FEV)
+# 
+# 
+# FEV.match <- matchit(smoke~age+height+sex, FEV, distance = "mahalanobis")
+# 
+# match.out <- match.data(FEV.match)
+# 
+# 
+# lm(fev~smoke, match.out) %>% summary()
+# lm(fev~smoke+age+height+sex, FEV) %>% summary()
+
+```
+
+
+## Simulated data
+
+```{r}
+
+#normal distribution
+rnorm(200, 27, 5.5) %>% hist(main="Normal Distribution")
+
+#uniform distribution
+runif(200, 10, 30) %>% hist(main="Uniform Distribution")
+
+#poisson distribution
+rpois(200, 25) %>% hist(main="Poisson Distribution")
+
+#binomial distribution
+rbinom(200, 20, 0.5) %>% hist(main="Binomial Distribution")
+
+#beta 
+rbeta(200, 10, 1) %>% hist(main="Beta Distribution")
+
+rcauchy(200)
+```
+
+
+```{r}
+
+golem::create_golem("../PSM.golex")
+
+```
+
