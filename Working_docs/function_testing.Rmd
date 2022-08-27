@@ -4,22 +4,29 @@ output: html_notebook
 ---
 
 ```{r}
-
 library(tidyverse)
 library(MatchIt)
 library(cem)
 library(ggpubr)
 library(cobalt)
+library(plotly)
+library(gapminder)
 
+```
+
+
+
+```{r}
 #########################################################################
 ###############function to create data set 2
 cd1 <- function() {
     
-    x1 <- c(runif(100, 0,5),runif(100, 1,6))
-    x2 <- c(runif(100, 0,5),runif(100, 1,6))
+    t <- c(rep(0,100), rep(1,100))
+    x1 <- runif(200, 0,5) + t
+    x2 <- runif(200, 0,5) + t
     x3 <- rep(c(rep("A",25), rep("B",25),rep("C",25), rep("D",25)),2)
-    t <- c(rep("C",100),rep("T",100))
-    y <- 2*ifelse(t=="C",0,1) + x1 + x2 #+ rnorm(200)
+    # t <- c(rep("C",100),rep("T",100))
+    y <- 2*t + x1 + x2 #+ rnorm(200)
 
     d <- list(x1=x1,x2=x2,x3=x3,t=t,y=y) %>% as.data.frame()
 
@@ -73,8 +80,95 @@ d1 <- dists(form.t=t ~ x1 + x2, data=cd1())
 
 # a %>% predict(newdata=d1, type = "response") == a$fitted.values
 
+data <- cd1()
+
+ggplot(data, aes(x1, x2, color=t)) + geom_point() 
+
+
+
 
 ```
+
+```{r}
+f <- t ~ x1 + x2
+mdata <- dists(data, form.t = f)
+matches <- dist.matches(f=f, data=mdata)
+```
+
+
+
+```{r}
+
+Line <-  gvisScatterChart(data[c("x1","x2", "t")],
+                       options=list(
+                         legend="right",
+                         title="Hello World",
+                         titleTextStyle="{color:'red',
+                                           fontName:'Courier',
+                                           fontSize:16}",
+                         backgroundColor="#D3D3D3",
+                         vAxis="{gridlines:{color:'red', count:3}}",
+                         hAxis="{title:'X1', titleTextStyle:{color:'blue'}}",
+                         series="[{color:'green', targetAxisIndex: 0},
+                                   {color: 'orange',targetAxisIndex:1}]",
+                         vAxes="[{title:'val1'}, {title:'val2'}]",
+                         legend="bottom",
+                         curveType="function",
+                         width=500,
+                         height=500
+                       ), chartid = 55555)
+plot(Line)
+
+```
+
+
+```{r}
+
+df <- gapminder 
+
+fig <- mdata %>%
+
+  plot_ly(
+
+    x = ~x1, 
+
+    y = ~x2, 
+
+    # size = ~pop, 
+
+    color = ~c("No","Yes")[factor(t)], 
+    
+    # text = ~color,
+
+    frame = ~prop.st,
+
+    # text = paste0(round(~x1,2), ", ",round(~x2,2)),
+    
+    hovertemplate = '%{color}: %{x:.2f}, %{y:.2f}<extra></extra>',
+
+    # hoverinfo = "text",
+
+    type = 'scatter',
+
+    mode = 'markers'
+
+  )
+
+# fig <- fig %>% layout(
+# 
+#     xaxis = list(
+# 
+#       type = "log"
+# 
+#     )
+# 
+#   )
+
+
+print(fig)
+
+```
+
 
 
 ```{r}
@@ -362,7 +456,7 @@ quantile(distance[lalonde$treat==1], probs = sprobs, na.rm = TRUE)
 
 
 ```{r}
-match <- matchit(treat~age+educ, lalonde, distance = "mahalanobis" , replace = T, m.order = "largest")
+match <- matchit(treat~age+educ, lalonde, distance = "mahalanobis" , replace = T, m.order = "data")
 # summary(match)
 
 match.out <- match.data(match)
@@ -370,17 +464,38 @@ match.out <- match.data(match)
 
 # ggplot(match.out, aes(educ, age)) + geom_point(aes(color = as.factor(treat))) + geom_line(aes(group=subclass))
 
-d.matrix <- optmatch::match_on(distance, z=lalonde$treat)
+d.matrix <- optmatch::match_on(distance, z=lalonde$treat, standardization.scale=1)
 d.matrix <- optmatch::match_on(match$formula, data = lalonde, method = "mahalanobis")
+d.matrix2 <- optmatch::match_on(match$formula, data = lalonde, method = "mahalanobis", standardization.scale=1)
 
-mat <-  dist.matches(d.matrix, replace = T, order = "largest")
 
+mat <-  dist.matches(d.matrix, replace = T, order = "data")
+
+
+mat %>% 
 
 # match$match.matrix==as.matrix(mat[['control']])
 
-cbind(mat, matchit = match$match.matrix) %>% filter(control!=matchit)
+# cbind(mat, matchit = match$match.matrix) %>% filter(control!=matchit)
+
+lalonde[mat$treatment,]
+lalonde[mat$control,]
+
+cbind(t=lalonde[mat$treatment,], c=lalonde[mat$control,],mat) %>% dim()
 
 
+data.frame(IDs=c(mat$treatment, mat$control)) %>%  summarise(nIDs=n(), .groups = IDs)
+
+t(table(c(mat$treatment, mat$control))) %>% dim()
+
+table(mat$control)[mat$control] %>% dim()
 ```
 
+
+
+```{r}
+
+dist()
+
+```
 

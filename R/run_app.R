@@ -26,3 +26,8 @@ run_app <- function(
     golem_opts = list(...)
   )
 }
+
+run_app()
+
+# roxygen2::roxygenize()
+

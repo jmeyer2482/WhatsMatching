@@ -48,7 +48,11 @@ usethis::use_git()
 ## Create a template for tests
 golem::use_recommended_tests()
 golem::use_recommended_deps()
+#
+# golem::set_golem_wd(path="C:/Users/jmurs/OneDrive/Health Data Science Masters/Dissertation/PSM.golex")
+# golem::set_golem_wd(path="D:/Jason/OneDrive/Health Data Science Masters/Dissertation/PSM.golex")
 
+golem::get_golem_wd()
 ## Favicon ----
 # If you want to change the favicon (default is golem's one)
 golem::use_favicon() # path = "path/to/ico". Can be an online file.

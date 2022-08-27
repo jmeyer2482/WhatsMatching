@@ -629,6 +629,7 @@ bal
 # b$Balance 
 ```
 
+
 ```{r}
 
 ggplot() + geom_line(aes(n, Diff.Un, group=row))
@@ -826,7 +827,7 @@ matched.c <- calc.matches(treat~age+educ+race, data=dt, cat.vars = "race",
                           match.grp = 1)
 
 
-match.out <- matchit(treat~age+educ+race, data=dt)
+match.out <- matchit(treat~age+educ+race, data=lalonde)
 
 match.out2 <- matchit(treat~age+educ+race, data=dt, distance="mahalanobis", exact=~race) 
 

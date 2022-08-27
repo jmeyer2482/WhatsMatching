@@ -248,7 +248,9 @@ psm <- glm(treat~educ+age, family= "binomial", data = lalonde)
 
 mo1 <- match_on(psm) 
 
-mo2 <- match_on(psm$fitted.values, z=lalonde$treat) 
+mo2 <- optmatch::match_on(psm$fitted.values, z=lalonde$treat) 
+
+calc.matches(f=treat~educ+age,data=mo2)
 
 identical(mo1,mo2)
 

@@ -1,13 +1,42 @@
 Package: PSM.golex
 Title: PSM Paradox
 Version: 0.0.0.9000
-Authors@R: person('Jaosn', 'Meyer', email = 'jmeyer2482@gmail.com', role = c('cre', 'aut'))
+Authors@R: 
+    person("Jason", "Meyer", , "jmeyer2482@gmail.com", role = c("cre", "aut"))
 Description: PKG_DESC.
 License: N/A
+URL: https://github.com/jmeyer2482/PSM.Golex
+BugReports: https://github.com/jmeyer2482/PSM.Golex/issues
 Imports: 
+    cobalt,
     config (>= 0.3.1),
     golem (>= 0.3.2),
-    shiny (>= 1.7.1)
+    ggplot2,
+    dplyr,
+    tidyr,
+    tibble,
+    stringr,
+    MatchIt,
+    mplot,
+    optmatch,
+    shinipsum,
+    shiny (>= 1.7.1),
+    attempt,
+    DT,
+    glue,
+    htmltools,
+    shinyBS,
+    catdata,
+    plotly,
+    ggforce
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.1
+Suggests: 
+    knitr,
+    rmarkdown,
+    spelling,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Language: en-US
+VignetteBuilder: knitr
