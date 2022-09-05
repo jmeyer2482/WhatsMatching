@@ -1,18 +1,18 @@
 
-setwd_golem <- function(LT, PC){
-  if (golem::get_golem_wd()==LT & file.exists(PC)) {
-    golem::set_golem_wd(path=PC)
-  }
+# setwd_golem <- function(LT, PC){
+#   if (golem::get_golem_wd()==LT & file.exists(PC)) {
+#     golem::set_golem_wd(path=PC)
+#   }
+#
+#   if (golem::get_golem_wd()==PC & file.exists(LT)) {
+#     golem::set_golem_wd(path=LT)
+#   }
+# }
+#w
+# setwd_golem(LT="C:/Users/jmurs/OneDrive/Health Data Science Masters/Dissertation/PSM.golex",
+#             PC="D:/Jason/OneDrive/Health Data Science Masters/Dissertation/PSM.golex")
 
-  if (golem::get_golem_wd()==PC & file.exists(LT)) {
-    golem::set_golem_wd(path=LT)
-  }
-}
-
-setwd_golem(LT="C:/Users/jmurs/OneDrive/Health Data Science Masters/Dissertation/PSM.golex",
-            PC="D:/Jason/OneDrive/Health Data Science Masters/Dissertation/PSM.golex")
-
-here::here()
+# here::here()
 
 # Set options here
 options(golem.app.prod = FALSE) # TRUE = production mode, FALSE = development mode
@@ -29,4 +29,6 @@ golem::document_and_reload()
 
 # Run the application
 run_app()
+
+# between(NULL,1,30)
 

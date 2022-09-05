@@ -2,7 +2,6 @@
 
 create.sim1.data <- function(te=2){
   t = c(rep(0, 25),rep(1, 25),rep(0, 25),rep(1, 25),rep(0, 50))
-  g = c(rep("Paired", 50), rep("Random", 50), rep("Controls", 50))
 
   px1c <- runif(25, min = -2, max = 2)
   px2c <- runif(25, min = -2, max = 2)
@@ -22,7 +21,7 @@ create.sim1.data <- function(te=2){
 
   t.char <- ifelse(t==0,"Control", "Treated")
 
-  data <- as.data.frame(list(X1=X1, X2=X2, t=t, t.char=t.char, g=g, y=y))
+  data <- list(t=t, Allocation=t.char, X1=X1, X2=X2, y=y) %>% as.data.frame()
 
   return(data)
 }
@@ -41,7 +40,7 @@ create.sim2.data <- function(te=2, g1_min=0, g1_max=5,
   t.char <- ifelse(t==0,"Control","Treated")
   y <- te*t + X1 + X2
 
-  d <- list(X1=X1,X2=X2,t=t, t.char=t.char, y=y) %>% as.data.frame()
+  d <- list(t=t, Allocation=t.char, X1=X1, X2=X2, y=y) %>% as.data.frame()
 
   return(d)
 }
@@ -50,23 +49,23 @@ create.sim2.data <- function(te=2, g1_min=0, g1_max=5,
 # Generating X1 and X2
 create.sim3.data <- function(
 
-    # Generating X1 and X2
-    n = 200,
-    mean1 = 0,
-    mean2 = 0,
-    sd1 = 1,
-    sd2 = 1,
-    rho = .3, #must be between -1 and 1 inclusive.
+  # Generating X1 and X2
+  n = 200,
+  mean1 = 0,
+  mean2 = 0,
+  sd1 = 1,
+  sd2 = 1,
+  rho = .3, #must be between -1 and 1 inclusive.
 
-    # Generating t
-    weight_t1 = 0.5, #effect of X1 on t, -10 to 10
-    weight_t2 = 0.5,  #effect of X2 on t, -10 to 10
+  # Generating t
+  weight_t1 = 0.5, #effect of X1 on t, -10 to 10
+  weight_t2 = 0.5,  #effect of X2 on t, -10 to 10
 
-    # Generating y
-    weight_y0 = 2, #base value of y
-    weight_y1 = 1, #effect of X1 on y, -10 to 10
-    weight_y2 = -1, #effect of X2 on y, -10 to 10
-    te = 2 # True treatment effect, -10 to 10
+  # Generating y
+  weight_y0 = 2, #base value of y
+  weight_y1 = 1, #effect of X1 on y, -10 to 10
+  weight_y2 = -1, #effect of X2 on y, -10 to 10
+  te = 2 # True treatment effect, -10 to 10
 ){
 
   means = c(mean1,mean2)
@@ -79,12 +78,13 @@ create.sim3.data <- function(
       mutate(scaledX1 = scale(X1), scaledX2 = scale(X2),
              t = rbinom(n, 1,
                         prob = arm::invlogit(weight_t1*scaledX1 + weight_t2*scaledX2)),
-               y = weight_y0 + te*t + weight_y1*X1 + weight_y2*X2,
-               t.char = ifelse(t==0,"Control","Treated")) %>%
+             y = weight_y0 + te*t + weight_y1*X1 + weight_y2*X2,
+             Allocation = ifelse(t==0,"Control","Treated")) %>%
       select(-c(scaledX1,scaledX2))
 
     #only return if there are no more than half of the units "treated"
-    if(table(df$t)[[2]]<=(n/2)) return(df)
+    if(table(df$t)[[2]]<=(n/2))
+      return(df[c("t", "Allocation", "X1", "X2", "y")])
 
   }
 }
@@ -384,18 +384,16 @@ axis.settings <- function(axis.text="Insert Title", axis.range=c(0,0),
     list(
       title=list(font=list(family="Arial Black"),
                  text=axis.text,
-                 standoff=5),
+                 standoff=0),
       autorange = TRUE,
-      tickmode="auto",
-      margin=list()
+      tickmode="auto"
     )} else {
       list(
         title=list(font=list(family="Arial Black"),
                    text=axis.text,
-                   standoff=5),
+                   standoff=0),
         range = axis.range,
-        tickmode="auto",
-        margin=list())
+        tickmode="auto")
     }
 }
 
@@ -427,7 +425,7 @@ matching.plot <- function(match.data, xvar, yvar, multi=F){
   all.data <- data.frame(x=match.data$data[[xvar]],
                          y=match.data$data[[yvar]],
                          t=factor(match.data$data[[tvar]])) %>%
-    mutate(t.char=ifelse(t==0,"Control","Treated"))
+    mutate(Allocation=ifelse(t==0,"Control","Treated"))
 
 
   m.data <- data.frame(
@@ -436,12 +434,12 @@ matching.plot <- function(match.data, xvar, yvar, multi=F){
     t=factor(match.data$matched.data[[tvar]]),
     subclass=match.data$matched.data[["subclass"]],
     pair.dist=match.data$matched.data[["pair.dist"]]) %>%
-    mutate(t.char=ifelse(t==0,"Control","Treated"),
-           txt=paste0(t.char, "<br>Pair number: ", subclass,
-                       "<br>", xvar,": ", round(x,3),
-                       "<br>", yvar, ": ", round(y,3))) %>%
+    mutate(Allocation=ifelse(t==0,"Control","Treated"),
+           txt=paste0(Allocation, "<br>Pair number: ", subclass,
+                      "<br>", xvar,": ", round(x,3),
+                      "<br>", yvar, ": ", round(y,3))) %>%
     arrange(pair.dist, subclass) %>%
-    mutate(t.char=ifelse(t==0,"Control","Treated"),
+    mutate(Allocation=ifelse(t==0,"Control","Treated"),
            ord=(row_number(pair.dist) + (row_number(pair.dist)%%2))/2)
 
   d.ann <- m.data %>% mutate(distance = mdist, rframe=max(ord)-ord)
@@ -459,7 +457,7 @@ matching.plot <- function(match.data, xvar, yvar, multi=F){
     scale_shape_manual(values = c(2,6))
 
   pltly <- ggplotly(gp, tooltip = 'text')  %>%
-    add_markers(data=all.data, x=~x, y=~y, text=~t.char,
+    add_markers(data=all.data, x=~x, y=~y, text=~Allocation,
                 color=~t, colors=c("pink","lightblue"),
                 marker = list(alpha = 0.5, size = 10,line=list(width=1.5)),
                 symbol= ~t, symbols = c('105','106'),
@@ -477,7 +475,7 @@ matching.plot <- function(match.data, xvar, yvar, multi=F){
                          list(prefix = "Number of pairs removed: ",
                               xanchor = "left",
                               font = list(color="black"))
-                       )
+      )
   }
 
   return(pltly)
@@ -550,21 +548,27 @@ std.means <- function(match.data, xvar, yvar, tvar) {
 # }
 
 
-get.estimates <- function(match.data, outcome) {
+get.estimates <- function(match.data, f) {
 
   treatment <- match.data$treatment
 
-  f <- paste0(outcome, " ~ ", match.data$treatment) %>% as.formula()
+  # f <- paste0(outcome, " ~ ", match.data$treatment) %>% as.formula()
   d <- match.data$data
 
   #raw
   mod.v <- lm(f, d)
-  raw <- cbind(estimate=coef(mod.v),confint(mod.v))[treatment,]
+  raw <- coef(mod.v)[[treatment]]
+  # cbind(estimate=coef(mod.v),confint(mod.v))[treatment,]
 
   #weighted
-  mod.w <- lm(f, d, weights = match.data$wt.ATT)
-  weighted <- cbind(estimate=coef(mod.w),
-                    confint(mod.w))[treatment,]
+  wtd <- cbind(d,wts= match.data$wt.ATT)
+  # print(wts)
+  # print(f)
+  # print(d)
+  mod.w <- lm(f, wtd, weights = wts)
+  weighted <- coef(mod.w)[[treatment]]
+  # cbind(estimate=coef(mod.w),
+  #                   confint(mod.w))[treatment,]
 
   #stratified
   max.strat <- max(as.numeric(match.data$stratification))
@@ -572,13 +576,13 @@ get.estimates <- function(match.data, outcome) {
   stratified <- lapply(1:max.strat, function(x) {
     m <- lm(f, d[match.data$stratification==x,])
 
-    return(cbind(estimate=coef(m),
-                 confint(m))[treatment,])
-  }  ) %>% bind_rows() %>% colMeans(na.rm=T)
+    return(coef(m)[[treatment]])
+    # confint(m))[treatment,])
+  }  ) %>% unlist() %>% mean(na.rm=T)
 
   a <- rbind(raw, weighted, stratified) %>% as.data.frame()
 
-  colnames(a) <- c("estimate", "CI_2.5", "CI_97.5")
+  colnames(a) <- c("estimate")#, "CI_2.5", "CI_97.5")
 
   a$method <- rownames(a)
 
@@ -593,9 +597,9 @@ get.estimates <- function(match.data, outcome) {
 }
 
 
-matching.ests <- function(match.data, outcome){
+matching.ests <- function(match.data, f){
 
-  f <- paste0(outcome, " ~ ", match.data$treatment) %>% as.formula()
+  # f <- paste0(outcome, " ~ ", match.data$treatment) %>% as.formula()
 
 
   d <- accumulate_by(match.data$matched.data, ~ord) %>%
@@ -606,37 +610,41 @@ matching.ests <- function(match.data, outcome){
   a <- lapply(1:max.match, function(x) {
     m <- lm(f, d[d$rframe==x,])
 
-    return(cbind(distance=match.data$distance,
-                 idx=x,
-                 estimate=coef(m),
-                 confint(m))[treatment,])
+    return(c(distance=match.data$distance,
+             idx=x,
+             estimate=coef(m)[[treatment]]))
+    # ,
+    #       confint(m))[treatment,])
   }  ) %>% bind_rows()
 
-  colnames(a) <- c("distance", "idx", "estimate", "CI_2.5", "CI_97.5")
+  # colnames(a) <- c("distance", "idx", "estimate", "CI_2.5", "CI_97.5")
 
-  a <- a %>% mutate(across(idx:CI_97.5, as.numeric)) %>%
+  a <- a %>% mutate(across(idx:estimate, as.numeric)) %>%
     mutate(txt=paste0("Estimate: ", round(estimate,3)))
 
-  for (x in 1:nrow(a)) {
-    if (is.na(a[x,4]))
-    {a[x,4] <- a[x,3]}
-
-    if (is.na(a[x,5]))
-    {a[x,5] <- a[x,3]}
-  }
+  # for (x in 1:nrow(a)) {
+  #   if (is.na(a[x,4]))
+  #   {a[x,4] <- a[x,3]}
+  #
+  #   if (is.na(a[x,5]))
+  #   {a[x,5] <- a[x,3]}
+  # }
 
   return(a)
 
 }
 
 
-combined.plot <- function(xvar, yvar, outcome, M1, M2, te=NULL){
+combined.plot <- function(xvar, yvar, M1, M2, te=NULL,
+                          outcome.f=y~t){
 
   # m.matches <- matched.data(f=f, data=d, dist="mahalanobis",
   #                           order=ord, replace=rep)
   # p.matches <- matched.data(f=f, data=d, dist="propensity score",
   #                           order=ord, replace=rep)
   treatment <- M1$treatment
+
+  outcome <- all.vars(outcome.f)[1]
 
 
   gg1 <- matching.plot(M1, xvar, yvar, multi=T)
@@ -651,9 +659,12 @@ combined.plot <- function(xvar, yvar, outcome, M1, M2, te=NULL){
     select(-rframe) %>%
     mutate(rframe=frame,
            method="1",
-           txt= paste0(yvar, " SMD using Method ",
-                       method," - ", distance, " : ",
-                       round(matched.smd.y,3)))
+           txty= paste0(yvar, " SMD using Method ",
+                        method," - ", distance, " : ",
+                        round(matched.smd.y,3)),
+           txtx= paste0(xvar, " SMD using Method ",
+                        method," - ", distance, " : ",
+                        round(matched.smd.x,3)))
 
   s.means.M2 <- std.means(M2, xvar, yvar, treatment)
 
@@ -661,9 +672,12 @@ combined.plot <- function(xvar, yvar, outcome, M1, M2, te=NULL){
     select(-rframe) %>%
     mutate(rframe=frame,
            method="2",
-           txt= paste0(yvar, " SMD using Method ",
+           txty= paste0(yvar, " SMD using Method ",
                         method," - ", distance, " : ",
-                       round(matched.smd.y,3)))
+                        round(matched.smd.y,3)),
+           txtx= paste0(xvar, " SMD using Method ",
+                        method," - ", distance, " : ",
+                        round(matched.smd.x,3)))
 
   s.means.cum <- rbind(s.means.M1.cum, s.means.M2.cum)
 
@@ -672,20 +686,19 @@ combined.plot <- function(xvar, yvar, outcome, M1, M2, te=NULL){
 
   y.range <- c(min(ys), max(ys))
 
-  gg3 <- ggplot(s.means.cum, aes(x=n, frame=rframe, colour=method,
-                                 text=txt)) +
+  gg3 <- ggplot(s.means.cum, aes(x=n, frame=rframe, colour=method)) +
     geom_line(aes(x=n, y=matched.smd.x,
-                  linetype=method, group=method)) +
+                  linetype=method, group=method, text=txtx)) +
     geom_line(aes(x=n, y=matched.smd.y,
-                  linetype=method, group=method))
+                  linetype=method, group=method, text=txty))
 
   gg3 <- ggplotly(gg3, tooltip="text") %>%
     animation_opts(transition = 0, redraw=T, frame=400)
 
   gg3 <- gg3 %>% add_lines(data=s.means.cum, x=~n,
-              y=~full.smd.x, inherit = F, name=xvar, text=xvar,
-              hovertemplate = "%{text} Raw SMD: %{y:>-0,.2f}<extra></extra>"
-    ) %>%
+                           y=~full.smd.x, inherit = F, name=xvar, text=xvar,
+                           hovertemplate = "%{text} Raw SMD: %{y:>-0,.2f}<extra></extra>"
+  ) %>%
     add_lines(data=s.means.cum, x=~n,
               y=~full.smd.y, inherit = F, name=yvar, text=yvar,
               hovertemplate = "%{text} Raw SMD: %{y:>-0,.2f}<extra></extra>"
@@ -696,36 +709,36 @@ combined.plot <- function(xvar, yvar, outcome, M1, M2, te=NULL){
                                  y.range, F)
     )
 
-  M1.ests <- matching.ests(M1, outcome) %>%
+  M1.ests <- matching.ests(M1, outcome.f) %>%
     mutate(method="1",#paste("Method 1 -", distance),
-            lab=paste("Method",method,"-",distance,txt))
+           lab=paste("Method",method,"-",distance,txt))
 
-  M2.ests <- matching.ests(M2, outcome) %>%
+  M2.ests <- matching.ests(M2, outcome.f) %>%
     mutate(method="2",#paste("Method 2 -", distance),
            lab=paste("Method",method,"-",distance,txt))
 
   comb.match.ests <- rbind(M1.ests, M2.ests)
-    # matching.ests(M1, outcome) %>%
-    #   mutate(method=paste0("Method 1 - ",distance)),
-    # matching.ests(M2, outcome) %>%
-    #   mutate(method=paste0("Method 2 - ",distance),
-    #          txt=paste0(method, " Estimate: ", round(estimate,3)))
-    # )
+  # matching.ests(M1, outcome) %>%
+  #   mutate(method=paste0("Method 1 - ",distance)),
+  # matching.ests(M2, outcome) %>%
+  #   mutate(method=paste0("Method 2 - ",distance),
+  #          txt=paste0(method, " Estimate: ", round(estimate,3)))
+  # )
 
   comb.match.ests.cum <- comb.match.ests %>%
     accumulate_by(~idx-1) %>% select(-rframe) %>%
     mutate(rframe=frame)
 
-  agg.ests <- cbind(get.estimates(M1, outcome), te=te)
+  agg.ests <- cbind(get.estimates(M1, outcome.f), te=te)
 
   ys <- c(comb.match.ests[['estimate']],agg.ests[1,2:4] %>% unlist())
 
   y.range <- c(min(ys),max(ys))
 
   gg4 <- ggplot(comb.match.ests.cum,
-         aes(idx, estimate, frame=rframe, group=method, text=lab,
-             color=method, linetype=method
-             )) + geom_line(size=1)
+                aes(idx, estimate, frame=rframe, group=method, text=lab,
+                    color=method, linetype=method
+                )) + geom_line(size=1)
 
   gg4 <- ggplotly(gg4, tooltip = "text") %>%
     animation_opts(transition = 0, redraw=T, frame=400)
@@ -749,9 +762,9 @@ combined.plot <- function(xvar, yvar, outcome, M1, M2, te=NULL){
     )
 
   subplot(gg1, gg2, gg3, gg4,
-          widths = c(0.47,0.47), heights = c(0.47,0.47),
-          margin = 0.015, shareX = F, shareY = F, nrows = 2,#) %>%#,
-         titleX = T, titleY = T) %>%
+          widths = c(0.45,0.45), heights = c(0.45,0.45),
+          margin = 0.05, shareX = F, shareY = F, nrows = 2,#) %>%#,
+          titleX = T, titleY = T) %>%
     # layout(annotations=annotations) %>%
     animation_opts(transition = 0, redraw=T, frame=400) %>%
     animation_slider(currentvalue = list(prefix = "Number of pairs removed: ",

@@ -10,18 +10,29 @@
 mod_ViewData_ui <- function(id){
   ns <- NS(id)
   tagList(
-
+  fluidPage(
     tabsetPanel(type = "pills",
-                tabPanel("Plots", value="tabPlot",
-                         plotOutput("dataPlot")),
-                tabPanel("Table", value="tabTable",
-                         tableOutput("dataTable")),
-                tabPanel("Match Info", value="tabMInfo",
-                         tableOutput("matchtable"))
-    )
+
+  #data plots
+      tabPanel("Plots", value="tabPlot",
+               plotlyOutput("dataPlot")),
+
+  #data table
+      tabPanel("Table", value="tabTable", br(),
+               DTOutput("dataTable", height="700px")),
+
+  #matching information
+  tabPanel("Match Info", value="tabMInfo",
+           fluidRow(
+             "Matches for this simulation have occurred using the parameters below.",br(),
+             span("Formula used for matching: ", htmlOutput("f.treat")),
+             span("Formula used for estimating treatment effect: ", htmlOutput("f.outcome")),
+             span("Treatment effect: ", textOutput("TE")),
+             tableOutput("matchtable"))
+  ))
 
   )
-}
+  )}
 
 #' ViewData Server Functions
 #'

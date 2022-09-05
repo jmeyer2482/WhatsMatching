@@ -4,6 +4,12 @@
 #'     DO NOT REMOVE.
 #' @import shiny
 #' @noRd
+
+
+te.txt <- HTML(paste0(strong("Mean (average)"), br(),
+                        "Select a value to set the mean value for the",
+                        "normally distributed variables X1 and X2."))
+
 app_ui <- function(request) {
   tagList(
     # Leave this function for adding external resources
@@ -15,45 +21,77 @@ app_ui <- function(request) {
     fluidPage(
   #title
       fluidRow(
-        column(width = 12, align = "left",
-               h1("The Propensity Score Paradox"))),
-  #buttons
-      fluidRow(
-        column(width = 2, align = "center",
-               actionButton("butMatchData","Random Matches")),
-        column(width = 2, align = "center",
-               actionButton("butGetData","Create Matches")),
-        column(width = 2, align = "center",
-               actionButton("butViewData","View Data")),
-        column(width = 6)), br(),br(),
+        align = "center",
+               h1("The Propensity Score Paradox")
+        ),
+  #main page
+      fluidRow(column(4),
+        column(4,
+        align = "center",
+      #Settings
+        actionButton("butGetData",label=NULL,icon=icon("cog", lib="glyphicon"), width = "20%"),
 
-  #text description
-      fluidRow(column(width = 6, align = "center", strong(textOutput("M1.text"))),
-               column(width = 6, align = "center", strong(textOutput("M2.text")))),
+      #View data
+        actionButton("butViewData",label=NULL, icon=icon("table"), width = "20%"),
 
-  #pop up for selecting data
-      bsModal(id="modGetData", title="Select Data", trigger="butGetData",
-              size = "large", mod_SimData_ui("SimData_1"),
-              tags$head(tags$style("#modGetData .modal-footer{ display:none}"))
+      #Random matches
+        actionButton("butRandom",label=NULL, icon=icon("shuffle"), width = "20%"),
+
+      #Info
+        actionButton("butInfo",label=NULL, icon=icon("info"), width = "20%")),
       ),
 
-  #pop up for match settings
+      #Settings
+      bsPopover(id="butGetData",title=HTML(paste(strong("Data and Match Settings"))),
+                content="Change the data and match settings that have informed the plot",
+                "right",options = list(container = "body")),
+      bsModal(id="modGetData", title="Data and Match Settings", trigger="butGetData",
+              size = "large", mod_SimData_ui("SimData_1"),
+              tags$head(tags$style("#modGetData .modal-footer{ display:none}"))),
       bsModal(id="modMatchSettings", title="Update Matching Settings",
               trigger="butMatchSettings", size = "large",
               mod_MatchSettings_ui("MatchSettings_1"),
               tags$head(tags$style("#modMatchSettings .modal-footer{ display:none}"))
       ),
 
-  #pop up for viewing data
-      bsModal(id="modViewData", title="View Data", titlePanel("Simulate Data"),
-              trigger = "butViewData", size = "large", mod_ViewData_ui("ViewData_1"),
+      #View data
+      bsPopover(id="butViewData",title=HTML(paste(strong("View Data"))),
+                content="View the data and match settings that have informed the plot",
+                "right",options = list(container = "body")),
+      bsModal(id="modViewData", title="View Data", trigger = "butViewData",
+              size = "large", mod_ViewData_ui("ViewData_1"),
               tags$head(tags$style("#modViewData .modal-footer{ display:none}"))
       ),
 
+      #Random matches
+      bsPopover(id="butRandom",title=HTML(paste(strong("Random Matching"))),
+                content="Generate a random simulated data set for matching. Warning: will overwrite whatever is currently loaded",
+                "right",options = list(container = "body")
+      ),
+
+      #Info
+      bsPopover(id="butInfo",title=HTML(paste(strong("App Information"))),
+                content="See all the information about the app and the research that underpins it.",
+                "right",options = list(container = "body")),
+      bsModal(id="modInfo", title="App Information", trigger = "butInfo",
+              size = "large", mod_Info_ui("Info_1")),
+      # br(),
+
   #matching plot panel
-      mainPanel(width = 12,
-        plotlyOutput("distPlot", height = "900px")
-      )
+      mainPanel(width = 12, align = "center",
+        plotlyOutput("distPlot", width = "100%", height = "900px")
+      ),
+
+  #decriptors
+      fluidRow(
+        # column(),
+        column(12, align = "left", h4(textOutput("M1.text")),
+        # column(1),
+        # column(6, align = "left",
+        h4(textOutput("M2.text")))
+      ),
+
+
 
     )#close fluidpage
 

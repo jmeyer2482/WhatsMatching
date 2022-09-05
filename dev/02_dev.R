@@ -20,7 +20,7 @@ attachment::att_amend_desc()
 ## Add modules ----
 ## Create a module infrastructure in R/
 golem::add_module(name = "landing", with_test = TRUE) # Name of the module
-golem::add_module(name = "KandN", with_test = TRUE)
+golem::add_module(name = "Info", with_test = F)
 golem::add_module(name = "RealData", with_test = TRUE)
 golem::add_module(name = "SimData", with_test = TRUE)
 

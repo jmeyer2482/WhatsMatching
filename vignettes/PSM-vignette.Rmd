@@ -146,13 +146,13 @@ d <- create.sim1.data(5)
 
 
 ggpubr::ggarrange(
-  ggplot(df, aes(X1, X2, colour=t.char)) + geom_point(alpha=0.5) +
+  ggplot(d, aes(X1, X2, colour=t.char)) + geom_point(alpha=0.5) +
     guides(colour=guide_legend("Groups")),
-  ggplot(df, aes(t.char, y, fill=t.char)) + geom_boxplot() + 
+  ggplot(d, aes(t.char, y, fill=t.char)) + geom_boxplot() + 
     xlab("Groups"),
-  ggplot(df, aes(X1, y, colour=t.char)) + geom_point(alpha=0.5) + 
+  ggplot(d, aes(X1, y, colour=t.char)) + geom_point(alpha=0.5) + 
     guides(colour=guide_legend("Groups")),
-  ggplot(df, aes(X2, y, colour=t.char)) + geom_point(alpha=0.5) +
+  ggplot(d, aes(X2, y, colour=t.char)) + geom_point(alpha=0.5) +
     guides(colour=guide_legend("Groups")), 
   ncol=2, nrow=2, common.legend = T, legend = "right")
 # create.sim3.data(weight_t1=-1,weight_t2=-2, sd1=10, sd2=20)
@@ -160,6 +160,44 @@ ggpubr::ggarrange(
 ```
 
 
+```{r}
+
+p1 <- d %>% ggplot(aes(X1, X2, colour=t.char)) +
+         geom_point(alpha=0.5) +
+         guides(colour=guide_legend("Groups")) #%>%
+  # ggplotly(p)
+         
+# p2 <- d %>% ggplot(aes(t.char, y, fill=t.char)) + 
+#   geom_boxplot() + #theme(legend.position = "none") + 
+#   xlab("Groups")
+# 
+# p3 <- d %>% ggplot(aes(X1, y, colour=t.char)) +
+#   geom_point(alpha=0.5) #+ theme(legend.position = "none")
+# # +
+# #   guides(colour=guide_legend("Groups"))
+# 
+# p4 <- ggplot(d, aes(X2, y, colour=t.char)) +
+#   geom_point(alpha=0.5) #+ theme(legend.position = "none")
+# # +
+# #   guides(colour=guide_legend("Groups"))
+
+p1 <- ggplotly(p1) %>% layout(showlegend = FALSE,
+      xaxis = list(title=list(#font=list(family="Arial Black"),
+                   # text="X2",
+                   standoff=0)),
+      yaxis = list(title=list(#font=list(family="Arial Black"),
+                   # text="X2",
+                   standoff=0)))
+p1
+
+subplot(p1,p2,p3,p4,widths = c(0.47,0.47), 
+        heights = c(0.45,0.45),
+        margin = 0.05, shareX = F, shareY = F, nrows = 2,
+        titleX = T, titleY = T)
+
+# ncol=2, nrow=2, common.legend = T, legend = "right")
+
+```
 
 
 
@@ -175,7 +213,8 @@ m <- matched.data(f, d, "Mahalanobis", "data", T)
 
 # ply <- 
   # suppressWarnings(
-    combined.plot(xvar="X1", yvar="X2", outcome="y", M1=m, M2=p, te=5)#)
+    combined.plot(xvar="X1", yvar="X2", M1=m, M2=p, te=5,
+                  outcome=y~t+X1+X2 )#)
 
 # ply
   
@@ -196,6 +235,106 @@ m.data <- data.frame(
     arrange(pair.dist, subclass) %>%
     mutate(ord=(row_number(pair.dist) + (row_number(pair.dist)%%2))/2)
 
+
+
+```
+
+
+```{r}
+
+  d1 <- accumulate_by(p$matched.data, ~ord) %>%
+    mutate(rframe=max(frame)-frame)
+
+  treatment <- p$treatment
+  max.match <- max(d1$rframe)
+
+  test <- lm(y~t+X1+X2,d1[d1$rframe==1,])
+  
+  coef(test)[[treatment]]
+  
+  a <- lapply(1:max.match, function(x) {
+    m1 <- lm(y~t+X1+X2, d1[d1$rframe==x,])
+
+    return(c(distance=p$distance,
+                 idx=x,
+                 estimate=coef(m1)[[treatment]]))#,
+                 # confint(m))[treatment,])
+  }  ) %>% bind_rows()# unlist() #
+  #%>% 
+    
+    a <- a %>% mutate(across(idx:estimate, as.numeric)) %>%
+    mutate(txt=paste0("Estimate: ", round(estimate,3)))
+
+  for (x in 1:nrow(a)) {
+    if (is.na(a[x,4]))
+    {a[x,4] <- a[x,3]}
+
+    if (is.na(a[x,5]))
+    {a[x,5] <- a[x,3]}
+  }
+
+dt <- create.sim1.data()
+    
+dt.m <- matched.data(t~X1+X2, dt, dist = "Propensity Score")
+
+get.estimates(dt.m, y~t+X1+X2)
+
+mod <- lm(y~t+X1+X2, dt.m$data, weights = dt.m$wt.ATT)
+
+coef(mod)[["t"]]
+
+o.f <- y~t+X1+X2 
+all.vars(o.f)[-1]
+
+
+x <- create.sim1.data(2)
+y <- create.sim2.data(2)
+
+all(x==y)
+
+
+if(length(all.equal(x,y))>1) FALSE else TRUE
+
+length(all.equal(x,y))
+```
+
+```{r}
+
+
+f <- y~t+X1+X2
+d <- p$data
+  #raw
+  mod.v <- lm(f, d)
+  raw <- coef(mod.v)[[treatment]]
+    # cbind(estimate=coef(mod.v),confint(mod.v))[treatment,]
+
+  #weighted
+  mod.w <- lm(f, d, weights = p$wt.ATT)
+  weighted <- coef(mod.w)[[treatment]]
+  # cbind(estimate=coef(mod.w),
+  #                   confint(mod.w))[treatment,]
+
+  #stratified
+  max.strat <- max(as.numeric(p$stratification))
+
+  stratified <- lapply(1:max.strat, function(x) {
+    m <- lm(f, d[p$stratification==x,])
+
+    return(coef(m)[[treatment]])
+                 # confint(m))[treatment,])
+  }  ) %>% unlist() %>% mean(na.rm=T)
+
+  a <- rbind(raw, weighted, stratified) %>% as.data.frame()
+
+  colnames(a) <- c("estimate")#, "CI_2.5", "CI_97.5")
+
+  a$method <- rownames(a)
+
+  b <- a[,1] %>% t() %>% as.data.frame()
+
+  colnames(b) <- rownames(a)
+
+  b <- cbind(n=1:(nrow(p$pairs)-1),b)
 
 
 ```
@@ -575,4 +714,144 @@ rownames(M.list) <- labs
 M.list
 
 ```
+
+```{r}
+
+lr <- lm(y~t+X1+X2, d)
+
+coef(lr)["t"]
+
+confint(lr)["t",]
+```
+
+
+
+```{r}
+ f<-y ~ t * X1 * X2 * I(X1^2) * I(X2^2) * I(X1^3) * I(X2^3) * I(X1^4) * I(X2^4)
+
+# f <- y ~ t * X1 * X2 * X2^2 * (X1 + X2)^3 * (X1 + X2)^4
+
+t.f <- terms(f)
+
+# attr(t.f, "term.labels") 
+attr(t.f, "term.labels")#[stringr::str_detect(attr(t.f, "term.labels"),"t")]
+
+is.null(NULL)
+
+```
+
+
+
+```{r}
+
+s.d <- create.sim1.data(2)
+d <- NULL
+
+if(is.null(d)) {s.d} else {d}
+
+```
+
+
+
+```{r}
+
+tp <- function(d){
+  # ggpubr::ggarrange(
+  p1 <- ggplot(d, aes(X1, X2, colour=t.char)) +
+    geom_point(alpha=0.5) + theme(legend.position = "none") +
+    guides(colour="Group")
+  p1 <- ggplotly(p1) %>%
+    layout(xaxis=list(
+      title=list(standoff=0,autorange = TRUE, tickmode="auto")),
+      yaxis=list(
+        title=list(standoff=0,autorange = TRUE, tickmode="auto")))
+
+  p2 <- ggplot(d, aes(t.char, y, fill=t.char)) + geom_boxplot() +
+    xlab("") + theme(legend.position = "none") +
+    guides(colour="Group")
+  p2 <- ggplotly(p2) %>%
+    layout(xaxis=list(
+      title=list(standoff=0,autorange = TRUE, tickmode="auto")),
+      yaxis=list(
+        title=list(standoff=0,autorange = TRUE, tickmode="auto")))
+
+  p3 <- ggplot(d, aes(X1, y, colour=t.char)) + geom_point(alpha=0.5)  +
+    theme(legend.position = "none") +
+    guides(colour="Group")
+  p3 <- ggplotly(p3) %>%
+    layout(xaxis=list(
+      title=list(standoff=0,autorange = TRUE, tickmode="auto")),
+      yaxis=list(
+        title=list(standoff=0,autorange = TRUE, tickmode="auto")))
+  
+  p4 <- ggplot(d, aes(X2, y, colour=t.char)) + geom_point(alpha=0.5)  +
+    theme(legend.position = "none") +
+    guides(colour="Group")
+  p4 <- ggplotly(p4) %>%
+    layout(xaxis=list(
+      title=list(standoff=0,autorange = TRUE, tickmode="auto")),
+      yaxis=list(
+        title=list(standoff=0,autorange = TRUE, tickmode="auto")))
+  
+  return(plotly::subplot(p1,p2,p3,p4, nrows=2, titleX=T, titleY = T,
+                         widths = c(0.45,0.45), heights = c(0.45,0.45),
+                         margin = 0.1) %>% config(displayModeBar = F)
+         )
+}
+
+tp(create.sim1.data())
+
+```
+
+```{r}
+
+library(shiny)
+
+shinyApp(
+  server = function(input,output,session){},
+  ui = fluidPage(
+    span(
+      "Example",
+      div(style = "display:inline-block;",
+          title = sd.txt,
+          icon("info-circle")))
+  )
+)
+
+```
+
+
+
+```{r}
+
+CR1_BS<-paste("i. This is line 1",
+              "ii. This is line 2",
+              "iii. This is line 3", sep = "<br>")
+
+sd.txt <- HTML(paste0(strong("Standard Deviation"), br(),
+               "Select a value to set the standard deviation for the",
+               "normally distributed variables X1 and X2."))
+
+
+ui <- fluidPage(
+  # actionButton("CR1_S1", "Button"),
+  fluidRow( icon("question-sign", lib="glyphicon", id="CR1_S1"),
+
+  bsPopover(id="CR1_S1",title=NULL,content=sd.txt ,"right",options = list(container = "body"))
+))
+
+server <- function(input, output){}
+
+shinyApp(ui, server)
+```
+
+
+```{r}
+
+sample(c(y~t, y~t+X1, y~t+X2, t~t+X1+X2),1)[1]
+
+paste0(code(deparse1(y~t+X1+X2)))
+
+```
+
 
