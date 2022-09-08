@@ -12,7 +12,7 @@ mod_Info_ui <- function(id){
   tagList(
 
   fluidPage(
-    "Not sure if having buttons or tab panels"
+    "Not sure if having buttons or tab panels?`???"
   )
 
   )

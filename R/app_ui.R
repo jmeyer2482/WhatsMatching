@@ -3,6 +3,10 @@
 #' @param request Internal parameter for `{shiny}`.
 #'     DO NOT REMOVE.
 #' @import shiny
+#' @importFrom shinyBS bsPopover bsModal
+#' @importFrom htmltools HTML
+#' @importFrom shinythemes shinytheme
+#'
 #' @noRd
 
 
@@ -19,6 +23,7 @@ app_ui <- function(request) {
 
 #set up fluidpage
     fluidPage(
+      theme = shinytheme("spacelab"),
   #title
       fluidRow(
         align = "center",

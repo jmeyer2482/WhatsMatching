@@ -16,13 +16,14 @@
 ## Dependencies ----
 ## Amend DESCRIPTION with dependencies read from package code parsing
 attachment::att_amend_desc()
+devtools::document()
 
 ## Add modules ----
 ## Create a module infrastructure in R/
-golem::add_module(name = "landing", with_test = TRUE) # Name of the module
+golem::add_module(name = "landing", with_test = F) # Name of the module
 golem::add_module(name = "Info", with_test = F)
-golem::add_module(name = "RealData", with_test = TRUE)
-golem::add_module(name = "SimData", with_test = TRUE)
+golem::add_module(name = "RealData", with_test = F)
+golem::add_module(name = "SimData", with_test = F)
 
 golem::add_module(name = "ViewData")
 
@@ -31,7 +32,11 @@ golem::add_module(name = "MatchSettings", with_test = F)
 
 ## Add helper functions ----
 ## Creates fct_* and utils_*
-# golem::add_fct("helpers", with_test = TRUE)
+golem::add_fct("simulations", with_test = F)
+golem::add_fct("matches", with_test = F)
+golem::add_fct("matchplot", with_test = F)
+golem::add_fct("multimatchplot", with_test = F)
+
 # golem::add_utils("helpers", with_test = TRUE)
 
 ## External resources
@@ -61,11 +66,15 @@ usethis::use_package("shinipsum")
 usethis::use_package("shinyBS")
 usethis::use_package("ggplot2")
 usethis::use_package("dplyr")
-usethis::use_package("catdata")
 usethis::use_package("mplot")
 usethis::use_package("plotly")
 usethis::use_package("shiny")
 usethis::use_package("ggforce")
+usethis::use_package("shinyBS")
+usethis::use_package("htmltools")
+usethis::use_package("DT")
+usethis::use_package("MASS")
+usethis::use_package("arm")
 
 
 # usethis::use_package("cem")

@@ -2,7 +2,16 @@
 #'
 #' @param input,output,session Internal parameters for {shiny}.
 #'     DO NOT REMOVE.
+#'
 #' @import shiny
+#' @import ggplot2
+#' @import dplyr
+#' @rawNamespace import(plotly, except = last_plot)
+#' @import shinyBS
+#' @importFrom stats as.formula
+#' @importFrom htmltools HTML
+#' @importFrom DT JS renderDT
+#'
 #' @noRd
 #'
 #'
@@ -11,19 +20,19 @@
 
 #
 # library(MatchIt)
-library(optmatch)
-library(ggplot2)
-library(dplyr)
+# library(optmatch)
+# library(ggplot2)
+# library(dplyr)
 # library(catdata)
 # library(mplot)
-library(plotly)
-library(ggforce)
-library(shiny)
-library(shinyBS)
+# library(plotly)
+# library(ggforce)
+# library(shiny)
+# library(shinyBS)
 # library(ggpubr)
-library(htmltools)
-library(shinythemes)
-library(DT)
+# library(htmltools)
+# library(shinythemes)
+# library(DT)
 
 
 plot.data <- function(d){
@@ -31,23 +40,23 @@ plot.data <- function(d){
   a.set <- list(title=list(standoff=2,autorange = TRUE, tickmode="auto"))
 
   # ggpubr::ggarrange(
-  p1 <- ggplot(d, aes(X1, X2, colour=Allocation)) +
+  p1 <- ggplot(d, aes(.data$X1, .data$X2, colour=.data$Allocation)) +
     geom_point(alpha=0.5) + theme(legend.position = "none") +
     guides(colour="Group")
   p1 <- ggplotly(p1) %>% layout(xaxis=a.set, yaxis=a.set)
 
-  p2 <- ggplot(d, aes(Allocation, y, fill=Allocation)) + geom_boxplot() +
-    xlab("") + theme(legend.position = "none") +
+  p2 <- ggplot(d, aes(.data$Allocation, .data$y, fill=.data$Allocation)) +
+    geom_boxplot() + xlab("") + theme(legend.position = "none") +
     guides(colour="Group")
   p2 <- ggplotly(p2) %>% layout(xaxis=a.set, yaxis=a.set)
 
-  p3 <- ggplot(d, aes(X1, y, colour=Allocation)) + geom_point(alpha=0.5)  +
-    theme(legend.position = "none") +
+  p3 <- ggplot(d, aes(.data$X1, .data$y, colour=.data$Allocation)) +
+    geom_point(alpha=0.5) + theme(legend.position = "none") +
     guides(colour="Group")
   p3 <- ggplotly(p3) %>% layout(xaxis=a.set, yaxis=a.set)
 
-  p4 <- ggplot(d, aes(X2, y, colour=Allocation)) + geom_point(alpha=0.5)  +
-    theme(legend.position = "none") +
+  p4 <- ggplot(d, aes(.data$X2, .data$y, colour=.data$Allocation)) +
+    geom_point(alpha=0.5) + theme(legend.position = "none") +
     guides(colour="Group")
   p4 <- ggplotly(p4) %>% layout(xaxis=a.set, yaxis=a.set)
 
@@ -63,13 +72,7 @@ random.data <- function(TE=round(runif(1, -10, 10),1)){
 
   rand.data <- sample(1:3,1)
 
-  if (rand.data==1){
-    d <- create.sim1.data(te=TE)
-  } else if (rand.data==2){
-    d <- create.sim2.data(te=TE)
-  } else if (rand.data==3) {
-    d <- create.sim3.data(te=TE)
-  }
+  d <- create.sim.data(sim=rand.data, te=TE)
 
   return(d)
 
@@ -91,7 +94,7 @@ match.detail <- function(M, M.num){
              "Mahalanobis"="Mahalanobis Distance",
              "Propensity Score"="Propensity Score"),
       " Matching was performed ",
-      ifelse(M$replace, "with", "without"), " replacement.",
+      ifelse(M$replace, "with", "without"), " replacement. ",
       ifelse(M$replace, "", ord.s)
       )
 
@@ -113,7 +116,7 @@ app_server <- function(input, output, session) {
     M2.dist="Propensity Score",
     M2.ord="data",
     M2.rep=T,
-    selected.d=NULL,#random.data(2),
+    selected.d=random.data(2),
     outcome.f=y~t,
     treat.f=t~X1+X2,
     d=NULL
@@ -220,7 +223,7 @@ app_server <- function(input, output, session) {
 
     output$M2.text <- renderText(M2.desc)
 
-    output$distPlot <- renderPlotly(cp)
+    output$distPlot <- plotly::renderPlotly(cp)
 
     removeModal()
 
@@ -235,7 +238,10 @@ app_server <- function(input, output, session) {
 
     TE <- input$sim1.TE
 
-    d <- create.sim1.data(TE)
+    # d <- create.sim1.data(TE)
+
+    d <- create.sim.data(sim=1, te=TE)
+
 
     values$TE <<- TE
     values$d <<- d
@@ -250,7 +256,7 @@ app_server <- function(input, output, session) {
     }) %>%
     bindEvent(input$applySim1)
 
-  output$sim1plot <- renderPlotly(plot1.data())
+  output$sim1plot <- plotly::renderPlotly(plot1.data())
 
 
   observe({
@@ -275,7 +281,11 @@ app_server <- function(input, output, session) {
     overlap.X1 <- diff - input$sim2.x.overlap
     overlap.X2 <- diff - input$sim2.y.overlap
 
-    d <- create.sim2.data(TE, val.min, val.max, overlap.X1, overlap.X2)
+    # d <- create.sim2.data(TE, val.min, val.max, overlap.X1, overlap.X2)
+
+    d <- create.sim.data(sim=2, te=TE,
+                          g1_min=val.min, g1_max=val.max,
+                          g2_shift_X1=overlap.X1, g2_shift_X2=overlap.X2)
 
     values$TE <<- TE
     values$d <<- d
@@ -288,7 +298,7 @@ app_server <- function(input, output, session) {
     }) %>%
     bindEvent(input$applySim2)
 
-  output$sim2plot <- renderPlotly(plot2.data())
+  output$sim2plot <- plotly::renderPlotly(plot2.data())
 
 
   plot3.data <- reactive({
@@ -308,35 +318,35 @@ app_server <- function(input, output, session) {
 
     txt <- ""
 
-    if(!between(X1m,-25,25)){
+    if(!dplyr::between(X1m,-25,25)){
       txt <- paste0(txt,br(),"X1 Mean")
     }
 
-    if(!between(X2m,-25,25)){
+    if(!dplyr::between(X2m,-25,25)){
       txt <- paste0(txt,br(),"X2 Mean")
     }
 
-    if(!between(X1sd,0,30)){
+    if(!dplyr::between(X1sd,0,30)){
       txt <- paste0(txt,br(),"X1 Standard Deviation")
     }
 
-    if(!between(X2sd,0,30)){
+    if(!dplyr::between(X2sd,0,30)){
       txt <- paste0(txt,br(),"X2 Standard Deviation")
     }
 
-    if(!between(X1t,-25,25)){
+    if(!dplyr::between(X1t,-25,25)){
       txt <- paste0(txt,br(),"X1 Effect on Treatment")
     }
 
-    if(!between(X2t,-25,25)){
+    if(!dplyr::between(X2t,-25,25)){
       txt <- paste0(txt,br(),"X2 Effect on Treatment")
     }
 
-    if(!between(X1y,-25,25)){
+    if(!dplyr::between(X1y,-25,25)){
       txt <- paste0(txt,br(),"X1 Effect on Outcome")
     }
 
-    if(!between(X2y,-25,25)){
+    if(!dplyr::between(X2y,-25,25)){
       txt <- paste0(txt,br(),"X2 Effect on Outcome")
     }
 
@@ -355,11 +365,17 @@ app_server <- function(input, output, session) {
 
       } else {
 
-      d <- create.sim3.data(
-              te=TE, rho=rho, weight_y0=y,
-              mean1=X1m, mean2=X2m, sd1=X1sd, sd2=X2sd,
-              weight_t1=X1t, weight_t2=X2t,
-              weight_y1=X1y, weight_y2=X2y)
+      # d <- create.sim3.data(
+      #         te=TE, rho=rho, weight_y0=y,
+      #         mean1=X1m, mean2=X2m, sd1=X1sd, sd2=X2sd,
+      #         weight_t1=X1t, weight_t2=X2t,
+      #         weight_y1=X1y, weight_y2=X2y)
+
+      d <- create.sim.data(sim=3,
+                te=TE, rho=rho, weight_y0=y,
+                mean1=X1m, mean2=X2m, sd1=X1sd, sd2=X2sd,
+                weight_t1=X1t, weight_t2=X2t,
+                weight_y1=X1y, weight_y2=X2y)
 
       values$TE <<- TE
       values$d <<- d
@@ -374,13 +390,13 @@ app_server <- function(input, output, session) {
     }) %>%
     bindEvent(input$applySim3)
 
-  output$sim3plot <- renderPlotly(plot3.data())
+  output$sim3plot <- plotly::renderPlotly(plot3.data())
 
 
   observe({
 
-    toggleModal(session, "modGetData", toggle="close")
-    toggleModal(session, "modMatchSettings", toggle="open")
+    shinyBS::toggleModal(session, "modGetData", toggle="close")
+    shinyBS::toggleModal(session, "modMatchSettings", toggle="open")
     }) %>%
     bindEvent(input$usedata)
 
@@ -392,12 +408,12 @@ app_server <- function(input, output, session) {
       values$M2.dist <<- input$Dist2
       values$M2.ord <<- input$Ord2
       values$M2.rep <<- input$Rep2
-      values$outcome.f <<- as.formula(input$outcome.f)
+      values$outcome.f <<- stats::as.formula(input$outcome.f)
     })
 
 
   observe({
-    addTooltip(session, id="sim3.X1sd",
+    shinyBS::addTooltip(session, id="sim3.X1sd",
                title="Enter the standard deviation of X1 here.",
                placement = "bottom",trigger = "hover",
                options = list(container = "body"))
@@ -407,7 +423,7 @@ app_server <- function(input, output, session) {
 
   observe({
 
-    toggleModal(session, "modMatchSettings", toggle="close")
+    shinyBS::toggleModal(session, "modMatchSettings", toggle="close")
 
     if (is.null(values$d)) {d <- values$selected.d} else {d <- values$d}
 
@@ -426,11 +442,11 @@ app_server <- function(input, output, session) {
   #   bindEvent(input$butInfo)
 
 
-  output$dataPlot <- renderPlotly(plot.data(values$selected.d))
+  output$dataPlot <- plotly::renderPlotly(plot.data(values$selected.d))
 
-  output$dataTable <- renderDT(values$selected.d,
+  output$dataTable <- DT::renderDT(values$selected.d,
                                options = list(
-                                 initComplete = JS(
+                                 initComplete = DT::JS(
                                    "function(){$(this).addClass('compact');}")))
 
   output$f.outcome <- renderText(paste(code(deparse1(values$outcome.f))))

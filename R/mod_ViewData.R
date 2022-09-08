@@ -7,6 +7,10 @@
 #' @noRd
 #'
 #' @importFrom shiny NS tagList
+#'
+#' @importFrom DT DTOutput
+#'
+
 mod_ViewData_ui <- function(id){
   ns <- NS(id)
   tagList(
