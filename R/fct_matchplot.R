@@ -2,13 +2,29 @@
 #'
 #' @description A fct function
 #'
-#' @return The return value, if any, from executing the function.
+#' @param match.data An object returned from the matched.data function
+#' @param xvar A string naming the variable to go on the X axis
+#' @param yvar A string naming the variable to go on the Y axis
+#' @param multi Boolean value of whether the output will be part of a plotly subplot
+#'
+#' @return A plotly object of the sequence of matches performed on the data
 #'
 #' @importFrom grDevices colorRampPalette
 #' @importFrom smd smd
 #' @importFrom lazyeval f_eval
 #'
-#' @noRd
+#' @examples
+#' #simulate some data
+#' d <- create.sim.data(1,2)
+#' #matching formula
+#' f <- t~X1+X2
+#' #create matched data object
+#' M <- matched.data(f,d,"Propensity Score")
+#'
+#' #create an animated plot of the matched data
+#' matching.plot(M, "X1", "X2", FALSE)
+#'
+#' @export
 
 matching.plot <- function(match.data, xvar, yvar, multi=F){
 
