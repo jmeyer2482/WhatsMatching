@@ -91,13 +91,13 @@ mod_SimData_ui <- function(id){
                                                 actionButton("applySim1", "Apply"))
                                 )),
 
-                   mainPanel(plotlyOutput("sim1plot", height = "700px")
+                   mainPanel(plotlyOutput("sim1plot", height = "500px")
                    )
                  )),
         ###Simulation 2
         tabPanel("Simulation 2", value="Sim2",
                  sidebarLayout(
-                   sidebarPanel(style="height: 700px;",
+                   sidebarPanel(style="height: 500px;",
 
                                 fluidRow(
                                   strong("Treatment Effect"),

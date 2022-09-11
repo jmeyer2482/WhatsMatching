@@ -2,6 +2,7 @@
 
 export(create.sim.data)
 export(matched.data)
+export(matching.plot)
 export(run_app)
 import(dplyr)
 import(ggplot2)

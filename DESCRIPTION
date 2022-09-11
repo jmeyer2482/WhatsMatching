@@ -20,6 +20,7 @@ Imports:
     lazyeval,
     MASS,
     optmatch,
+    pkgload,
     plotly,
     shiny (>= 1.7.1),
     shinyBS,

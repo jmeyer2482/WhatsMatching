@@ -2,7 +2,6 @@
 #'
 #' @description A function for simulating data
 #'
-#' @noRd
 #'
 #'
 #' @param sim a integer referencing the simulation - 1, 2 or 3
@@ -42,20 +41,21 @@
 #'
 #' @examples
 #' # generate a simulated dataframe
-#' create.sim.data(1)
+#' create.sim.data(1,2)
 
-create.sim.data <- function(sim = 1,
+create.sim.data <- function(
+    sim = 1,
 
-                            te=2,
+    te=2,
 
-                            g1_min=0, g1_max=5, g2_shift_X1=1, g2_shift_X2=1,
+    g1_min=0, g1_max=5, g2_shift_X1=1, g2_shift_X2=1,
 
-                            # Generating X1 and X2
-                            n = 200, mean1 = 0, mean2 = 0, sd1 = 1, sd2 = 1, rho = .3,
-                            # Generating t
-                            weight_t1 = 0.5, weight_t2 = 0.5,
-                            # Generating y
-                            weight_y0 = 2, weight_y1 = 1, weight_y2 = -1
+    # Generating X1 and X2
+    n = 200, mean1 = 0, mean2 = 0, sd1 = 1, sd2 = 1, rho = .3,
+    # Generating t
+    weight_t1 = 0.5, weight_t2 = 0.5,
+    # Generating y
+    weight_y0 = 2, weight_y1 = 1, weight_y2 = -1
 ){
 
   #simulation 1

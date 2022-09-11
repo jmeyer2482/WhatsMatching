@@ -4,11 +4,6 @@
 #'
 #' @return Returns a dataframe with the variable t, Allocation, X1, X2, y
 #'
-#' @noRd
-#'
-#'
-#' @param sim a integer referencing the simulation - 1, 2 or 3
-#'
 #' @param f a two sided formula containing the treatment variable on the left side and the matching variables on the right
 #' @param data a dataframe of the data that is to be used for matching
 #' @param dist a matching distance. Either "propensity" or "mahalanobis"
@@ -31,6 +26,16 @@
 #' @importFrom stats lm
 #' @importFrom stats quantile
 #' @importFrom optmatch match_on
+#'
+#' @examples
+#' #simulate some data
+#' d <- create.sim.data(1,2)
+#' #matching formula
+#' f <- t~X1+X2
+#' #create matched data object
+#' M <- matched.data(f,d,"Propensity Score")
+
+#'
 #' @export
 #'
 #'

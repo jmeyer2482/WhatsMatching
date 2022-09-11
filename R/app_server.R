@@ -18,21 +18,14 @@
 #'
 #'
 
-#
-# library(MatchIt)
-# library(optmatch)
-# library(ggplot2)
-# library(dplyr)
-# library(catdata)
-# library(mplot)
-# library(plotly)
-# library(ggforce)
-# library(shiny)
-# library(shinyBS)
-# library(ggpubr)
-# library(htmltools)
-# library(shinythemes)
-# library(DT)
+library(ggplot2)
+library(dplyr)
+library(plotly)
+library(shiny)
+library(shinyBS)
+library(htmltools)
+library(shinythemes)
+library(DT)
 
 
 plot.data <- function(d){

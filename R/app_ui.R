@@ -84,7 +84,7 @@ app_ui <- function(request) {
 
   #matching plot panel
       mainPanel(width = 12, align = "center",
-        plotlyOutput("distPlot", width = "100%", height = "900px")
+        plotlyOutput("distPlot", width = "100%", height = "650px")
       ),
 
   #decriptors

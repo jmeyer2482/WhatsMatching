@@ -40,3 +40,9 @@ golem::add_dockerfile_shinyproxy()
 
 ## If you want to deploy to Heroku
 golem::add_dockerfile_heroku()
+
+
+
+rsconnect::setAccountInfo(name='jmeyer2482',
+                          token='C5C2F89630BCB30C99C721E0AD9FBC8A',
+                          secret='NMextOp1PfJCY0Vo5rcL/crlJ30bKOkIHiQDk2p4')
