@@ -48,3 +48,6 @@ po/*~
 # RStudio Connect folder
 rsconnect/
 inst/doc
+.Rproj.user
+.Rdata
+.DS_Store
