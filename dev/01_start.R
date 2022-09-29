@@ -19,13 +19,13 @@
 ## to change the name in the app_sys() function in app_config.R /!\
 ##
 golem::fill_desc(
-  pkg_name = "PSM.golex", # The Name of the package containing the App
-  pkg_title = "Propensity Score Matching Paradox", # The Title of the package containing the App
-  pkg_description = "PKG_DESC.", # The Description of the package containing the App
+  pkg_name = "WhatsMatching", # The Name of the package containing the App
+  pkg_title = "What is Matching?", # The Title of the package containing the App
+  pkg_description = "The WhatsMatching package demonstrates how propensity score matching and mahalanobis distance matching compare under different circumstances. The aim of the app is to provide educational insights into matching methods.", # The Description of the package containing the App
   author_first_name = "Jason", # Your First Name
   author_last_name = "Meyer", # Your Last Name
   author_email = "jmeyer2482@gmail.com", # Your Email
-  repo_url = NULL # The URL of the GitHub Repo (optional)
+  repo_url = "https://github.com/jmeyer2482/WhatsMatching" # The URL of the GitHub Repo (optional)
 )
 
 ## Set {golem} options ----
@@ -38,11 +38,11 @@ usethis::use_readme_rmd(open = FALSE)
 # Note that `contact` is required since usethis version 2.1.5
 # If your {usethis} version is older, you can remove that param
 usethis::use_code_of_conduct(contact = "Jason Meyer")
-usethis::use_lifecycle_badge("Experimental")
+usethis::use_lifecycle_badge("Stable")
 usethis::use_news_md(open = FALSE)
 
 ## Use git ----
-usethis::use_git()
+usethis::use_git(message = "testing use_git")
 
 ## Init Testing Infrastructure ----
 ## Create a template for tests
@@ -59,8 +59,8 @@ golem::use_favicon() # path = "path/to/ico". Can be an online file.
 # golem::remove_favicon() # Uncomment to remove the default favicon
 
 ## Add helper functions ----
-golem::use_utils_ui(with_test = TRUE)
-golem::use_utils_server(with_test = TRUE)
+golem::use_utils_ui()
+golem::use_utils_server()
 
 # You're now set! ----
 
