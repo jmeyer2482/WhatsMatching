@@ -4,7 +4,7 @@
 \alias{matching.plot}
 \title{matchplot}
 \usage{
-matching.plot(match.data, xvar, yvar, multi = F)
+matching.plot(match.data, xvar, yvar, multi = F, plot.n = 1)
 }
 \arguments{
 \item{match.data}{An object returned from the matched.data function}
@@ -14,6 +14,8 @@ matching.plot(match.data, xvar, yvar, multi = F)
 \item{yvar}{A string naming the variable to go on the Y axis}
 
 \item{multi}{Boolean value of whether the output will be part of a plotly subplot}
+
+\item{plot.n}{a number indicating the number plot it is for the title}
 }
 \value{
 A plotly object of the sequence of matches performed on the data

@@ -7,6 +7,7 @@
 create.sim.data(
   sim = 1,
   te = 2,
+  jitter = 0.5,
   g1_min = 0,
   g1_max = 5,
   g2_shift_X1 = 1,
@@ -28,6 +29,8 @@ create.sim.data(
 \item{sim}{a integer referencing the simulation - 1, 2 or 3}
 
 \item{te}{a number represnting the treatment effect, specify for all simulations.}
+
+\item{jitter}{controls the SD of the rnorm function that is used to add jitter to the outcome variable}
 
 \item{g1_min}{Simulation 2 - minimum value of for uniform distribution}
 

@@ -29,9 +29,15 @@ mod_ViewData_ui <- function(id){
   tabPanel("Match Info", value="tabMInfo",
            fluidRow(
              "Matches for this simulation have occurred using the parameters below.",br(),
-             span("Formula used for matching: ", htmlOutput("f.treat")),
-             span("Formula used for estimating treatment effect: ", htmlOutput("f.outcome")),
-             span("Treatment effect: ", textOutput("TE")),
+             br(),
+             span("Formula used for matching: ",
+                  htmlOutput("f.treat", inline = T)),br(),
+             br(),
+             span("Formula used for estimating treatment effect: ",
+                  htmlOutput("f.outcome", inline = T)),br(),
+             br(),
+             span("Treatment effect: ", textOutput("TE", inline = T)),
+             br(),
              tableOutput("matchtable"))
   ))
 

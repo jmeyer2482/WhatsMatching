@@ -9,6 +9,7 @@
 #' @param te a number represnting the treatment effect, specify for all simulations.
 #'
 #' @param n the number of observations to populate for simulation 2 and 3
+#' @param jitter controls the SD of the rnorm function that is used to add jitter to the outcome variable
 #'
 #' @param g1_min Simulation 2 - minimum value of for uniform distribution
 #' @param g1_max Simulation 2 - maximum value of for uniform distribution
@@ -31,8 +32,7 @@
 #' @importFrom dplyr mutate
 #' @importFrom dplyr %>%
 #' @importFrom dplyr select
-#' @importFrom stats runif
-#' @importFrom stats rbinom
+#' @importFrom stats runif rbinom rnorm
 #' @importFrom MASS mvrnorm
 #' @importFrom arm invlogit
 #'
@@ -46,7 +46,7 @@
 create.sim.data <- function(
     sim = 1,
 
-    te=2,
+    te=2, jitter = 0.5,
 
     g1_min=0, g1_max=5, g2_shift_X1=1, g2_shift_X2=1,
 
@@ -77,7 +77,7 @@ create.sim.data <- function(
     X1 <- c(px1c, px1t, rx1, cx1)
     X2 <- c(px2c, px2t, rx2, cx2)
 
-    y <- t*te + X1 + X2
+    y <- t*te + X1 + X2 + rnorm(n=length(t), mean=0, sd=jitter)
 
     t.char <- ifelse(t==0,"Control", "Treated")
 
@@ -98,7 +98,7 @@ create.sim.data <- function(
 
     t <- c(rep(0,n.2),rep(1,n.2))
     t.char <- ifelse(t==0,"Control","Treated")
-    y <- te*t + X1 + X2
+    y <- te*t + X1 + X2 + rnorm(n=length(t), mean=0, sd=jitter)
 
     d <- list(t=t, Allocation=t.char, X1=X1, X2=X2, y=y) %>% as.data.frame()
 
@@ -116,10 +116,10 @@ create.sim.data <- function(
       #create the data
       df <- data.frame(MASS::mvrnorm(n, mu = means, Sigma = varcovarMat)) %>%
         mutate(scaledX1 = scale(.data$X1), scaledX2 = scale(.data$X2),
-               t = rbinom(n, 1,
-                          prob = arm::invlogit(weight_t1*.data$scaledX1 + weight_t2*.data$scaledX2)),
-               y = weight_y0 + te*t + weight_y1*X1 + weight_y2*X2,
-               Allocation = ifelse(t==0,"Control","Treated")) %>%
+           t = rbinom(n, 1,
+                      prob = arm::invlogit(weight_t1*.data$scaledX1 + weight_t2*.data$scaledX2)),
+           y = weight_y0 + te*t + weight_y1*X1 + weight_y2*X2 + rnorm(n=length(t), mean=0, sd=jitter),
+           Allocation = ifelse(t==0,"Control","Treated")) %>%
         select(-c(.data$scaledX1,.data$scaledX2))
 
       #only return if there are no more than half of the units "treated"

@@ -6,6 +6,7 @@
 #' @param xvar A string naming the variable to go on the X axis
 #' @param yvar A string naming the variable to go on the Y axis
 #' @param multi Boolean value of whether the output will be part of a plotly subplot
+#' @param plot.n a number indicating the number plot it is for the title
 #'
 #' @return A plotly object of the sequence of matches performed on the data
 #'
@@ -26,7 +27,7 @@
 #'
 #' @export
 
-matching.plot <- function(match.data, xvar, yvar, multi=F){
+matching.plot <- function(match.data, xvar, yvar, multi=F, plot.n=1){
 
   mdist <- match.data$distance
   tvar <- match.data$treatment
@@ -44,44 +45,68 @@ matching.plot <- function(match.data, xvar, yvar, multi=F){
     subclass=match.data$matched.data[["subclass"]],
     pair.dist=match.data$matched.data[["pair.dist"]]) %>%
     mutate(Allocation=ifelse(t==0,"Control","Treated"),
-           txt=paste0(.data$Allocation, "<br>Pair number: ", .data$subclass,
+           txt=paste0(.data$Allocation,
+                      "<br>Matched using: ", mdist, " Distance",
+                      "<br>Distance between pair: ", round(.data$pair.dist,3),
+                      "<br>Pair number: ", .data$subclass,
                       "<br>", xvar,": ", round(.data$x,3),
                       "<br>", yvar, ": ", round(.data$y,3))) %>%
     arrange(.data$pair.dist, .data$subclass) %>%
-    mutate(Allocation=ifelse(t==0,"Control","Treated"),
-           ord=(row_number(.data$pair.dist) + (row_number(.data$pair.dist)%%2))/2)
+    mutate(ord=(row_number(.data$pair.dist) + (row_number(.data$pair.dist)%%2))/2)
 
-  d.ann <- m.data %>% mutate(distance = mdist, rframe=max(.data$ord)-.data$ord)
+  d.ann <- m.data %>% mutate(distance = mdist, frame=.data$ord)
 
   d <- accumulate_by(m.data, ~ord) %>% mutate(distance = mdist)
 
-  gp <- ggplot(d, aes(x=.data$x, y=.data$y, group=.data$subclass, frame=.data$rframe
-                      , text=.data$txt)) +
-    geom_point(aes(color=t, shape=t), size=3, stroke=1) +
-    geom_line() +
-    geom_point(data=d.ann, aes(color=t),
-               size = 5, stroke = 2, shape=21, alpha=0.5) +
-    scale_color_manual(values=c(0,1),
-                       palette=colorRampPalette(c("red", "blue"))) +
-    scale_shape_manual(values = c(2,6))
+  control.col <-'#3772ff'
+  treat.col <- '#df2935'
 
-  pltly <- ggplotly(gp, tooltip = 'text')  %>%
-    add_markers(data=all.data, x=~x, y=~y, text=~Allocation,
-                color=~t, colors=c("pink","lightblue"),
-                marker = list(alpha = 0.5, size = 10,line=list(width=1.5)),
-                symbol= ~t, symbols = c('105','106'),
-                hovertemplate = glue::glue("%{{text}}<br>{xvar}: %{{x:.3f}}<br>{yvar}: %{{y:.3f}}<extra></extra>"),
-                inherit = F) %>%
-    layout(showlegend = FALSE,
+  p <- ggplot(d, aes(x=.data$x, y=.data$y, group=.data$subclass,
+                      frame=.data$frame, color=.data$Allocation)) +
+    geom_point(aes(shape=.data$Allocation, text=.data$txt),
+               size=3, stroke=0.8, alpha=0.8) +
+    geom_line(color="black") +
+    scale_shape_manual(values = c("Control"=2, "Treated"=6)) +
+    scale_color_manual(values = c("Control"=control.col, "Treated"=treat.col)) +
+    theme_bw() +
+    theme(legend.title = element_blank(), legend.position='none')
+
+  pltly <- ggplotly(p, tooltip = 'text')
+
+  pltly <- pltly %>%
+    add_markers(data=all.data, x=~x, y=~y,
+                color=~t, colors=c(control.col, treat.col),name=~Allocation,
+                marker = list(opacity = 0.3, size = 10,
+                              line=list(width=1.5)),
+                symbol= ~t, showlegend=FALSE,
+                symbols = c("triangle-up-open","triangle-down-open"),
+                hoverinfo = "none", inherit = F)
+
+  #annotation for multiplot
+  x.min <- axis.ranges(all.data$x,0.1) %>% min()
+  y.max <- axis.ranges(all.data$y,0.1) %>% max()
+  a <- subplot.title(paste0("Plot ", plot.n, ": Method ", plot.n,
+                            " - Matching with ", mdist),
+                     x.min, y.max)
+
+  pltly <- pltly %>%
+    add_markers(data=d.ann, x=~x, y=~y, color=~t, frame=~frame,
+                hoverinfo="none", name=~Allocation, showlegend=FALSE,
+                opacity=0.3, inherit = F,
+                marker = list(size = 20, symbol="circle-open",
+                              line = list(width = 8, color=~t,
+                                          cmin=control.col, cmax=treat.col))
+    ) %>%
+    layout(showlegend = FALSE, annotations=a,
            xaxis = axis.settings(xvar),
            yaxis = axis.settings(yvar)) %>%
     animation_opts(transition = 0, redraw=T, frame=400)
 
   if (multi==F) {
     pltly <- pltly %>%
-      layout(title=paste0("Matching via ", mdist)) %>%
+      layout(title=paste0("Matching via ", mdist), annotations=NULL) %>%
       animation_slider(currentvalue =
-                         list(prefix = "Number of pairs removed: ",
+                         list(prefix = "Number of pairs matched: ",
                               xanchor = "left",
                               font = list(color="black"))
       )
@@ -109,40 +134,51 @@ accumulate_by <- function(dat, var) {
 
   })
 
-  dplyr::bind_rows(dats) %>% mutate(rframe=max(.data$frame)-.data$frame)
+  dplyr::bind_rows(dats) %>% mutate(rframe=.data$frame)#max(.data$frame)-.data$frame)
 
 }
 
+subplot.title <- function(title, pos.x, pos.y) { list(
+  x = pos.x,
+  y = pos.y,
+  text = title,
+  font=list(family="Arial Black"),
+  xref = "x",
+  yref = "y",
+  showarrow = FALSE,
+  xanchor="left",
+  yanchor="bottom"
+)}
 
-hline <- function(y = 0, color = "black") {
-  list(
-    type = "line",
-    x0 = 0,
-    x1 = 1,
-    xref = "paper",
-    y0 = y,
-    y1 = y,
-    line = list(color = color)
-  )
+axis.ranges <- function(range, margin=0.1){
+  min.r <- min(range)
+  max.r <- max(range)
+
+  r <- ((max.r-min.r)*margin) * c(-1,1)
+
+  r <- r + c(min.r,max.r)
+
+  return(r)
 }
 
 #standardise titles
-axis.settings <- function(axis.text="Insert Title", axis.range=c(0,0),
-                          auto.range = T){
+axis.settings <- function(axis.text="Insert Title", axis.range=c(0,1),
+                          auto.range = T, margin=0.1){
   #add 10% buffer to each side
-  axis.range <- ((axis.range[2]-axis.range[1])*.1) * c(-1,1) + axis.range
+  axis.ranges(axis.range, margin=margin)
+  # axis.range <- ((axis.range[2]-axis.range[1])*.1) * c(-1,1) + axis.range
 
   #only use the axis range if auto.range is false.
   if(auto.range){
     list(
-      title=list(font=list(family="Arial Black"),
+      title=list(font=list(family="Arial Black",color="#2d2d2d"),
                  text=axis.text,
                  standoff=0),
       autorange = TRUE,
-      tickmode="auto"
-    )} else {
+      tickmode="auto")
+    } else {
       list(
-        title=list(font=list(family="Arial Black"),
+        title=list(font=list(family="Arial Black",color="#2d2d2d"),
                    text=axis.text,
                    standoff=0),
         range = axis.range,
@@ -160,20 +196,20 @@ std.means <- function(match.data, xvar, yvar, tvar) {
   m.data <- m.data %>% arrange(.data$pair.dist, .data$subclass) %>%
     mutate(ord=(row_number(.data$pair.dist) + (row_number(.data$pair.dist)%%2))/2)
 
-  m.data <- accumulate_by(m.data, ~ord) %>% mutate(rframe=max(.data$frame)-.data$frame)
+  m.data <- accumulate_by(m.data, ~ord)# %>% mutate(rframe=max(.data$frame)-.data$frame)
 
-  s.means <- cbind(n = 0:max(m.data$rframe),
+  s.means <- cbind(n = 1:max(m.data$frame), target=rep(0,max(m.data$frame)),
                    full.smd.x = rep(smd::smd(data[[xvar]], data[[tvar]])$estimate,
-                                    max(m.data$rframe)+1),
-                   matched.smd.x = sapply(0:(max(m.data$rframe)),
+                                    max(m.data$frame)),
+                   matched.smd.x = sapply(1:(max(m.data$frame)),
                                   function(x)
-                                     smd::smd(subset(m.data, m.data$rframe==x)[[xvar]],
-                                              subset(m.data, m.data$rframe==x)[[tvar]])$estimate),
+                                     smd::smd(subset(m.data, m.data$frame==x)[[xvar]],
+                                              subset(m.data, m.data$frame==x)[[tvar]])$estimate),
                    full.smd.y = rep(smd::smd(data[[yvar]],data[[tvar]])$estimate,
-                                    max(m.data$rframe)+1),
-                   matched.smd.y = sapply(0:max(m.data$rframe), function(x)
-                     smd::smd(subset(m.data, m.data$rframe==x)[[yvar]],
-                              subset(m.data, m.data$rframe==x)[[tvar]])$estimate)
+                                    max(m.data$rframe)),
+                   matched.smd.y = sapply(1:max(m.data$frame), function(x)
+                     smd::smd(subset(m.data, m.data$frame==x)[[yvar]],
+                              subset(m.data, m.data$frame==x)[[tvar]])$estimate)
   ) %>% as.data.frame()
 
   s.means <- cbind(distance=match.data$distance, s.means)

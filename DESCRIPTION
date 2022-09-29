@@ -1,26 +1,23 @@
-Package: PSM.golex
-Title: PSM Paradox
+Package: WhatsMatching
+Title: What is Matching?
 Version: 0.0.0.9000
-Authors@R: 
-    person("Jason", "Meyer", , "jmeyer2482@gmail.com", role = c("cre", "aut"))
-Description: PKG_DESC.
+Authors@R: person('Jason', 'Meyer', email = 'jmeyer2482@gmail.com', role = c('cre', 'aut'))
+Description: The WhatsMatching package demonstrates how propensity score matching and mahalanobis distance matching compare under different circumstances. The aim of the app is to provide educational insights into matching methods.
 License: MIT + file LICENSE
-URL: https://github.com/jmeyer2482/PSM.Golex
-BugReports: https://github.com/jmeyer2482/PSM.Golex/issues
+URL: https://github.com/jmeyer2482/WhatsMatching
+BugReports: https://github.com/jmeyer2482/WhatsMatching/issues
 Imports: 
     arm,
     config (>= 0.3.1),
     dplyr,
     DT,
     ggplot2,
-    glue,
     golem (>= 0.3.2),
     grDevices,
     htmltools,
     lazyeval,
     MASS,
     optmatch,
-    pkgload,
     plotly,
     shiny (>= 1.7.1),
     shinyBS,

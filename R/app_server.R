@@ -72,26 +72,72 @@ random.data <- function(TE=round(runif(1, -10, 10),1)){
 }
 
 
-match.detail <- function(M, M.num){
+match.detail <- function(M, M.num, outcome.f, treat.f){
 
-  ord.s <- paste0("Matches were calculated using the ",
-                 switch(M$order,
-                        "data"="order the data was already in.",
-                        "largest"="the largest propensity score first.",
-                        "smallest"="the smallest propensity score first.",
-                        "random"="a random order."))
+  # ord.s <- paste0("Matches were calculated using the ",
+  #                switch(M$order,
+  #                       "data"="order the data was already in.",
+  #                       "largest"="the largest propensity score first.",
+  #                       "smallest"="the smallest propensity score first.",
+  #                       "random"="a random order."))
+  #
+  # # paste0(
+  #     paste0("*Method ", M.num, ": ",
+  #     switch(M$distance,
+  #            "Mahalanobis"="Mahalanobis Distance",
+  #            "Propensity Score"="Propensity Score"),
+  #     " Matching was performed ",
+  #     ifelse(M$replace, "with", "without"), " replacement. ",
+  #     ifelse(M$replace, "", ord.s)
+  #     )
 
-  # paste0(
-      paste0("*Method ", M.num, ": ",
-      switch(M$distance,
-             "Mahalanobis"="Mahalanobis Distance",
-             "Propensity Score"="Propensity Score"),
-      " Matching was performed ",
-      ifelse(M$replace, "with", "without"), " replacement. ",
-      ifelse(M$replace, "", ord.s)
-      )
+  list(paste("Method", M.num), M$distance, M$order, M$replace,
+       deparse1(outcome.f),deparse1(treat.f))
+
 
 }
+
+
+random.msg <- function(){
+  n <- round(runif(1, 0.51, 10.49),0)
+
+  switch(n,
+     "1"=paste("In 2019, King and Neilsen identified a paradox when using",
+               "the propensity score for matching and demonstrated that",
+               "extensive matching on the propensity score can increase",
+               "bias despite improving covariate balance."),
+     "2"=paste("The propensity score can be used in multiple way to achieve",
+               "this, notably matching, weighting and stratification (aka",
+               "subclassification)"),
+     "3"=paste("Matching requires that a type of distance between units",
+               "is calculated. This distance is then used to pair or match",
+               "units that are close together while discarding or pruning",
+               "those that are not."),
+     "4"=paste("Weighting with the propensity score differs from matching",
+               "as no units are pruned from the dataset. This is an advantage",
+               "over matching in the sense that all data can remain in the",
+               "analysis, giving the opportunity to calculate the average",
+               "treatment effect on all units, as opposed to only the treated ones."),
+     "5"=paste("Stratification relies on the use of the propensity score to group",
+               "units into quantiles. Once the number of groups has been",
+               "established, usually between 5 and 10, the treatment",
+               "effect is estimated across the groups and then averaged to",
+               "give a mean difference average treatment effect."),
+     "6"=paste("Rosenbaum and Rubin (1983) defined the propensity score as",
+               "the 'conditional probability of assignment to a particular",
+               "treatment given a vector of observed covariates'. It is one",
+               "of the most widely used statistical methods when analysing",
+               "observational data."),
+     "7"=paste("In most cases, the propensity score is estimated from",
+               "available data using a simple logistic regression on a binary",
+               "treatment assignment indicator."),
+     "8"=paste("The propensity score is the probability of receiving treatment which",
+               "reduces a multidimensional space to a single dimension for easy",
+               "comparison between treated and untreated units."),
+     "9"=paste("Test 9"),
+     "10"=paste("Test 10")
+    )
+  }
 
 
 ##SERVER
@@ -109,7 +155,7 @@ app_server <- function(input, output, session) {
     M2.dist="Propensity Score",
     M2.ord="data",
     M2.rep=T,
-    selected.d=random.data(2),
+    selected.d=NULL, #random.data(2),
     outcome.f=y~t,
     treat.f=t~X1+X2,
     d=NULL
@@ -148,7 +194,7 @@ app_server <- function(input, output, session) {
       rep <- sample(x=c(F,T), 2, replace = F)
     }
 
-    values$outcome.f <<- sample(c(y~t, y~t+X1, y~t+X2, t~t+X1+X2),1)[[1]]
+    values$outcome.f <<- sample(c(y~t, y~t+X1, y~t+X2, y~t+X1+X2),1)[[1]]
     values$treat.f <<- t~X1+X2
 
     values$M1.dist <<- dist[[1]]
@@ -179,15 +225,31 @@ app_server <- function(input, output, session) {
     showModal(modalDialog(
       title = "Loading",
       easyClose = F,
-      "Please wait while the object loads.",
+      random.msg(),
+      # "Please wait while the object loads.",
       footer = tagList()
     ))
 
 
-    TE <- values$TE
-    d <- values$selected.d
-    o.f <- values$outcome.f
-    t.f <- values$treat.f
+    if (is.null(values$TE)) {
+      TE <- round(runif(1, -10, 10),1)
+      values$TE <<- TE
+      } else {TE <- values$TE}
+
+    if (is.null(values$selected.d)) {
+      d <- random.data(TE=TE)
+      values$selected.d <<- d
+      } else {d <- values$selected.d}
+
+    if (is.null(values$outcome.f)) {
+      o.f <- y~t
+      values$outcome.f <<- o.f
+      } else {o.f <- values$outcome.f}
+
+    if (is.null(values$treat.f)) {
+      t.f <- t ~ X1 + X2
+      values$treat.f <- t.f
+      } else {t.f <- values$treat.f}
 
     D1 <- values$M1.dist #input$Dist1
     O1 <- values$M1.ord #input$Ord1
@@ -206,22 +268,39 @@ app_server <- function(input, output, session) {
     values$M1 <<- M1
     values$M2 <<- M2
 
-    M1.desc <- match.detail(M1,1)
+    # M1.desc <- match.detail(M1,1)
 
-    M2.desc <- match.detail(M2,2)
+    # M2.desc <- match.detail(M2,2)
 
     cp <- combined.plot("X1", "X2", M1, M2, te=TE, o.f)
 
-    output$M1.text <- renderText(M1.desc)
+    output$txt.M.TE <- renderText(TE)
+    output$txt.M.o.f <- renderText(deparse1(o.f))
+    output$txt.M.t.f <- renderText(deparse1(t.f))
 
-    output$M2.text <- renderText(M2.desc)
+    output$txt.M1.dist <- renderText(D1)
+    output$txt.M1.ord <- renderText(O1)
+    output$txt.M1.rep <- renderText(R1)
+
+    output$txt.M2.dist <- renderText(D2)
+    output$txt.M2.ord <- renderText(O2)
+    output$txt.M2.rep <- renderText(R2)
+
+    m.info <- list(Distance=c(D1,D2), Order=c(O1,O2),
+                   Replace=c(ifelse(R1,"Yes","No"), ifelse(R2,"Yes","No"))) %>%
+      as.data.frame()
+
+    rownames(m.info) <- c("Plot 1", "Plot 2")
+
+    output$m.info <- shiny::renderTable(t(m.info), rownames = T,
+                                        bordered=TRUE, hover=TRUE)
 
     output$distPlot <- plotly::renderPlotly(cp)
 
     removeModal()
 
     }) %>%
-    bindEvent(values$selected.d, ignoreInit = F, ignoreNULL = F)
+    bindEvent(values$selected.d, ignoreInit = F, ignoreNULL = T)
 
 
   #create plot for simulation 1
@@ -380,8 +459,8 @@ app_server <- function(input, output, session) {
 
       }
 
-    }) %>%
-    bindEvent(input$applySim3)
+    }) #%>%
+    # bindEvent(input$applySim3)
 
   output$sim3plot <- plotly::renderPlotly(plot3.data())
 
@@ -437,8 +516,8 @@ app_server <- function(input, output, session) {
 
   output$dataPlot <- plotly::renderPlotly(plot.data(values$selected.d))
 
-  output$dataTable <- DT::renderDT(values$selected.d,
-                               options = list(
+  output$dataTable <- DT::renderDT(DT::datatable(values$selected.d) %>% DT::formatRound(~y+X1+X2, digits=3),
+                               options = list(pageLength=25,
                                  initComplete = DT::JS(
                                    "function(){$(this).addClass('compact');}")))
 
@@ -465,6 +544,7 @@ app_server <- function(input, output, session) {
     M.list
   }, striped=T, hover=T, bordered=T, rownames = T, colnames = T)
 
+  # output$ref <- markdown::renderMarkdown(file=app_sys("app/www/App_References.bib"))
 
   ## To be copied in the server
   mod_SimData_server("SimData_1")
