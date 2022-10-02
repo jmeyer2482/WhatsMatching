@@ -183,32 +183,32 @@ mod_SimData_ui <- function(id){
                                           min=-1, max=1,value=0, step=0.1, ticks=F))
               ),
 
-              fluidRow(#align="center",
-                span(strong("Base value of outcome "), code("(y)")),
-                icon("question-sign", lib="glyphicon", id=ns("y")),
-                bsPopover(id=ns("y"),title="<strong>Base value of </strong><code>y</code>",
-                          content=y.txt ,
-                          "right",options = list(container = "body"))),
-
-              fluidRow(column(12,
-                              sliderInput("sim3.y", label=NULL,
-                                          min=-25, max=25,value=2, step=1, ticks=F))
-              ),
+              # fluidRow(#align="center",
+              #   span(strong("Base value of outcome "), code("(y)")),
+              #   icon("question-sign", lib="glyphicon", id=ns("y")),
+              #   bsPopover(id=ns("y"),title="<strong>Base value of </strong><code>y</code>",
+              #             content=y.txt ,
+              #             "right",options = list(container = "body"))),
+              #
+              # fluidRow(column(12,
+              #                 sliderInput("sim3.y", label=NULL,
+              #                             min=-25, max=25,value=2, step=1, ticks=F))
+              # ),
               # fluidRow(column(6, strong("X1 values")),
               #          column(6, strong("X2 Values"))),
 
-              fluidRow(#align="center",
-                strong("Mean (average)"),
-                icon("question-sign", lib="glyphicon", id=ns("mean")),
-                bsPopover(id=ns("mean"),title=NULL,content=mean.txt ,
-                          "right",options = list(container = "body"))),
-              fluidRow(
-                column(6, numericInput("sim3.X1m", "X1",
-                                       min=-25, max=25,value=0, step=1)
-                ),
-                column(6, numericInput("sim3.X2m", "X2",
-                                       min=-25, max=25,value=0, step=1))
-              ),
+              # fluidRow(#align="center",
+              #   strong("Mean (average)"),
+              #   icon("question-sign", lib="glyphicon", id=ns("mean")),
+              #   bsPopover(id=ns("mean"),title=NULL,content=mean.txt ,
+              #             "right",options = list(container = "body"))),
+              # fluidRow(
+              #   column(6, numericInput("sim3.X1m", "X1",
+              #                          min=-25, max=25,value=0, step=1)
+              #   ),
+              #   column(6, numericInput("sim3.X2m", "X2",
+              #                          min=-25, max=25,value=0, step=1))
+              # ),
 
               fluidRow(
                 strong("Standard Deviation"),

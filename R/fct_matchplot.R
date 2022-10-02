@@ -54,22 +54,53 @@ matching.plot <- function(match.data, xvar, yvar, multi=F, plot.n=1){
     arrange(.data$pair.dist, .data$subclass) %>%
     mutate(ord=(row_number(.data$pair.dist) + (row_number(.data$pair.dist)%%2))/2)
 
+
+  p.data <- data.frame(
+    t.x=match.data$paired.data[[paste0("t.",xvar)]],
+    t.y=match.data$paired.data[[paste0("t.",yvar)]],
+    c.x=match.data$paired.data[[paste0("c.",xvar)]],
+    c.y=match.data$paired.data[[paste0("c.",yvar)]],
+    subclass=rownames(match.data$paired.data),
+    pair.dist=match.data$paired.data[["dist"]],
+    ord=match.data$paired.data[["d.order"]]) %>%
+    mutate(txt.c=paste0("Control",
+                        "<br>Matched using: ", mdist, " Distance",
+                        "<br>Distance between pair: ", round(.data$pair.dist,3),
+                        "<br>Pair number: ", .data$subclass,
+                        "<br>", xvar,": ", round(.data$c.x,3),
+                        "<br>", yvar, ": ", round(.data$c.y,3)),
+           txt.t=paste0("Treated",
+                        "<br>Matched using: ", mdist, " Distance",
+                        "<br>Distance between pair: ", round(.data$pair.dist,3),
+                        "<br>Pair number: ", .data$subclass,
+                        "<br>", xvar,": ", round(.data$t.x,3),
+                        "<br>", yvar, ": ", round(.data$t.y,3)))
+
   d.ann <- m.data %>% mutate(distance = mdist, frame=.data$ord)
 
-  d <- accumulate_by(m.data, ~ord) %>% mutate(distance = mdist)
+  d <- accumulate_by(p.data, ~ord) %>% mutate(distance = mdist)
 
   control.col <-'#3772ff'
   treat.col <- '#df2935'
 
-  p <- ggplot(d, aes(x=.data$x, y=.data$y, group=.data$subclass,
-                      frame=.data$frame, color=.data$Allocation)) +
-    geom_point(aes(shape=.data$Allocation, text=.data$txt),
+  # p <- ggplot(d, aes(x=.data$x, y=.data$y, group=.data$subclass,
+  #                     frame=.data$frame, color=.data$Allocation)) +
+  #   geom_point(aes(shape=.data$Allocation, text=.data$txt),
+  #              size=3, stroke=0.8, alpha=0.8) +
+  #   geom_line(color="black") +
+  #   scale_shape_manual(values = c("Control"=2, "Treated"=6)) +
+  #   scale_color_manual(values = c("Control"=control.col, "Treated"=treat.col)) +
+
+  p <- ggplot(d, aes(x=t.x, y=t.y, frame=frame)) +
+    geom_segment(aes(x=t.x, y=t.y, xend=c.x, yend=c.y), color="black") +
+    geom_point(aes(x=t.x, y=t.y, text=txt.t), color=treat.col, shape=6,
                size=3, stroke=0.8, alpha=0.8) +
-    geom_line(color="black") +
-    scale_shape_manual(values = c("Control"=2, "Treated"=6)) +
-    scale_color_manual(values = c("Control"=control.col, "Treated"=treat.col)) +
-    theme_bw() +
-    theme(legend.title = element_blank(), legend.position='none')
+    geom_point(aes(x=c.x, y=c.y, text=txt.c), color=control.col, shape=2,
+               size=3, stroke=0.8, alpha=0.8) +
+    theme_bw()
+  # +
+  #   theme(legend.title = element_blank(), legend.position='none')
+
 
   pltly <- ggplotly(p, tooltip = 'text')
 
@@ -97,7 +128,7 @@ matching.plot <- function(match.data, xvar, yvar, multi=F, plot.n=1){
                               line = list(width = 8, color=~t,
                                           cmin=control.col, cmax=treat.col))
     ) %>%
-    layout(showlegend = FALSE, annotations=a,
+    layout(annotations=a,
            xaxis = axis.settings(xvar),
            yaxis = axis.settings(yvar)) %>%
     animation_opts(transition = 0, redraw=T, frame=400)

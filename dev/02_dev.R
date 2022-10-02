@@ -86,8 +86,9 @@ golem::add_fct("multimatchplot", with_test = F)
 
 
 ## Vignette ----
-# usethis::use_vignette("PSM-vignette")
-# devtools::build_vignettes()
+# usethis::use_vignette("WhatsMatching-Theory")
+# usethis::use_vignette("WhatsMatching-HowTo")
+devtools::build_vignettes()
 
 ## Code Coverage----
 ## Set the code coverage service ("codecov" or "coveralls")

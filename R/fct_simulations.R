@@ -46,7 +46,7 @@
 create.sim.data <- function(
     sim = 1,
 
-    te=2, jitter = 0.5,
+    te=2, jitter = 0.2,
 
     g1_min=0, g1_max=5, g2_shift_X1=1, g2_shift_X2=1,
 

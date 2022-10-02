@@ -1,0 +1,11 @@
+---
+output:
+    github_document:
+        toc: true
+bibliography: App_References.bib
+csl: ama.csl
+nocite: '@*'
+link-citations: true
+linkcolor: blue
+always_allow_html: true
+---

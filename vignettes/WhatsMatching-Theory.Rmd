@@ -1,0 +1,27 @@
+---
+title: "WhatsMatching App - Development"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{WhatsMatching-Theory}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: ../inst/app/www/App_References.bib
+csl: ../inst/app/www/ama.csl
+link-citations: yes
+linkcolor: blue
+always_allow_html: true
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+This app has been developed with the intention of providing education support for understanding matching methods in the context of causal inference. 
+
+```{r setup}
+library(WhatsMatching)
+```
+

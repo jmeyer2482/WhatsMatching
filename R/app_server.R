@@ -145,7 +145,7 @@ random.msg <- function(){
 app_server <- function(input, output, session) {
   # Your application server logic
 
-  values <- reactiveValues(
+  values <- rv(
 
     TE=2,
     outcome.f=y~t,
@@ -377,10 +377,10 @@ app_server <- function(input, output, session) {
 
     TE <- input$sim3.TE
     rho <- input$sim3.rho
-    y <- input$sim3.y
+    y <- 5#input$sim3.y
 
-    X1m <- input$sim3.X1m
-    X2m <- input$sim3.X2m
+    X1m <- 0#input$sim3.X1m
+    X2m <- 0#input$sim3.X2m
     X1sd <- input$sim3.X1sd
     X2sd <- input$sim3.X2sd
     X1t <- input$sim3.X1t
@@ -390,13 +390,13 @@ app_server <- function(input, output, session) {
 
     txt <- ""
 
-    if(!dplyr::between(X1m,-25,25)){
-      txt <- paste0(txt,br(),"X1 Mean")
-    }
-
-    if(!dplyr::between(X2m,-25,25)){
-      txt <- paste0(txt,br(),"X2 Mean")
-    }
+    # if(!dplyr::between(X1m,-25,25)){
+    #   txt <- paste0(txt,br(),"X1 Mean")
+    # }
+    #
+    # if(!dplyr::between(X2m,-25,25)){
+    #   txt <- paste0(txt,br(),"X2 Mean")
+    # }
 
     if(!dplyr::between(X1sd,0,30)){
       txt <- paste0(txt,br(),"X1 Standard Deviation")

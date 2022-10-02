@@ -1,0 +1,16 @@
+---
+output: html_fragment
+bibliography: App_References.bib
+csl: ama.csl
+link-citations: yes
+linkcolor: blue
+always_allow_html: true
+---
+
+In 2019, King and Neilsen published a paper presenting a paradox that arises when using the propensity score for matching2. They were able to demonstrate that, when compared to other matching distances like the Mahalanobis distance, matching on the propensity score only approximated a randomised experiment as opposed to a more efficient fully blocked experiment.   
+  
+As the matching algorithm proceeds, unmatched observations are pruned from the dataset. Initially, this reduces the imbalance between the treated and untreated groups with corresponding improvements to the estimated treatment effect. However, after a certain threshold is reached, further pruning the dataset starts to result in more biased estimates of the treatment effect. This is the PSM paradox.  
+  
+The authors postulated that this made matching on the propensity score inferior and were able to demonstrate this concept visually but were unable to provide mathematical proofs of the implications.  
+  
+The question arises, does this paradox occur in the two other applications of the propensity score discussed above (weighting and stratification)? A review of recent literature would suggest not.

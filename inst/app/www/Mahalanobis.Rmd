@@ -1,0 +1,15 @@
+---
+output: html_fragment
+bibliography: App_References.bib
+csl: ama.csl
+link-citations: yes
+linkcolor: blue
+always_allow_html: true
+---
+
+An alternative is to match based on a distance metric that measures the proximity between observations in the multivariate space of X. The idea then is to use observations that are “close”, but not necessarily equal, as matches. A common approach is to use  
+$$MD(Xi, Xj)=\sqrt{(Xi-Xj )'\sum{^{-1}}(Xi-Xj )}$$
+as distance metric, where $\textstyle \sum$ is an appropriate scaling matrix.  
+- Mahalanobis matching: $\textstyle \sum$ is the covariance matrix of $X$.  
+- Euclidean matching: $\textstyle \sum$ is the identity matrix.  
+- Mahalanobis matching is equivalent to Euclidean matching based on standardized and orthogonalized $X$.  

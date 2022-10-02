@@ -1,0 +1,56 @@
+
+
+
+<p>The propensity score allows the reduction of a multidimensional space
+to a single dimension for easy comparison between treated and untreated
+units. Mathematically, it can be formulated as <span class="math inline">\(e(x_i) = pr(Z_i=1|x)\)</span>, where <span class="math inline">\(e(x_i)\)</span> is the propensity score, <span class="math inline">\(Z\)</span> is the treatment variable, <span class="math inline">\(x\)</span> is a vector of covariates, and <span class="math inline">\(i\)</span> represents an individual. Therefore,
+the propensity score is the probability of receiving treatment given
+covariates <span class="math inline">\(x\)</span>.<br />
+In observational data there is no ability to control which people
+receive treatment and which do not. In fact, there is often little
+control over the available covariates that may help inform the outcomes.
+This potentially exposes observational data to selection bias and
+confounding. The objective of using the propensity score in data
+analysis is to replicate a randomised experiment within observational
+data as a means of bias reduction and covariate balancing. The
+propensity score can be used in multiple way to achieve this, notably
+matching, weighting and stratification (aka subclassification).</p>
+<div id="weighting" class="section level4">
+<h4>Weighting</h4>
+<p>Weighting with the propensity score differs from matching as no units
+are pruned from the dataset. This is an advantage over matching in the
+sense that all data can remain in the analysis, giving the opportunity
+to calculate the average treatment effect on all units (ATE), as opposed
+to the ATT.</p>
+<p>The formulas for weighting vary depending on the method you want to
+employ. The data being analysed, by virtue of its source, may be more
+appropriately analysed for the ATT and not the ATE. The formulas for
+these weights are:<br />
+<span class="math display">\[ATE, w(W,x) =
+\frac{W}{\hat{e}(x)}+\frac{1-W}{1-\hat{e}(x)}\]</span><br />
+and<br />
+<span class="math display">\[ATE, w(W,x) =
+W+(1-W)\frac{\hat{e}(x)}{1-\hat{e}(x)}\]</span><br />
+where <span class="math inline">\(\hat{e}(x)\)</span> indicates the
+estimated propensity score conditional on observed x covariates.</p>
+</div>
+<div id="stratification" class="section level4">
+<h4>Stratification</h4>
+<p>The stratification method varies from matching and weighting in that
+it relies on the use of the propensity score to group units into
+quantiles. Once the number of groups has been established, the
+literature suggests this is between five and ten depending on the size
+of the dataset5, the treatment effect is estimated across the groups and
+then averaged to give a mean difference ATE<span class="citation"><sup><a href="#ref-guo_propensity_2020" role="doc-biblioref">1</a></sup></span>.</p>
+</div>
+<div id="references" class="section level4 unnumbered">
+<h4 class="unnumbered">References</h4>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-guo_propensity_2020" class="csl-entry">
+1. Guo S, Fraser M, Chen Q. Propensity <span>Score</span>
+<span>Analysis</span>: <span>Recent</span> <span>Debate</span> and
+<span>Discussion</span>. <em>Journal of the Society for Social Work and
+Research</em>. 2020;11(3):463-482. doi:<a href="https://doi.org/10.1086/711393">10.1086/711393</a>
+</div>
+</div>
+</div>

@@ -64,56 +64,12 @@ app_ui <- function(request) {
   shiny::sidebarLayout(position="right",
 
     shiny::sidebarPanel(width = 3,
-      span(
-        h4("Overview"),#br(),
-        "The purpose of these plots is to provide insights into how ",
-        "matching methods work in practice. Generally, matching is used to assist ",
-        "in controlling confounding and bias in observational data where the treatment ",
-        "is a binary variable prior to estimating the treatment effects.", br(),
-        "Simulated data containing a treatment variable (", code("t", .noWS="outside"),
-        "), covariates (", code("X1", .noWS="outside"),"and", code("X2", .noWS="outside"), ") and an outcome varible (",
-        code("y", .noWS="outside"), ") have been used to generate and compare matching methods. ",
-        "The data in all of the simulatons are matched on the same formula - ",
-        code(textOutput("txt.M.t.f", inline = T), .noWS="outside"), br(),
-        br(),
-        h4("Plot 1 and Plot 2"),#br(),
-        "Plot 1 and 2 show the underlying data the matches were performed on. ",
-        "A frame by frame progression of how the matches occurred for two ",
-        "different methods are shown. ",
-        "Blue trianges represent the treated group, red triangles the control group. ",
-        "When matching occurs, there is a control unit paired to every treated unit.", br(),
-        # br(),
-        # strong("Plot 2 - Method 2"),br(),
-        # "Plot 2 is the same as Plot 1 but for Method 2. ",br(),
-        br(),
-        h4("Plot 3 - Standardised Mean Difference (SMD)"),#br(),
-        "Plot 3 shows the SMD between each of the covariates for the raw values ",
-        "and each of the matching methods. Each frame shows the changes in the SMD ",
-        "for the matched data in Plot 1 and Plot 2. The raw SMD does not change as ",
-        "the underlying data does not change.",br(),
-        br(),
-        h4("Plot 4 - Estimates of the Treatment Effect"),#br(),
-        "Plot 4 shows the estimates of the treatment effect for various propensity score ",
-        "methods, including stratification and weighting. The cumulative effect of the estimates ",
-        "as units are added to the data is also visible in relation to the matches seen in Plot 1 ",
-        "and 2. The formula and the treatment ",
-        "effect used to simulate the outcome is the same for all methods.", br(),
-        br(),
-        h4("Estimate Settings"),#br(),
-        "Outcome Formula: ", code(textOutput("txt.M.o.f", inline = T), .noWS="outside"), br(),
+        h4("Treatment Effect Settings"),#br(),
+        "Formula: ", code(textOutput("txt.M.o.f", inline = T), .noWS="outside"), br(),
         "Treatment Effect: ", textOutput("txt.M.TE", inline = T), br(),
-        br(),
-        h4("Match settings"),#br(),
-        # "Method 1 Distance: ", textOutput("txt.M1.dist",inline=T),br(),
-        # "Method 1 Order: ", textOutput("txt.M1.ord",inline=T),br(),
-        # "Method 1 Use Replacement: ", textOutput("txt.M1.rep",inline=T),br(),
-        # "Method 2 Distance: ", textOutput("txt.M2.dist",inline=T),br(),
-        # "Method 2 Order: ", textOutput("txt.M2.ord",inline=T),br(),
-        # "Method 2 Use Replacement: ", textOutput("txt.M2.rep",inline=T)
-        tableOutput("m.info")
-        )
-
-
+        h4("Match settings"),
+        tableOutput("m.info"),
+        includeMarkdown("inst/app/www/main_side.html")
     ),
   #matching plot panel
       mainPanel(width = 9, align = "center",
@@ -121,7 +77,7 @@ app_ui <- function(request) {
   #title
     fluidRow(
       align = "center",
-      h1("The Propensity Score Paradox")
+      h1("What is Matching? An Exploratory Shiny App")
     ),
 
   #main page
@@ -173,7 +129,7 @@ golem_add_external_resources <- function() {
     favicon(),
     bundle_resources(
       path = app_sys("app/www"),
-      app_title = "PSM.golex"
+      app_title = "WhatsMatching"
     )
     # Add here other external resources
     # for example, you can add shinyalert::useShinyalert()

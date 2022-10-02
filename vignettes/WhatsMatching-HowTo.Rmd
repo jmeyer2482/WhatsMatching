@@ -1,0 +1,19 @@
+---
+title: "WhatsMatching-HowTo"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{WhatsMatching-HowTo}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(WhatsMatching)
+```
