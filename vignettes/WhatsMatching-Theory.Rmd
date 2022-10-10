@@ -2,11 +2,11 @@
 title: "WhatsMatching App - Development"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{WhatsMatching-Theory}
+  %\VignetteIndexEntry{WhatsMatching App - Development}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-bibliography: ../inst/app/www/App_References.bib
-csl: ../inst/app/www/ama.csl
+bibliography: ../inst/app/App_References.bib
+csl: ../inst/app/ama.csl
 link-citations: yes
 linkcolor: blue
 always_allow_html: true
@@ -15,13 +15,300 @@ always_allow_html: true
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
-)
+  comment = "#>",
+  fig.width=9
+  )
 ```
 
-This app has been developed with the intention of providing education support for understanding matching methods in the context of causal inference. 
+This Shiny App package has been developed with the intention of providing educational support for understanding matching methods in the context of causal inference.  
+  
+Let's have a look at how it has been developed.  
+  
+The functions in this app were initially developed using datasets available in the `MatchIt` and `mplot` packages. We'll keep it simple here and just load the `fev` (FEV, forced expiratory volume) dataset from `mplot`.
 
-```{r setup}
-library(WhatsMatching)
+```{r setup, echo=FALSE}
+#function to load data directly to named variable instead of
+#the variable being loaded into the global environment
+load.data <- function(dt, pkg){
+  
+  # make sure the relevant library is available
+  require(pkg, character.only = T)
+  #create environment for loading, otherwise loads into global
+  e <- new.env()
+  #get data
+  data(list=dt, package=pkg, envir = e)
+  #store data
+  d <- e[[dt]]
+  #delete environment
+  e <- NULL
+  #return data
+  return(d)
+}
+
+
 ```
+
+
+```{r preview data}
+#this is a custom function for loading data into named variable
+d <- load.data("fev", "mplot")
+
+head(d)
+```
+
+  As we can see, there are 5 columns. All the data here is numeric. For the purpose of this exercise, we want to see what the effect of smoke is on forced expiratory volume. Therefore, we will use the `smoke` variable as the treatment and `fev` is the outcome. The remaining covariates are `age`, `height`, and `sex`.  
+  
+  Let's have a quick look at the data using `ggplot2`.  
+  
+```{r data plots}
+
+library(dplyr)
+library(ggplot2)
+
+dt <- d %>% mutate(Sex=ifelse(sex==0,"Female","Male"),
+                   Smokes=ifelse(smoke==0,"No","Yes"))
+# ,
+#                    Age=age+rnorm(nrow(.),0,0.2),
+#                    Height=Height+rnorm(nrow(.),0,0.2))
+
+p1 <- ggplot(dt, aes(x=Smokes)) 
+
+p1.1 <- p1 + geom_boxplot(aes(y=age, fill=Smokes)) 
+p1.2 <- p1 + geom_boxplot(aes(y=height, fill=Smokes))
+p1.3 <- p1 + geom_count(aes(y=Sex, colour=Smokes))
+p1.4 <- p1 + geom_boxplot(aes(y=fev, fill=Smokes))
+
+
+p2 <- ggplot(dt, aes(y=fev)) 
+
+p2.1 <- p2 + geom_point(aes(x=age, color=Smokes), alpha=0.5) 
+p2.2 <- p2 + geom_point(aes(x=height, color=Smokes), alpha=0.5)
+p2.3 <- p2 + geom_boxplot(aes(x=Sex, fill=Smokes))
+p2.4 <- p2 + geom_boxplot(aes(x=Smokes, fill=Smokes))
+
+
+ggpubr::ggarrange(p1.1,p1.2,p1.3,p1.4)
+
+ggpubr::ggarrange(p2.1,p2.2,p2.3,p2.4)
+```
+  
+  We can see from this quick look at the data that smokers are older, taller and appear to have a larger FEV. They are also a small subset of the overall population in the dataset. If we were to map out the relationships in a directed acyclic graph, it might look something like this:
+
+```{r dag}
+#smoke, age, height, sex, fev
+fev.dag <- dagitty::dagitty('dag{
+                 age -> height
+                 sex -> height
+                 age -> smoke
+                 height -> fev
+                 smoke -> height
+                 smoke -> fev
+                 age -> fev
+                 age -> smoke
+                 smoke [exposure]
+                 fev [outcome]
+                 }', layout=FALSE)
+
+
+dagitty::coordinates(fev.dag) <- 
+  list(x=c(age=0.5,fev=1,height=0.5,sex=0,smoke=0),
+       y=c(age=0.9,fev=0.5,height=0.1,sex=0,smoke=0.5))
+
+plot(fev.dag)
+
+
+```
+  
+  We can see from the relationships here that `age` is a confounder as it effects both the exposure (`smoke`) and the outcome (`fev`). `height` is also important as it is a mediator. `sex` appears to be completely accounted for by `height`. Now that we have the variables for our model, let's look at some methods for matching.   
+
+  There is more than one way of matching units in a dataset. The two methods we are looking at here are Propensity Score Matching (PSM) and Mahalanobis Distance Matching (MDM). We will also look at some of the different specifications you can make when matching.   
+   
+  Propensity score matching is relatively straight forward. Using logistic regression, create a vector of probabilities based on the whether or not each unit is likely to have received the treatment (or been exposed to subject of interested). We will be using `smoke ~ age + height` to determine our matches. For consistency in output between methods, I have used the `optmatch` package to generate the distance matrix.    
+  
+```{r create ps matix}
+f <- smoke~age+height
+
+#fit model
+fev.mod <- glm(f, data=d, family="binomial") 
+
+#get matrix using the fitted values from the model (propensity scores)
+#the matrix is generated using the treatment variable (y in the model output) 
+ps.dm <- optmatch::match_on(x=fev.mod$fitted.values, z=fev.mod$y)
+
+```
+
+  If we wanted to do the same thing for MDM then we specify it as per the optmatch documentation. In terms of the differences between the distance matrices, the propensity score distance matrix is the distance (or difference) between the calculated propensity score for each unit whereas the mahalanobis distance matrix will be the actual distance between the units based on the covariance matrix of $X$.    
+  
+```{r create mahalanobis matrix}
+#Mahalanobis distance matrix
+md.dm <- optmatch::match_on(x=f, data=d, method="mahalanobis")
+
+```
+
+  Now that we have a distance matrix for each method we can look at matching.  
+  
+  At this point we can start to specify how the matching occurs. Options include:  
+- whether or not to use replacement  
+- the order the data is matched in (this is really only important if you aren't replacing matches)  
+- whether or not to use a calliper (and how tight to make it)  
+  
+  This exercise is not looking at the use of a calliper. It is also not exploring exact matching or other more complex match settings. We will be doing a simple match without replacement, ordered by the data for both methods.  
+
+  Each matrix is $m \times n$ where $m$ represents the treatment group and $n$ represents the control group. To get our matches, we sequentially go through each $m$ and select the $n$ with the smallest value until we get to the last $m$. When do this with replacement there is no regard for whether $n$ has been used before, without replacement mean that the same $n$ cannot be used twice. Let's get some matches!  
+  
+```{r get matches}
+
+#to make this repeatable I'm just going to wrap this is a function
+match.ids <- function(dm){ 
+    
+  #we can get the row and column names from the matrix to make looping a bit easier. It will be the same for both methods in this case.
+  t.names <- attributes(dm)$dimnames$treatment
+  c.names <- attributes(dm)$dimnames$control
+  
+  # initialise a dataframe for storing matches
+  ids <- list(treatment=character(),
+              control=character(),
+              dist=numeric()
+  ) %>% as.data.frame()
+  
+  #loop over the distance matrix rows using the order they are already in
+  for (i in t.names) {
+    #select the row
+    
+    d <- dm[i,!c.names %in% ids$control]
+    
+    c.val <- names(which.min(d))
+    if (length(d)==1) c.val <- c.names[!c.names %in% ids$control]
+    
+    a <- list(treatment = i,
+              control = c.val,
+              dist = min(d))
+    
+    #add the matched pair to the dataframe
+    ids <- rbind(ids,a)
+  
+    row.names(ids) <- 1:nrow(ids)
+  
+  }
+  
+  return(ids)
+  
+}
+
+#we can specify @.Data to get the matrix explictly as the optmatch object has some other parts we don't require
+ps.dm <- ps.dm@.Data
+md.dm <- md.dm@.Data
+
+
+#the paired ids for all the matches
+ps.ids <- match.ids(ps.dm)
+md.ids <- match.ids(md.dm)
+
+#are the matches the same?
+table(ps.ids$control==md.ids$control)
+```
+
+  OK. Now we have our matches for each method. Let's see what they look like visually using `ggplot2`.  
+  
+```{r plot matches}
+
+ps.matches <- rbind(
+  cbind(dt[ps.ids$treatment,], subclass=ps.ids$treatment),
+  cbind(dt[ps.ids$control,], subclass=ps.ids$treatment))
+
+md.matches <- rbind(
+  cbind(dt[md.ids$treatment,], subclass=md.ids$treatment),
+  cbind(dt[md.ids$control,], subclass=md.ids$treatment))
+
+mp1 <- ggplot(ps.matches, aes(height, age, group=subclass)) +
+  geom_point(data=d, aes(height, age), colour="black", alpha=0.3,
+             inherit.aes = F, size=1) + 
+  geom_point(aes(color=Smokes), alpha=0.6, size=3) + 
+  geom_line(color="black") +
+  labs(title="Propensity Score Matching matches")
+
+mp2 <- ggplot(md.matches, aes(height, age, group=subclass)) +
+  geom_point(data=d, aes(height, age), colour="black", alpha=0.3,
+             inherit.aes = F, size=1) + 
+  geom_point(aes(color=Smokes), alpha=0.6, size=3) + 
+  geom_line(color="black") +
+  labs(title="Mahalanobis Distance Matching matches")
+
+mp1
+mp2
+
+```
+  
+  We can see from these two plots that the matches between the groups are slightly different between methods. For example, the smoker that is `age`=15 and `height`=60 is paired with very different non-smokers. Overall the matches look quite similar in the distribution even though there are a few differences between them. Let's see if that changes the treatment effect.  
+  
+  There are two ways we can specify how we estimate the treatment effect on the matched data. The purpose of the matching is to control confounding and bias. If we are happy that has been done by virtue of the matching then we need only specify `fev ~ smoke`. Alternatively, if we wanted to cover our bases, we could include the covariates in the model as well - `fev ~ age + height + smoke`. Let's compare them to a model that contains all the data.  
+  
+```{r view model estimates}
+f1 <- fev ~ smoke
+f2 <- fev ~ height + smoke
+f3 <- fev ~ age + smoke
+f4 <- fev ~ age + height + smoke
+  
+mod1.1 <- lm(f1, md.matches) 
+mod1.2 <- lm(f1, ps.matches) 
+mod1.3 <- lm(f1, dt) 
+
+mod2.1 <- lm(f2, md.matches) 
+mod2.2 <- lm(f2, ps.matches) 
+mod2.3 <- lm(f2, dt)
+
+mod3.1 <- lm(f3, md.matches) 
+mod3.2 <- lm(f3, ps.matches) 
+mod3.3 <- lm(f3, dt)
+
+mod4.1 <- lm(f4, md.matches) 
+mod4.2 <- lm(f4, ps.matches) 
+mod4.3 <- lm(f4, dt)
+
+mod.comp <- rbind(
+  c(model="Mahalanobis Match", formula=deparse(f1), coef(mod1.1)["smoke"], confint(mod1.1)["smoke",]),
+  c(model="Propensity Score Match", formula=deparse(f1), coef(mod1.2)["smoke"], confint(mod1.2)["smoke",]),
+  c(model="Unmatched", formula=deparse(f1), coef(mod1.3)["smoke"], confint(mod1.3)["smoke",]),
+  
+  c(model="Mahalanobis Match", formula=deparse(f2), coef(mod2.1)["smoke"], confint(mod2.1)["smoke",]),
+  c(model="Propensity Score Match", formula=deparse(f2), coef(mod2.2)["smoke"], confint(mod2.2)["smoke",]),
+  c(model="Unmatched", formula=deparse(f2), coef(mod2.3)["smoke"], confint(mod2.3)["smoke",]),
+  
+  c(model="Mahalanobis Match", formula=deparse(f3), coef(mod3.1)["smoke"], confint(mod3.1)["smoke",]),
+  c(model="Propensity Score Match", formula=deparse(f3), coef(mod3.2)["smoke"], confint(mod3.2)["smoke",]),
+  c(model="Unmatched", formula=deparse(f3), coef(mod3.3)["smoke"], confint(mod3.3)["smoke",]),
+  
+  c(model="Mahalanobis Match", formula=deparse(f4), coef(mod4.1)["smoke"], confint(mod4.1)["smoke",]),
+  c(model="Propensity Score Match", formula=deparse(f4), coef(mod4.2)["smoke"], confint(mod4.2)["smoke",]),
+  c(model="Unmatched", formula=deparse(f4), coef(mod4.3)["smoke"], confint(mod4.3)["smoke",])
+) %>% unlist() %>% as.data.frame() %>% 
+  mutate(across(smoke:`97.5 %`, as.numeric)) 
+
+colnames(mod.comp) <- c("model", "formula", "estimate", "CI2.5", "CI97.5")
+
+library(plotly)
+
+ggplotly(ggplot(mod.comp, aes(x=estimate, y=paste0(model,"\n",formula), colour=model)) +
+  geom_point() + geom_errorbarh(aes(xmin=CI2.5, xmax=CI97.5), height=0.2) +
+  labs(y="Method and Formula for Producing Estimate", x="Estimate", color="Method"))
+
+```
+  
+
+
+
+
+
+```{r}
+
+dagitty::localTests(fev.dag, md.matches, type="cis.chisq")
+
+```
+
+
+
+
+
+
+
 

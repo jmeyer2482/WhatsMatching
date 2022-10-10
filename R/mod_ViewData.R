@@ -19,7 +19,7 @@ mod_ViewData_ui <- function(id){
 
   #data plots
       tabPanel("Plots", value="tabPlot",
-               plotlyOutput("dataPlot")),
+               plotlyOutput("dataPlot", height="600px")),
 
   #data table
       tabPanel("Table", value="tabTable", br(),

@@ -93,13 +93,13 @@ mod_SimData_ui <- function(id){
                                   actionButton("applySim1", "Apply"))
                   )),
 
-             mainPanel(plotlyOutput("sim1plot", height = "500px")
+             mainPanel(plotlyOutput("sim1plot", height = "700px")
              )
            )),
         ###Simulation 2
         tabPanel("Simulation 2", value="Sim2",
            sidebarLayout(
-             sidebarPanel(style="height: 500px;",
+             sidebarPanel(style="height: 700px;",
 
                   fluidRow(
                     strong("Treatment Effect"),
@@ -183,33 +183,6 @@ mod_SimData_ui <- function(id){
                                           min=-1, max=1,value=0, step=0.1, ticks=F))
               ),
 
-              # fluidRow(#align="center",
-              #   span(strong("Base value of outcome "), code("(y)")),
-              #   icon("question-sign", lib="glyphicon", id=ns("y")),
-              #   bsPopover(id=ns("y"),title="<strong>Base value of </strong><code>y</code>",
-              #             content=y.txt ,
-              #             "right",options = list(container = "body"))),
-              #
-              # fluidRow(column(12,
-              #                 sliderInput("sim3.y", label=NULL,
-              #                             min=-25, max=25,value=2, step=1, ticks=F))
-              # ),
-              # fluidRow(column(6, strong("X1 values")),
-              #          column(6, strong("X2 Values"))),
-
-              # fluidRow(#align="center",
-              #   strong("Mean (average)"),
-              #   icon("question-sign", lib="glyphicon", id=ns("mean")),
-              #   bsPopover(id=ns("mean"),title=NULL,content=mean.txt ,
-              #             "right",options = list(container = "body"))),
-              # fluidRow(
-              #   column(6, numericInput("sim3.X1m", "X1",
-              #                          min=-25, max=25,value=0, step=1)
-              #   ),
-              #   column(6, numericInput("sim3.X2m", "X2",
-              #                          min=-25, max=25,value=0, step=1))
-              # ),
-
               fluidRow(
                 strong("Standard Deviation"),
                 icon("question-sign", lib="glyphicon", id=ns("sd")),
@@ -254,12 +227,39 @@ mod_SimData_ui <- function(id){
                               actionButton("applySim3", "Apply")))),
               mainPanel(plotlyOutput("sim3plot", height = "700px"))
 
-                           ))
-                ),
-              actionButton("usedata", "Please generate some data.", width = "100%",
-                           style="font-weight: bold")
+                           )),
+        ###FEV
+        tabPanel("FEV", value="FEV",
+                 sidebarLayout(
+                   sidebarPanel(style="height: 700px;",
 
-              )#tabset panel
+                                # create.sim1.data <- function(te=2)
+                                fluidRow(
+                                  strong("Treatment Effect"),
+                                  icon("question-sign", lib="glyphicon", id=ns("te1")),
+                                  bsPopover(id=ns("te1"),title="<strong>Treatment Effect</strong>",
+                                            content=paste0("The treatment effect controls the effect that the ",
+                                                           "treatment will have on the outcome (", y.t, ").") ,
+                                            "right",options = list(container = "body"))
+                                ),
+                                # fluidRow(
+                                #   column(12,
+                                #          sliderInput("sim1.TE", NULL,
+                                #                      min=-25, max=25,value=2, step=1, ticks=F))
+                                # ),
+                                fluidRow(column(12, align = "right",
+                                                actionButton("applyFEV", "Apply"))
+                                )),
+
+                   mainPanel(plotlyOutput("FEVplot", height = "700px")
+                   )
+                 )),
+
+                ),
+      actionButton("usedata", "Please generate some data.", width = "100%",
+                   style="font-weight: bold")
+
+      )#tabset panel
   )#fluidpage
 
 }

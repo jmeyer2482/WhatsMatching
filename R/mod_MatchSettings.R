@@ -13,6 +13,9 @@ mod_MatchSettings_ui <- function(id){
     fluidPage(markdown("For the purposes of this simulation, all data is simulated
                         using the variables `t`, `X1`, `X2`, and `y`. The formula
                         the matching is conducted with is `t ~ X1 + X2`."), br(),
+              selectizeInput("treat.f", "Formula for matching treated and control units",
+                          c("t ~ X1 + X2", "t ~ X1", "t ~ X2"),
+                          "t ~ X1 + X2"), br(),
               fluidRow(column(6, "Matching Method 1"), column(6, "Matching Method 2"),
 
                        column(6, selectInput("Dist1", "First Matching Distance",
@@ -32,7 +35,7 @@ mod_MatchSettings_ui <- function(id){
                        column(6, checkboxInput("Rep1", "Use Replacement")),
                        column(6, checkboxInput("Rep2", "Use Replacement"))
               ),
-              selectInput("outcome.f", "Formula for calculating estimates",
+              selectizeInput("outcome.f", "Formula for calculating estimates",
                           c("y ~ t", "y ~ t + X1 + X2", "y ~ t + X1", "y ~ t + X2"),
                           "y ~  t"),
               actionButton("usematching", "Use these matching settings",

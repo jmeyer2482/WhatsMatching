@@ -1,0 +1,13 @@
+---
+title: "References"
+output: html_fragment
+bibliography: App_References.bib
+csl: ama.csl
+nocite: '@*'
+link-citations: true
+linkcolor: blue
+always_allow_html: true
+knit: (function(inputFile, encoding) {
+    rmarkdown::render(inputFile, encoding = encoding, output_dir = "www/")
+  })
+---

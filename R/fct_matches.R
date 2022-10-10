@@ -44,26 +44,6 @@
 ##MATCHING FUNCTIONS
 
 matched.data <- function(f, data, dist, order="data", replace=FALSE){
-  #f
-  #a two sided formula containing the treatment variable
-  #on the left side and the matching variables on the right
-
-  #data
-  #the data that is to be used for matching
-
-  #dist
-  #a matching distance. Either "propensity" or "mahalanobis"
-
-  #order
-  #a named order of "data", "smallest", "largest", "random"
-  #used to perform matches and is only relevant if replace = TRUE
-  #"data" just uses the order the data is already in
-  #"smallest" matches by the smallest propensity score first
-  #"largest" matches by the largest propensity score first
-  #"random" matches on a random order every time
-
-  #replace
-  #boolean value of whether to replace matched units or not
 
   #get the distance matrix
   d.m <- distance.matrix(f=f,data=data,dist=dist)
@@ -96,14 +76,17 @@ matched.data <- function(f, data, dist, order="data", replace=FALSE){
 
   matched <- cbind(id = pairs$treatment,
                    data[pairs$treatment,],
-                   subclass=pairs$treatment,
-                   pair.dist = pairs$dist) %>%
+                   subclass = pairs$treatment,
+                   pair.dist = pairs$dist,
+                   m.order = as.numeric(rownames(pairs))
+                   ) %>%
     rbind(cbind(id = pairs$control,
                 data[pairs$control,],
                 subclass=pairs$treatment,
-                pair.dist = pairs$dist))
+                pair.dist = pairs$dist,
+                m.order = as.numeric(rownames(pairs))))
 
-  matched <- matched %>% arrange(.data$pair.dist, .data$subclass) %>%
+  matched <- matched %>% arrange(.data$pair.dist, .data$m.order) %>%
     mutate(ord=(row_number(.data$pair.dist) + (row_number(.data$pair.dist)%%2))/2)
 
   #create a dataframe with the id and the number of time the id was used
@@ -206,24 +189,16 @@ dist.matches <- function(d.m, order=NULL, replace=FALSE){
     c.val <- names(which.min(d))
     if (length(d)==1) c.val <- c.names[!c.names %in% ids$control]
 
-    #NOT REQUIRED
-    # if (inc.equ) {
-    #   nms <- names(which(d==min(d)))
-    #   a <- list(treatment = rep(as.character(i), length(nms)),
-    #             control = nms,
-    #             dist = rep(min(d), length(nms)))
-    # } else {
     a <- list(treatment = i,
               control = c.val,
               dist = min(d))
-    # }
 
     #add the matched pair to the dataframe
     ids <- rbind(ids,a)
 
-    row.names(ids) <- 1:nrow(ids)
-
   }
+
+  row.names(ids) <- 1:nrow(ids)
 
   #return all the matched pairs with the score they were matched on
   #dataframe with nrow(d.m) rows and 3 cols.

@@ -5,6 +5,9 @@ csl: ama.csl
 link-citations: yes
 linkcolor: blue
 always_allow_html: true
+knit: (function(inputFile, encoding) {
+    rmarkdown::render(inputFile, encoding = encoding, output_dir = "www/")
+  })
 ---
 
 #### Overview ####  

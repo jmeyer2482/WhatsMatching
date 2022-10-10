@@ -5,6 +5,9 @@ csl: ama.csl
 link-citations: yes
 linkcolor: blue
 always_allow_html: true
+knit: (function(inputFile, encoding) {
+    rmarkdown::render(inputFile, encoding = encoding, output_dir = "www/")
+  })
 ---
 
 In 2019, King and Neilsen published a paper presenting a paradox that arises when using the propensity score for matching2. They were able to demonstrate that, when compared to other matching distances like the Mahalanobis distance, matching on the propensity score only approximated a randomised experiment as opposed to a more efficient fully blocked experiment.   

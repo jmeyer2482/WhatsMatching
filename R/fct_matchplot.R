@@ -43,16 +43,18 @@ matching.plot <- function(match.data, xvar, yvar, multi=F, plot.n=1){
     y=match.data$matched.data[[yvar]],
     t=factor(match.data$matched.data[[tvar]]),
     subclass=match.data$matched.data[["subclass"]],
-    pair.dist=match.data$matched.data[["pair.dist"]]) %>%
+    pair.dist=match.data$matched.data[["pair.dist"]],
+    ord=match.data$matched.data[["ord"]]) %>%
     mutate(Allocation=ifelse(t==0,"Control","Treated"),
            txt=paste0(.data$Allocation,
                       "<br>Matched using: ", mdist, " Distance",
                       "<br>Distance between pair: ", round(.data$pair.dist,3),
                       "<br>Pair number: ", .data$subclass,
                       "<br>", xvar,": ", round(.data$x,3),
-                      "<br>", yvar, ": ", round(.data$y,3))) %>%
-    arrange(.data$pair.dist, .data$subclass) %>%
-    mutate(ord=(row_number(.data$pair.dist) + (row_number(.data$pair.dist)%%2))/2)
+                      "<br>", yvar, ": ", round(.data$y,3)))
+  # %>%
+  #   arrange(.data$pair.dist, .data$subclass) %>%
+  #   mutate(ord=(row_number(.data$pair.dist) + (row_number(.data$pair.dist)%%2))/2)
 
 
   p.data <- data.frame(
@@ -91,12 +93,13 @@ matching.plot <- function(match.data, xvar, yvar, multi=F, plot.n=1){
   #   scale_shape_manual(values = c("Control"=2, "Treated"=6)) +
   #   scale_color_manual(values = c("Control"=control.col, "Treated"=treat.col)) +
 
-  p <- ggplot(d, aes(x=t.x, y=t.y, frame=frame)) +
-    geom_segment(aes(x=t.x, y=t.y, xend=c.x, yend=c.y), color="black") +
-    geom_point(aes(x=t.x, y=t.y, text=txt.t), color=treat.col, shape=6,
-               size=3, stroke=0.8, alpha=0.8) +
-    geom_point(aes(x=c.x, y=c.y, text=txt.c), color=control.col, shape=2,
-               size=3, stroke=0.8, alpha=0.8) +
+  p <- ggplot(d, aes(x=.data$t.x, y=.data$t.y, frame=.data$frame)) +
+    geom_segment(aes(x=.data$t.x, y=.data$t.y, xend=.data$c.x, yend=.data$c.y),
+                 color="black") +
+    geom_point(aes(x=.data$t.x, y=.data$t.y, text=.data$txt.t),
+               color=treat.col, shape=6, size=3, stroke=0.8, alpha=0.8) +
+    geom_point(aes(x=.data$c.x, y=.data$c.y, text=.data$txt.c),
+               color=control.col, shape=2, size=3, stroke=0.8, alpha=0.8) +
     theme_bw()
   # +
   #   theme(legend.title = element_blank(), legend.position='none')
@@ -107,7 +110,7 @@ matching.plot <- function(match.data, xvar, yvar, multi=F, plot.n=1){
   pltly <- pltly %>%
     add_markers(data=all.data, x=~x, y=~y,
                 color=~t, colors=c(control.col, treat.col),name=~Allocation,
-                marker = list(opacity = 0.3, size = 10,
+                marker = list(opacity = 0.2, size = 10,
                               line=list(width=1.5)),
                 symbol= ~t, showlegend=FALSE,
                 symbols = c("triangle-up-open","triangle-down-open"),

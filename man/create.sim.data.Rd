@@ -7,7 +7,7 @@
 create.sim.data(
   sim = 1,
   te = 2,
-  jitter = 0.5,
+  jitter = 0,
   g1_min = 0,
   g1_max = 5,
   g2_shift_X1 = 1,

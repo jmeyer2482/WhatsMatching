@@ -46,7 +46,7 @@
 create.sim.data <- function(
     sim = 1,
 
-    te=2, jitter = 0.2,
+    te=2, jitter = 0,
 
     g1_min=0, g1_max=5, g2_shift_X1=1, g2_shift_X2=1,
 
@@ -61,7 +61,9 @@ create.sim.data <- function(
   #simulation 1
   if (sim==1){
 
-    t = c(rep(0, 25),rep(1, 25),rep(0, 25),rep(1, 25),rep(0, 50))
+    n <- 150
+
+    t <- c(rep(0, 25),rep(1, 25),rep(0, 25),rep(1, 25),rep(0, 50))
 
     px1c <- runif(25, min = -2, max = 2)
     px2c <- runif(25, min = -2, max = 2)
@@ -77,13 +79,13 @@ create.sim.data <- function(
     X1 <- c(px1c, px1t, rx1, cx1)
     X2 <- c(px2c, px2t, rx2, cx2)
 
-    y <- t*te + X1 + X2 + rnorm(n=length(t), mean=0, sd=jitter)
+    y <- t*te + X1 + X2
 
     t.char <- ifelse(t==0,"Control", "Treated")
 
-    data <- list(t=t, Allocation=t.char, X1=X1, X2=X2, y=y) %>% as.data.frame()
+    d <- list(t=t, Allocation=t.char, X1=X1, X2=X2, y=y) %>% as.data.frame()
 
-    return(data)
+    # return(data)
   }
 
   #Simulation 2
@@ -98,11 +100,11 @@ create.sim.data <- function(
 
     t <- c(rep(0,n.2),rep(1,n.2))
     t.char <- ifelse(t==0,"Control","Treated")
-    y <- te*t + X1 + X2 + rnorm(n=length(t), mean=0, sd=jitter)
+    y <- te*t + X1 + X2
 
     d <- list(t=t, Allocation=t.char, X1=X1, X2=X2, y=y) %>% as.data.frame()
 
-    return(d)
+    # return(d)
   }
 
   #simulation 3
@@ -118,16 +120,28 @@ create.sim.data <- function(
         mutate(scaledX1 = scale(.data$X1), scaledX2 = scale(.data$X2),
            t = rbinom(n, 1,
                       prob = arm::invlogit(weight_t1*.data$scaledX1 + weight_t2*.data$scaledX2)),
-           y = weight_y0 + te*t + weight_y1*X1 + weight_y2*X2 + rnorm(n=length(t), mean=0, sd=jitter),
+           y = weight_y0 + te*t + weight_y1*X1 + weight_y2*X2,
            Allocation = ifelse(t==0,"Control","Treated")) %>%
         select(-c(.data$scaledX1,.data$scaledX2))
 
       #only return if there are no more than half of the units "treated"
-      if(table(df$t)[[2]]<=(n/2))
-        return(df[c("t", "Allocation", "X1", "X2", "y")])
+      if(table(df$t)[[2]]<=(n/2)){
+        d <- df[c("t", "Allocation", "X1", "X2", "y")]
+        break
+      }
     }
 
   }
+
+  #add jitter
+  #if jitter is 0 it adds 0, jitter 0 by default
+  d$y <- d$y + rnorm(n,0,jitter)
+
+  #rounded values
+  d <- d %>% mutate(across(3:5, ~ round(.x,3)))
+
+
+  return(d)
 }
 
 

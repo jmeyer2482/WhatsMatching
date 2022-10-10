@@ -135,9 +135,15 @@ estimates.plot <- function(M1, M2, outcome.f, te){
   comb.match.ests.cum <- comb.match.ests %>%
     accumulate_by(~.data$idx)
 
-  agg.ests <- cbind(get.estimates(M1, outcome.f), te=te)
+  if(is.null(te)){
+    agg.ests <- cbind(get.estimates(M1, outcome.f))
+    ys <- c(comb.match.ests[['estimate']],agg.ests[1,2:4] %>% unlist())
+    } else {
+    agg.ests <- cbind(get.estimates(M1, outcome.f), te=te)
+    ys <- c(comb.match.ests[['estimate']],agg.ests[1,2:5] %>% unlist())
+    }
 
-  ys <- c(comb.match.ests[['estimate']],agg.ests[1,2:5] %>% unlist())
+  # ys <- c(comb.match.ests[['estimate']],agg.ests[1,2:5] %>% unlist())
 
   y.range <- axis.ranges(ys,0.1)
 
@@ -155,15 +161,19 @@ estimates.plot <- function(M1, M2, outcome.f, te){
   gg <- ggplotly(gg, tooltip = "text") %>%
     animation_opts(transition = 0, redraw=T, frame=400)
 
+  if (!is.null(te)){
+    gg <- gg %>%
+      add_ribbons(data=agg.ests, x=~n, ymin=~te-0.2, ymax=~te+0.2, opacity=0.2,
+                  color=I("springgreen3"), inherit=F, name="Estimate Target Range",
+                  hovertemplate="Estimate Target Range (+/- 0.2)<extra></extra>",
+                  legendgroup="target") %>%
+      add_lines(data=agg.ests, x=~n, y=~te, inherit = F,
+                name = "True Estimate", color=I("springgreen3"),
+                line=list(dash='dot'), visible='legendonly',
+                hovertemplate="True Estimate: %{y:>-0,.2f}<extra></extra>")
+    }
+
   gg <- gg %>%
-    add_ribbons(data=agg.ests, x=~n, ymin=~te-0.2, ymax=~te+0.2, opacity=0.2,
-                color=I("springgreen3"), inherit=F, name="Estimate Target Range",
-                hovertemplate="Estimate Target Range (+/- 0.2)<extra></extra>",
-                legendgroup="target") %>%
-    add_lines(data=agg.ests, x=~n, y=~te, inherit = F,
-              name = "True Estimate", color=I("springgreen3"),
-              line=list(dash='dot'), visible='legendonly',
-              hovertemplate="True Estimate: %{y:>-0,.2f}<extra></extra>") %>%
     add_lines(data=agg.ests, x=~n, y=~raw, inherit = F, line=list(dash='dot', width=3),
               name = "Raw Estimate", color=I("#272727"), legendgroup="raw", opacity = 0.6,
               hovertemplate="Raw Estimate: %{y:>-0,.2f}<extra></extra>") %>%

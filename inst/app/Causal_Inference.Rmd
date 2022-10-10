@@ -5,6 +5,9 @@ csl: ama.csl
 link-citations: yes
 linkcolor: blue
 always_allow_html: true
+knit: (function(inputFile, encoding) {
+    rmarkdown::render(inputFile, encoding = encoding, output_dir = "www/")
+  })
 ---
 
 Causal Inference is a methodology that is generally used with observational (or non-experimental) data determine the effect of something. Unlike randomised controlled trials or other types of clinical research where the treated and control groups can be assigned, researchers are unable to control the treatment assignment in observational data or even the variables that are available to them. In this case, causal inference is used to make assumptions about the data to inform how best to analyse the effect of interest.

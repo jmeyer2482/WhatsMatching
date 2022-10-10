@@ -5,6 +5,9 @@ csl: ama.csl
 link-citations: yes
 linkcolor: blue
 always_allow_html: true
+knit: (function(inputFile, encoding) {
+    rmarkdown::render(inputFile, encoding = encoding, output_dir = "www/")
+  })
 ---
 
 Matching requires that a type of distance between units is calculated. This distance is then used to pair or match units that are close together while discarding or pruning those that are not. Once pruning has occurred to the satisfaction of the analyst, the treatment effect can be estimated on the pruned dataset. Many methods of matching have been explored in the literature and while the propensity score is perhaps the most used distance metric, other distance metrics are available, including the Mahalanobis distance.  
