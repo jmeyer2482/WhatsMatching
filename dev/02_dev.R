@@ -17,6 +17,8 @@
 ## Amend DESCRIPTION with dependencies read from package code parsing
 attachment::att_amend_desc()
 devtools::document()
+attachment::att_from_namespace()
+
 
 ## Add modules ----
 ## Create a module infrastructure in R/
@@ -88,6 +90,10 @@ golem::add_fct("multimatchplot", with_test = F)
 ## Vignette ----
 # usethis::use_vignette("WhatsMatching-Theory")
 # usethis::use_vignette("WhatsMatching-HowTo")
+
+usethis::use_vignette("Background", title="Vignette 1 - Background")
+usethis::use_vignette("TheApp", title="Vignette 2 - The App")
+usethis::use_vignette("Applications", title="Vignette 3 - Applications")
 devtools::build_vignettes()
 
 ## Code Coverage----

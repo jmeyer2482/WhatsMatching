@@ -12,7 +12,8 @@
 #' @importFrom htmltools HTML
 #' @importFrom DT JS renderDT
 #' @importFrom utils data
-#'
+#' @importFrom stringi stri_locate_first_fixed
+#' @import mplot
 #'
 #' @noRd
 #'
@@ -28,23 +29,24 @@ library(shinyBS)
 library(htmltools)
 library(shinythemes)
 library(DT)
-library(mplot)
+# library(mplot)
 
 
 #function for getting fev dataset
-load.data <- function(dt, pkg) {
-  # make sure the relevant library is available
-  require(pkg, character.only = T)
+load.fev <- function() {
+  requireNamespace("mplot")
+
   #create environment for loading, otherwise loads into global
   e <- new.env()
+
   #get data
-  data(list = dt,
-       package = pkg,
+  data(list = "fev",
+       package = "mplot",
        envir = e)
+
   #store data
-  d <- e[[dt]]
-  #delete environment
-  e <- NULL
+  d <- e$fev
+
   #return data
   return(d)
 }
@@ -70,7 +72,7 @@ plot.data <- function(d) {
 
   p2 <-
     ggplot(d, aes(.data$Allocation, .data$y, fill = .data$Allocation)) +
-    geom_boxplot() + xlab("") + theme(legend.position = "none") +
+    geom_boxplot(alpha=0.5) + xlab("") + theme(legend.position = "none") +
     # guides(colour = "Group") +
     scale_fill_manual(values=c(control.col, treat.col), name="Group")
   p2 <- ggplotly(p2) %>% layout(xaxis = a.set, yaxis = a.set)
@@ -213,6 +215,7 @@ app_server <- function(input, output, session) {
   values$d <- NULL
   values$d.set <- "sim"
   values$selected.p <- NULL
+  values$jitter <- 1
 
 
   #open the settings dialogue
@@ -296,10 +299,10 @@ app_server <- function(input, output, session) {
     ))
 
     #assign from reactivevalues to ensure values are static
-    o.f <- values$outcome.f
+    o.f <- as.formula(values$outcome.f)
     d <- values$selected.d
     TE <- values$TE
-    t.f <- values$treat.f
+    t.f <- as.formula(values$treat.f)
     D1 <- values$M1.dist
     O1 <- values$M1.ord
     R1 <- values$M1.rep
@@ -377,7 +380,8 @@ app_server <- function(input, output, session) {
   #and update the label for the usedata button
   plot1.data <- reactive({
     TE <- input$sim1.TE
-    d <- create.sim.data(sim = 1, te = TE)
+    d <- create.sim.data(sim = 1, te = TE,
+                         jitter=values$jitter)
 
     values$TE <<- TE
     values$d <<- d
@@ -385,11 +389,11 @@ app_server <- function(input, output, session) {
     updateActionButton(session, "usedata",
                        label = "Use the data from Simulation 1")
 
-    updateSelectInput(session,
-                      "outcome.f",
-                      choices = c("y ~ t", "y ~ t + X1 + X2", "y ~ t + X1", "y ~ t + X2"))
-
-    values$d.set <<- "sim"
+    # updateSelectInput(session,
+    #                   "outcome.f",
+    #                   choices = c("y ~ t", "y ~ t + X1 + X2", "y ~ t + X1", "y ~ t + X2"))
+    #
+    # values$d.set <<- "sim"
 
     p <- plot.data(d)
 
@@ -401,6 +405,8 @@ app_server <- function(input, output, session) {
     bindEvent(input$applySim1)
 
   output$sim1plot <- plotly::renderPlotly(plot1.data())
+
+
 
 
   observe({
@@ -429,7 +435,8 @@ app_server <- function(input, output, session) {
       g1_min = val.min,
       g1_max = val.max,
       g2_shift_X1 = overlap.X1,
-      g2_shift_X2 = overlap.X2
+      g2_shift_X2 = overlap.X2,
+      jitter=values$jitter
     )
 
     values$TE <<- TE
@@ -438,11 +445,11 @@ app_server <- function(input, output, session) {
     updateActionButton(session, "usedata",
                        label = "Use the data from Simulation 2")
 
-    updateSelectInput(session,
-                      "outcome.f",
-                      choices = c("y ~ t", "y ~ t + X1 + X2", "y ~ t + X1", "y ~ t + X2"))
+    # updateSelectInput(session,
+    #                   "outcome.f",
+    #                   choices = c("y ~ t", "y ~ t + X1 + X2", "y ~ t + X1", "y ~ t + X2"))
 
-    values$d.set <<- "sim"
+    # values$d.set <<- "sim"
 
     p <- plot.data(d)
 
@@ -458,95 +465,29 @@ app_server <- function(input, output, session) {
 
   plot3.data <- reactive({
     TE <- input$sim3.TE
-    rho <- input$sim3.rho
-    y <- 2
+    X1r <- input$sim3.X1rel
+    X2r <- input$sim3.X2rel
 
-    X1m <- 0
-    X2m <- 0
-    X1sd <- input$sim3.X1sd
-    X2sd <- input$sim3.X2sd
-    X1t <- input$sim3.X1t
-    X2t <- input$sim3.X2t
-    X1y <- input$sim3.X1y
-    X2y <- input$sim3.X2y
+    d <- create.sim.data(sim = 3, te = TE, relX1=X1r, relX2=X2r,
+                         jitter=values$jitter)
 
-    txt <- ""
+    values$TE <<- TE
+    values$d <<- d
 
-    if (!dplyr::between(X1sd, 0, 30)) {
-      txt <- paste0(txt, br(), "X1 Standard Deviation")
-    }
+    updateActionButton(session, "usedata",
+                       label = "Use the data from Simulation 3")
 
-    if (!dplyr::between(X2sd, 0, 30)) {
-      txt <- paste0(txt, br(), "X2 Standard Deviation")
-    }
+    # updateSelectInput(session,
+    #                   "outcome.f",
+    #                   choices = c("y ~ t", "y ~ t + X1 + X2", "y ~ t + X1", "y ~ t + X2"))
 
-    if (!dplyr::between(X1t, -25, 25)) {
-      txt <- paste0(txt, br(), "X1 Effect on Treatment")
-    }
+    # values$d.set <<- "sim"
 
-    if (!dplyr::between(X2t, -25, 25)) {
-      txt <- paste0(txt, br(), "X2 Effect on Treatment")
-    }
+    p <- plot.data(d)
 
-    if (!dplyr::between(X1y, -25, 25)) {
-      txt <- paste0(txt, br(), "X1 Effect on Outcome")
-    }
+    values$data.plots <<- p
 
-    if (!dplyr::between(X2y, -25, 25)) {
-      txt <- paste0(txt, br(), "X2 Effect on Outcome")
-    }
-
-    if (txt == "") {
-      OOR <- NULL
-    } else {
-      OOR <-
-        paste0("The following variables are outside the set ranges:", txt) %>%
-        HTML()
-    }
-
-
-    if (!is.null(OOR)) {
-      showModal(modalDialog(title = "Out of Range",
-                            easyClose = T,
-                            OOR))
-
-    } else {
-      # d <- create.sim3.data(
-      #         te=TE, rho=rho, weight_y0=y,
-      #         mean1=X1m, mean2=X2m, sd1=X1sd, sd2=X2sd,
-      #         weight_t1=X1t, weight_t2=X2t,
-      #         weight_y1=X1y, weight_y2=X2y)
-
-      d <- create.sim.data(
-        sim = 3,
-        te = TE,
-        rho = rho,
-        weight_y0 = y,
-        mean1 = X1m,
-        mean2 = X2m,
-        sd1 = X1sd,
-        sd2 = X2sd,
-        weight_t1 = X1t,
-        weight_t2 = X2t,
-        weight_y1 = X1y,
-        weight_y2 = X2y
-      )
-
-      values$TE <<- TE
-      values$d <<- d
-
-      updateActionButton(session, "usedata",
-                         label = "Use the data from Simulation 3")
-
-      values$d.set <<- "sim"
-
-      p <- plot.data(d)
-
-      values$data.plots <<- p
-
-      p
-
-    }
+    p
 
   }) %>%
     bindEvent(input$applySim3)
@@ -554,8 +495,58 @@ app_server <- function(input, output, session) {
   output$sim3plot <- plotly::renderPlotly(plot3.data())
 
 
+  plot4.data <- reactive({
+    TE <- input$sim4.TE
+    rho <- input$sim4.rho
+    y <- 2
+
+    # X1m <- 0
+    # X2m <- 0
+    X1sd <- input$sim4.X1sd
+    X2sd <- input$sim4.X2sd
+    X1t <- input$sim4.X1t
+    X2t <- input$sim4.X2t
+    X1y <- input$sim4.X1y
+    X2y <- input$sim4.X2y
+
+    d <- create.sim.data(
+      sim = 4,
+      te = TE,
+      rho = rho,
+      weight_y0 = y,
+      # mean1 = X1m,
+      # mean2 = X2m,
+      sd1 = X1sd,
+      sd2 = X2sd,
+      weight_t1 = X1t,
+      weight_t2 = X2t,
+      weight_y1 = X1y,
+      weight_y2 = X2y,
+      jitter=values$jitter
+    )
+
+    values$TE <<- TE
+    values$d <<- d
+
+    # updateActionButton(session, "usedata",
+    #                    label = "Use the data from Simulation 4")
+    #
+    # values$d.set <<- "sim"
+
+    p <- plot.data(d)
+
+    values$data.plots <<- p
+
+    p
+
+  }) %>%
+    bindEvent(input$applySim4)
+
+  output$sim4plot <- plotly::renderPlotly(plot4.data())
+
+
   plotFEV.data <- reactive({
-    d <- load.data("fev", "mplot")
+    d <- load.fev()
 
     values$d <<- d
     values$TE <<- NULL
@@ -581,7 +572,7 @@ app_server <- function(input, output, session) {
 
     p2 <-
       ggplot(d, aes(.data$Allocation, .data$fev, fill = .data$Allocation)) +
-      geom_boxplot() + xlab("") + theme(legend.position = "none") +
+      geom_boxplot(alpha=0.5) + xlab("") + theme(legend.position = "none") +
       # guides(colour = "Group") +
       scale_fill_manual(values=c(control.col, treat.col), name="Group")
     p2 <- ggplotly(p2) %>% layout(xaxis = a.set, yaxis = a.set)
@@ -630,29 +621,41 @@ app_server <- function(input, output, session) {
     shinyBS::toggleModal(session, "modGetData", toggle = "close")
     shinyBS::toggleModal(session, "modMatchSettings", toggle = "open")
 
+    values$selected.p <<- values$data.plots
+
+  }) %>%
+    bindEvent(input$usedata)
+
+  observe({
+
+    d <- values$d
+
+    cols <- colnames(d)
+
+    opts <- cols[!cols %in% c("smoke", "fev", "t", "y", "Allocation")]
+
+
     updateSelectizeInput(
       session,
       "outcome.f",
-      selected = switch(values$d.set,
-                        "sim" = "y ~ t + X1 + X2",
-                        "fev" = "fev ~ smoke + age + height"),
-      choices = switch(
-        values$d.set,
-        "sim" = c("y ~ t",
-                  "y ~ t + X1 + X2",
-                  "y ~ t + X1",
-                  "y ~ t + X2"),
-        "fev" = c(
-          "fev ~ smoke",
-          "fev ~ smoke + age",
-          "fev ~ smoke + height",
-          "fev ~ smoke + sex",
-          "fev ~ smoke + age + height",
-          "fev ~ smoke + sex + height",
-          "fev ~ smoke + age + sex",
-          "fev ~ smoke + age + height + sex"
-        )
-      ),
+      choices = opts,
+        # switch(
+        # values$d.set,
+        # "sim" = c("y ~ t",
+        #           "y ~ t + X1 + X2",
+        #           "y ~ t + X1",
+        #           "y ~ t + X2"),
+        # "fev" = c(
+        #   "fev ~ smoke",
+        #   "fev ~ smoke + age",
+        #   "fev ~ smoke + height",
+        #   "fev ~ smoke + sex",
+        #   "fev ~ smoke + age + height",
+        #   "fev ~ smoke + sex + height",
+        #   "fev ~ smoke + age + sex",
+        #   "fev ~ smoke + age + height + sex"
+        # )
+      # ),
       options = list(
         render = I(
           "
@@ -668,19 +671,21 @@ app_server <- function(input, output, session) {
     updateSelectizeInput(
       session,
       "treat.f",
-      selected = switch(values$d.set,
-                        "sim" = "t ~ X1 + X2",
-                        "fev" = "smoke ~ age + height"),
-      choices = switch(
-        values$d.set,
-        "sim" = c("t ~ X1 + X2"),
-        "fev" = c(
-          "smoke ~ age + sex",
-          "smoke ~ height + sex",
-          "smoke ~ age + height",
-          "smoke ~ age + height + sex"
-        )
-      ),
+      # selected = switch(values$d.set,
+      #                   "sim" = "t ~ X1 + X2",
+      #                   "fev" = "smoke ~ age + height"),
+      choices = opts,
+      selected = opts,
+      # switch(
+      #   values$d.set,
+      #   "sim" = c("t ~ X1 + X2"),
+      #   "fev" = c(
+      #     "smoke ~ age + sex",
+      #     "smoke ~ height + sex",
+      #     "smoke ~ age + height",
+      #     "smoke ~ age + height + sex"
+      #   )
+      # ),
       options = list(
         render = I(
           "
@@ -693,41 +698,70 @@ app_server <- function(input, output, session) {
       )
     )
 
-    values$selected.p <<- values$data.plots
-
   }) %>%
-    bindEvent(input$usedata)
+    bindEvent(values$d)
 
   #observer to update reactive values if they are changed
   observe({
+
     values$M1.dist <<- input$Dist1
     values$M1.ord <<- input$Ord1
     values$M1.rep <<- input$Rep1
     values$M2.dist <<- input$Dist2
     values$M2.ord <<- input$Ord2
     values$M2.rep <<- input$Rep2
-    values$outcome.f <<- stats::as.formula(input$outcome.f)
-    values$treat.f <<- stats::as.formula(input$treat.f)
+
+    d <- values$d
+
+    t.y <- c("smoke", "fev", "t", "y")[c("fev", "smoke", "t", "y") %in% colnames(d)]
+
+    values$outcome.f <<- paste(t.y[2], "~", t.y[1], paste(NULL, input$outcome.f, sep="+ ", collapse = " "))
+
+    values$treat.f <<- paste(t.y[1], "~",paste(input$treat.f, collapse = " + "))
   })
+
+  output$y.formula <- renderUI(code(noquote(values$outcome.f)))
+
+  output$t.formula <- renderUI(code(noquote(values$treat.f)))
 
   #start matching process
   observe({
 
     shinyBS::toggleModal(session, "modMatchSettings", toggle = "close")
 
-    if (is.null(values$d)) {
-      d <- values$selected.d
+    # if (is.null(values$d)) {
+    #   d <- values$selected.d
+    # } else {
+    #   d <- values$d
+    # }
+
+    a <- NULL
+
+    t.f <- values$treat.f
+
+    test1 <- nchar(t.f) - stringi::stri_locate_first_fixed(t.f,"~")[1] <= 2
+
+    # if(!is.formula(values$outcome.f)) a <- "The formula for calculating the outcome is incomplete"
+    if(test1) a <- "The formula for calculating the matches is incomplete"
+
+
+
+    if(is.null(a)) {
+
+      values$selected.d <<- NULL
+      values$selected.d <<- d
+
     } else {
-      d <- values$d
+
+      showModal(
+        modalDialog(
+          title = "Error",
+          easyClose = F, a)
+        )
     }
-
-    values$selected.d <<- NULL
-
-    values$selected.d <<- d
 
   }) %>%
     bindEvent(input$usematching)
-
 
   # observe({
 
@@ -763,7 +797,22 @@ app_server <- function(input, output, session) {
 #     }) %>%
 #     bindEvent(input$butViewData)
 
+  observe({
+    a <- input$sim4.X1t
 
+    updateSliderInput(session, "sim3.X2t",
+                      max=abs(a)-0.1, step=.1)
+
+  }) %>% bindEvent(input$sim4.X1t)
+
+
+  observe({
+    a <- input$sim4.X2t
+
+    updateSliderInput(session, "sim3.X1t",
+                      max=abs(a)-0.1, step=.1)
+
+  }) %>% bindEvent(input$sim4.X2t)
 
   #render outcome formula
   output$f.outcome <-

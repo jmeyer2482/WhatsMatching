@@ -16,25 +16,27 @@
 #' @param g2_shift_X1 Simulation 2 - how far to shift the X1 value for a control group
 #' @param g2_shift_X2 Simulation 2 - how far to shift the X2 value for a control group
 #'
-#' @param mean1 Simulation 3 - X1 mean value for a normal distribution
-#' @param mean2 Simulation 3 - X2 mean value for a normal distribution
-#' @param sd1 Simulation 3 - X1 standard deviation value for a normal distribution
-#' @param sd2 Simulation 3 - X2 standard deviation value for a normal distribution
-#' @param rho Simulation 3 - correlation coefficient for relationship between X1 and X2
-#' @param weight_t1 Simulation 3 - the weight of X1 on the treatment variable t
-#' @param weight_t2 Simulation 3 - the weight of X2 on the treatment variable t
-#' @param weight_y0 Simulation 3 - the unaffected value of the outcome y
-#' @param weight_y1 Simulation 3 - the weight of X1 on the outcome variable y
-#' @param weight_y2 Simulation 3 - the weight of X2 on the outcome variable y
+#' @param mean1 Simulation 3 and 4 - X1 mean value for a normal distribution
+#' @param mean2 Simulation 3 and 4 - X2 mean value for a normal distribution
+#' @param sd1 Simulation 3 and 4 - X1 standard deviation value for a normal distribution
+#' @param sd2 Simulation 3 and 4 - X2 standard deviation value for a normal distribution
+#' @param rho Simulation 3 and 4 - correlation coefficient for relationship between X1 and X2
+#' @param weight_t1 Simulation 3 and 4 - the weight of X1 on the treatment variable t
+#' @param weight_t2 Simulation 3 and 4 - the weight of X2 on the treatment variable t
+#' @param weight_y0 Simulation 3 and 4 - the unaffected value of the outcome y
+#' @param weight_y1 Simulation 3 and 4 - the weight of X1 on the outcome variable y
+#' @param weight_y2 Simulation 3 and 4 - the weight of X2 on the outcome variable y
+#' @param relX1 Simulation 3 - the causal relationship of X1 in the data. Can be 'mediator', 'confounder', 'collider', 'ancestor to y', 'ancestor to t'
+#' @param relX2 Simulation 3 - the causal relationship of X2 in the data. Can be 'mediator', 'confounder', 'collider', 'ancestor to y', 'ancestor to t'
+#'
 #'
 #' @return A dataframe with a 2 covariates, X1 and X2, and a treatment and outcome variable for the purposes of matching
 #'
-#' @importFrom dplyr mutate
-#' @importFrom dplyr %>%
-#' @importFrom dplyr select
-#' @importFrom stats runif rbinom rnorm
+#' @importFrom dplyr mutate %>% select case_when
+#' @importFrom stats runif rbinom rnorm pnorm
 #' @importFrom MASS mvrnorm
 #' @importFrom arm invlogit
+#' @importFrom tidyr expand_grid
 #'
 #'
 #' @export
@@ -51,11 +53,14 @@ create.sim.data <- function(
     g1_min=0, g1_max=5, g2_shift_X1=1, g2_shift_X2=1,
 
     # Generating X1 and X2
-    n = 200, mean1 = 0, mean2 = 0, sd1 = 1, sd2 = 1, rho = .3,
+    n = 200, mean1 = 40, mean2 = 40, sd1 = 5, sd2 = 10, rho = 0,
     # Generating t
-    weight_t1 = 0.5, weight_t2 = 0.5,
+    weight_t1 = 0.9, weight_t2 = 0.9,
     # Generating y
-    weight_y0 = 2, weight_y1 = 1, weight_y2 = -1
+    weight_y0 = 20, weight_y1 = 1.2, weight_y2 = 0.8,
+
+    #sim4 vars
+    relX1="Mediator", relX2="Confounder"
 ){
 
   #simulation 1
@@ -107,29 +112,132 @@ create.sim.data <- function(
     # return(d)
   }
 
-  #simulation 3
+
   if (sim==3) {
 
-    means = c(mean1,mean2)
+
+    # Collider, Mediator, Confounder
+    txt <- c("Mediator", "Collider", "Confounder", "Ancestor of t", "Ancestor of y")
+    rel <- tidyr::expand_grid(txt,txt)
+    colnames(rel) <- c("X1.rel","X2.rel")
+
+    #simplify directions for easy assignment
+    rel$X1d.t <- case_when(rel$X1.rel=="Collider"~F,
+                            rel$X1.rel=="Mediator"~F,
+                            rel$X1.rel=="Confounder"~T,
+                            rel$X1.rel=="Ancestor of t"~T,
+                            rel$X1.rel=="Ancestor of y"~F)
+    rel$X2d.t <- case_when(rel$X2.rel=="Collider"~F,
+                            rel$X2.rel=="Mediator"~F,
+                            rel$X2.rel=="Confounder"~T,
+                            rel$X2.rel=="Ancestor of t"~T,
+                            rel$X2.rel=="Ancestor of y"~F)
+    rel$X1d.y <- case_when(rel$X1.rel=="Collider"~F,
+                            rel$X1.rel=="Mediator"~T,
+                            rel$X1.rel=="Confounder"~T,
+                            rel$X1.rel=="Ancestor of t"~F,
+                            rel$X1.rel=="Ancestor of y"~T)
+    rel$X2d.y <- case_when(rel$X2.rel=="Collider"~F,
+                            rel$X2.rel=="Mediator"~T,
+                            rel$X2.rel=="Confounder"~T,
+                            rel$X2.rel=="Ancestor of t"~F,
+                            rel$X2.rel=="Ancestor of y"~T)
+
+    #assign directions
+    rel$direction.t <- case_when(
+      (rel$X1d.t==T & rel$X2d.t==T)~"both",
+      (rel$X1d.t==T & rel$X2d.t==F)~"X1",
+      (rel$X1d.t==F & rel$X2d.t==T)~"X2",
+      (rel$X1d.t==F & rel$X2d.t==F)~"none")
+
+    rel$direction.y <- case_when(
+      (rel$X1d.y==T & rel$X2d.y==T)~"both",
+      (rel$X1d.y==T & rel$X2d.y==F)~"X1",
+      (rel$X1d.y==F & rel$X2d.y==T)~"X2",
+      (rel$X1d.y==F & rel$X2d.y==F)~"none")
+
+    options <- rel[rel$X1.rel==relX1 & rel$X2.rel==relX2,]
+    dir.t <- options$direction.t
+    dir.y <- options$direction.y
+
+    #covariance matrix
+    varcovarMat <- matrix(c(sd1^2, sd1*sd2*rho, sd1*sd2*rho, sd2^2),2)
+
+    #simulate bivariate normal distribution for X1 and X2
+    means <- c(mean1,mean2)
+    d <- data.frame(MASS::mvrnorm(n, mu = means, Sigma = varcovarMat))
+
+    #simulate independent treatment
+    #set pr to 0.4 to ensure less treated units.
+    d$t <- rbinom(n, 1, 0.4)
+
+    #get weighted probabilities
+    prX1 <- pnorm(weight_t1*d$X1, mean1, sd1)
+    prX2 <- pnorm(weight_t2*d$X1, mean2, sd2)
+
+    #update t based on causal relationships
+    d$t <- switch(dir.t,
+                   "X1"=rbinom(n, 1, prob = prX1),
+                   "X2"=rbinom(n, 1, prob = prX2),
+                   "both"=rbinom(n, 1, prob = (prX1+prX2)/2),
+                   "none"=d$t)
+
+    #simulate X1 and X2 if they are mediators
+    #they are effected by t before calculating y
+    d$X1 <- switch(relX1,
+                   "Mediator"=d$X1+d$t*1.5,
+                   d$X1)
+
+    d$X2 <- switch(relX2,
+                   "Mediator"=d$X2+d$t*1.5,
+                   d$X2)
+
+    #simluate y
+    d$y <- switch(dir.y,
+                   "X1"=weight_y0 + weight_y1*d$X1 + te*d$t,
+                   "X2"=weight_y0 + weight_y2*d$X2 + te*d$t,
+                   "both"=weight_y0 + weight_y1*d$X1 + weight_y2*d$X2 + te*d$t,
+                   "none"=weight_y0 + te*d$t)
+
+    #simulate X1 and X2 if they are colliders
+    #they are effected by both t and y
+    d$X1 <- switch(relX1,
+                   "Collider"=d$X1+d$t+d$y,
+                   d$X1)
+
+    d$X2 <- switch(relX2,
+                   "Collider"=d$X2+d$t+d$y,
+                   d$X2)
+
+
+    d$Allocation <- ifelse(d$t==1,"Treated", "Control")
+
+    #reorder columns for consistency
+    d <- d[c("t", "Allocation", "X1", "X2", "y")]
+
+  }
+
+  #simulation 4
+  if (sim==4) {
+
+    means <- c(mean1,mean2)
 
     varcovarMat <- matrix(c(sd1^2, sd1*sd2*rho, sd1*sd2*rho, sd2^2),2)
 
-    for (i in 1:1000) {
-      #create the data
-      df <- data.frame(MASS::mvrnorm(n, mu = means, Sigma = varcovarMat)) %>%
-        mutate(scaledX1 = scale(.data$X1), scaledX2 = scale(.data$X2),
-           t = rbinom(n, 1,
-                      prob = arm::invlogit(weight_t1*.data$scaledX1 + weight_t2*.data$scaledX2)),
-           y = weight_y0 + te*t + weight_y1*X1 + weight_y2*X2,
-           Allocation = ifelse(t==0,"Control","Treated")) %>%
-        select(-c(.data$scaledX1,.data$scaledX2))
 
-      #only return if there are no more than half of the units "treated"
-      if(table(df$t)[[2]]<=(n/2)){
-        d <- df[c("t", "Allocation", "X1", "X2", "y")]
-        break
-      }
-    }
+    #get weighted probabilities
+    prX1 <- pnorm(weight_t1*d$X1, mean1, sd1)
+    prX2 <- pnorm(weight_t2*d$X1, mean2, sd2)
+
+    #create the data
+    d <- data.frame(MASS::mvrnorm(n, mu = means, Sigma = varcovarMat))# %>%
+    pr <- (prX1 + prX2)/2
+    t <- rbinom(n, 1, prob=pr)
+    y <- weight_y0 + te*t + weight_y1*d$X1 + weight_y2*d$X2
+    Allocation <- ifelse(t==0,"Control","Treated")
+
+    d <- list(t=t, Allocation=Allocation, X1=d$X1, X2=d$X2, y=y) %>%
+        as.data.frame()
 
   }
 

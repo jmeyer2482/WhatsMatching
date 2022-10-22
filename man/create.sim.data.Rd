@@ -13,16 +13,18 @@ create.sim.data(
   g2_shift_X1 = 1,
   g2_shift_X2 = 1,
   n = 200,
-  mean1 = 0,
-  mean2 = 0,
-  sd1 = 1,
-  sd2 = 1,
-  rho = 0.3,
-  weight_t1 = 0.5,
-  weight_t2 = 0.5,
-  weight_y0 = 2,
-  weight_y1 = 1,
-  weight_y2 = -1
+  mean1 = 40,
+  mean2 = 40,
+  sd1 = 5,
+  sd2 = 10,
+  rho = 0,
+  weight_t1 = 0.9,
+  weight_t2 = 0.9,
+  weight_y0 = 20,
+  weight_y1 = 1.2,
+  weight_y2 = 0.8,
+  relX1 = "Mediator",
+  relX2 = "Confounder"
 )
 }
 \arguments{
@@ -42,25 +44,29 @@ create.sim.data(
 
 \item{n}{the number of observations to populate for simulation 2 and 3}
 
-\item{mean1}{Simulation 3 - X1 mean value for a normal distribution}
+\item{mean1}{Simulation 3 and 4 - X1 mean value for a normal distribution}
 
-\item{mean2}{Simulation 3 - X2 mean value for a normal distribution}
+\item{mean2}{Simulation 3 and 4 - X2 mean value for a normal distribution}
 
-\item{sd1}{Simulation 3 - X1 standard deviation value for a normal distribution}
+\item{sd1}{Simulation 3 and 4 - X1 standard deviation value for a normal distribution}
 
-\item{sd2}{Simulation 3 - X2 standard deviation value for a normal distribution}
+\item{sd2}{Simulation 3 and 4 - X2 standard deviation value for a normal distribution}
 
-\item{rho}{Simulation 3 - correlation coefficient for relationship between X1 and X2}
+\item{rho}{Simulation 3 and 4 - correlation coefficient for relationship between X1 and X2}
 
-\item{weight_t1}{Simulation 3 - the weight of X1 on the treatment variable t}
+\item{weight_t1}{Simulation 3 and 4 - the weight of X1 on the treatment variable t}
 
-\item{weight_t2}{Simulation 3 - the weight of X2 on the treatment variable t}
+\item{weight_t2}{Simulation 3 and 4 - the weight of X2 on the treatment variable t}
 
-\item{weight_y0}{Simulation 3 - the unaffected value of the outcome y}
+\item{weight_y0}{Simulation 3 and 4 - the unaffected value of the outcome y}
 
-\item{weight_y1}{Simulation 3 - the weight of X1 on the outcome variable y}
+\item{weight_y1}{Simulation 3 and 4 - the weight of X1 on the outcome variable y}
 
-\item{weight_y2}{Simulation 3 - the weight of X2 on the outcome variable y}
+\item{weight_y2}{Simulation 3 and 4 - the weight of X2 on the outcome variable y}
+
+\item{relX1}{Simulation 3 - the causal relationship of X1 in the data. Can be 'mediator', 'confounder', 'collider', 'ancestor to y', 'ancestor to t'}
+
+\item{relX2}{Simulation 3 - the causal relationship of X2 in the data. Can be 'mediator', 'confounder', 'collider', 'ancestor to y', 'ancestor to t'}
 }
 \value{
 A dataframe with a 2 covariates, X1 and X2, and a treatment and outcome variable for the purposes of matching

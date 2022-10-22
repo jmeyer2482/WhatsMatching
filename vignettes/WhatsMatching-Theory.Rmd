@@ -16,23 +16,254 @@ always_allow_html: true
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.width=9
-  )
+  fig.width = 7,
+  fig.height = 7,
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE)
 ```
 
-This Shiny App package has been developed with the intention of providing educational support for understanding matching methods in the context of causal inference.  
+## Introduction  
   
-Let's have a look at how it has been developed.  
+  This Shiny App package has been developed with the intention of providing educational support for understanding matching methods in the context of causal inference. The initial intention was to deal specifically with the Propensity Score Paradox highlighted by King and Neilsen[ref]. Over the development of the app we decided that the underlying theoretical concepts that inform how matching is conducted by might be more useful and engaging in an educational environment. This document outlines the theoretical concepts and development process that was undertaken to develop the app.   
   
-The functions in this app were initially developed using datasets available in the `MatchIt` and `mplot` packages. We'll keep it simple here and just load the `fev` (FEV, forced expiratory volume) dataset from `mplot`.
+## Matching  
+  
+  In observational data there is no ability to control which people receive treatment and which do not. In fact, there is often little control over the available covariates that may help inform the outcomes. This potentially exposes observational data to selection bias and confounding. 
+  
+  Matching is a methodology that is used in the analysis of observational data. Matching is used as a pre-processing step to assist in improving the estimate of a given causal effect on an outcome of interest. The causal variable is generally framed as a binary treatment. Matching occurs by pairing the individuals, or units, in the dataset across the treated and untreated groups. The purpose of pairing, or matching, the data is to find a hidden randomised experiment within the data. That is to say, to find data within the dataset that is free from confounding and other bias that is usually automatically accounted for in a true randomised experiment.
+  
+  Essentially, when matching is conducted, a type of distance is used to see how far apart all the treated units are from all the controls. Then an iterative process takes place whereby each unit is matched to its nearest neighbour. This process can occur in an order of the analysts choosing and with or without replacement. At the end, the remaining units that are unmatched are removed and the analysis occurs on the matched data which, hopefully, is the hidden experiment you were looking for.  
+  
+  There are many different ways to calculate the distance between two units in a dataset. This app and vignette will focus on two commonly used distances - the propensity score and the mahalanobis distance. 
+  
+### Propensity Score   
+  
+  The propensity score is the most common way of conducting matching. It reduces a multidimensional space to a single dimension which allows for easy matching between units. It is based on theory by Rosenbaum and Rubin[ref] and relies on logistic regression to determine the probability that a unit will be treated. Mathematically, $e(x_i) = pr(Z_i=1|x)$ where $e(x_i)$ is the propensity score, $Z$ is the treatment variable, $x$ is a vector of covariates, and $i$ represents an individual. 
+  
+  Many packages in `R` that perform matching analysis take the leg work out of calculating the type of distance being used. When calculating the propensity score for matching the logistic regression formula looks like $t \sim x_1 + x_2 + ... + x_n$ where $t$ is the treatment variable and $x$ represents a chosen covariate to match on. Once the probabilities have been calculated then treated units are paired with control units that have the same or similar probability of treatment.  
+  
+  The propensity score is also widely used for other methods to improve estimates including weighting and stratification. While these methods are not the primary purpose of the app, their outcomes have been provided in the outputs to give some further insights into what alternative methods may demonstrate. 
+  
+### Mahalanobis Distance   
+  
+  The Mahalanobis Distance was developed by Prasanta Chandra Mahalanobis in 1936 as a means of comparing skulls based on their measurements. It's normal application calculates how many standard deviations a point is from the mean of the specified variables and can give a good indication of outliers in a group. In matching, the application is similar but not quite the same. Instead of using the mean as a comparator, each treated unit is compared, pairwise, with each of the units in the control group. 
+  
+  The pairwise Mahalanobis Distance is calculated by $D_{ij} = (X_i−X_j)W^{−1}(X_i−X_j)^T$ (https://stats.stackexchange.com/questions/65705/pairwise-mahalanobis-distances) where $X_i$ and $X_j$ represent the matrix of covariates for the treated and control groups and $W^{-1}$ is the covariance matrix. Similar to the Propensity Score, the Mahalanobis Distance reduces a multidimensional space to a single value representing the distance between units. A major difference, which will soon be seen, is how the matches occur between the methods. The Mahalanobis Distance uses the raw information to calculate the distance between individual units which is in contrast to the Propensity Score which uses the probability of being treated to then determine the distance. 
+  
+## Other Options  
+  
+  Like most things in statistics, there is more than one way to skin a cat and matching is no different. As mentioned above, there are other things that you can do with the matching process to help improve the results. Three of the things that will be discussed are replacement, ordering, and caliper application.
+  
+### Replacement  
+  
+  Replacement can be an important consideration when looking at using matching. Replacement refers to the re-use of a unit when it is the closest unit to more than one of the treated units. If we look at this visually (see Fig ) then we can see that many of the control units that were included in matching without replacement are dropped. This creates a tighter group of comparable units for the matched variables and is more likely to result in covariate balance, one of the primary aims of matching. It is also the prudent option when you have a dataset that has equal sized control and treated groups as matching without replacement will not result in pruning many units.  
+  
+  
+  
+```{r}
+library(dplyr)
+library(ggplot2)
+devtools::load_all()
 
+#function to plot matches
+plot.matches <- function(md, title, lims=NULL){
+  
+    x.var <- all.vars(md$formula)[2]
+    y.var <- all.vars(md$formula)[3]
+  
+    p <- ggplot(md$matched.data, aes(.data[[x.var]], .data[[y.var]], group=subclass)) +
+      geom_point(data=md$data, aes(.data[[x.var]], .data[[y.var]]), colour="black", alpha=0.3,
+                 inherit.aes = F, size=3) + 
+      geom_point(aes(color=factor(t)), alpha=0.6, size=5) + 
+      geom_line(color="black") + 
+      labs(title=title, color="Treated")
+
+    if(!is.null(lims)) p <- p + xlim(lims[1]) + ylim(lims[2])
+    
+    p
+}
+
+#number of obs
+n <- 100
+
+#data frame with treatment and random covariates
+d <- list(t=c(rep(0,n*.6), rep(1,n*.4)),
+          X1=rnorm(n, 50, 5), 
+          X2=rnorm(n, 40, 4)
+          ) %>% as.data.frame()
+
+m.norep <- WhatsMatching::matched.data(t~X1+X2, d, "Mahalanobis", replace = F)
+m.rep <- WhatsMatching::matched.data(t~X1+X2, d, "Mahalanobis", replace = T)
+
+ggpubr::ggarrange(
+plot.matches(m.norep, "Mahalanobis Matches without Replacement"),
+plot.matches(m.rep, "Mahalanobis Matches with Replacement"), common.legend = T
+)
+
+```
+  
+   
+### Ordering    
+  
+  The ordering of the matches is only relevant if you are matching without replacement. If you are matching with replacement then the nearest match will be used irrespective of what order you are using. The `MatchIt` package uses the propensity score as a way of controlling the order of the matches and data can be matched using one of four orders - data, smallest, largest, and random. 
+  
+  Ordering by data is just using the data in the order it has in the dataframe. Ordering by smallest starts with the lowest propensity score first, or to put it another way, starts with the units that have the lowest probability of being treated based on the supplied covariates. Ordering by largest is the same as ordering by smallest but starting with the highest propensity score. Ordering by random is exactly as it sounds, the `sample` function is used on the number of units to generate a random vector to order the data by.
+  
+  The `MatchIt` package has not extended the ability to order data to the Mahalanobis Distance (as generally the propensity score is not used in this instance of matching) but for the purposes of comparison we have included it in the app.
+  
+```{r}
+
+m.data <- WhatsMatching::matched.data(t~X1+X2, d, "Propensity Score", replace = F, order = "data")
+m.small <- WhatsMatching::matched.data(t~X1+X2, d, "Propensity Score", replace = F, order = "smallest")
+m.large <- WhatsMatching::matched.data(t~X1+X2, d, "Propensity Score", replace = F, order = "largest")
+m.rand <- WhatsMatching::matched.data(t~X1+X2, d, "Propensity Score", replace = F, order = "random")
+
+
+m.PO <- ggplot(m.data$matched.data, aes(X1, X2, group=subclass)) +
+  geom_point(data=m.data$data, aes(X1, X2,fill=factor(t)),alpha=0.5, shape=21,
+             inherit.aes = F, size=3) + 
+  # geom_point(aes(color=factor(t)), alpha=0.6, size=5) + 
+  geom_line(aes(linetype="data", color="data"), lwd=1, alpha=0.6) + 
+  geom_line(data=m.small$matched.data, aes(linetype="smallest",color="smallest"), lwd=1, alpha=0.6) +
+  geom_line(data=m.large$matched.data, aes(linetype="largest",color="largest"), lwd=1, alpha=0.6) +
+  geom_line(data=m.rand$matched.data, aes(linetype="random",color="random"), lwd=1, alpha=0.6) +
+  labs(title="Propensity score matching using different match ordering", fill="Treated") +
+  scale_linetype_manual(name="Ordering", values = c("data"=1, "smallest"=2, "largest"=3, "random"=4)) +
+  scale_color_manual(name="Ordering", values = c("data"="black", "smallest"="blue", "largest"="darkgreen", "random"="red")) 
+  
+m.data <- WhatsMatching::matched.data(t~X1+X2, d, "Mahalanobis", replace = F, order = "data")
+m.small <- WhatsMatching::matched.data(t~X1+X2, d, "Mahalanobis", replace = F, order = "smallest")
+m.large <- WhatsMatching::matched.data(t~X1+X2, d, "Mahalanobis", replace = F, order = "largest")
+m.rand <- WhatsMatching::matched.data(t~X1+X2, d, "Mahalanobis", replace = F, order = "random")
+
+
+m.MO <- ggplot(m.data$matched.data, aes(X1, X2, group=subclass)) +
+  geom_point(data=m.data$data, aes(X1, X2,fill=factor(t)),alpha=0.5, shape=21,
+             inherit.aes = F, size=3) + 
+  # geom_point(aes(color=factor(t)), alpha=0.6, size=5) + 
+  geom_line(aes(linetype="data", color="data"), lwd=1, alpha=0.6) + 
+  geom_line(data=m.small$matched.data, aes(linetype="smallest",color="smallest"), lwd=1, alpha=0.6) +
+  geom_line(data=m.large$matched.data, aes(linetype="largest",color="largest"), lwd=1, alpha=0.6) +
+  geom_line(data=m.rand$matched.data, aes(linetype="random",color="random"), lwd=1, alpha=0.6) +
+  labs(title="Propensity score matching using different match ordering", fill="Treated") +
+  scale_linetype_manual(name="Ordering", values = c("data"=1, "smallest"=2, "largest"=3, "random"=4)) +
+  scale_color_manual(name="Ordering", values = c("data"="black", "smallest"="blue", "largest"="darkgreen", "random"="red")) 
+
+
+
+
+
+
+ggpubr::ggarrange(
+  m.PO, m.MO, common.legend = T, legend = "right"
+)
+
+
+```
+  
+  
+### Calipers  
+  
+  The application of calipers to the matching process is to essentially limit the abl
+  
+  
+## Matching Visuals  
+  
+  In order to demonstrate how matching works visually, we will simulate some data under different conditions to highlight the differences in the methods. This will purely show how data are matched between groups, we will look out how that changes the estimate of the treatment effect later.
+  
+  All these simulations will contain 60 control units and 40 treated units and the matches will be completed with both the Propensity Score and the Mahalanobis Distance. 
+  
+```{r simulated data}
+
+
+
+
+#treatment has a mild effect on one covariate (1/2 std dev)
+d$X1.mild <- d$t*2.5 + d$X1
+
+#treatment has a strong effect on one covariate (3 std dev)
+d$X1.strong <- d$t*15 + d$X1
+
+#treatment has opposite effects on covariates (mild)
+d$X2.mild <- d$t*-2 + d$X2
+
+#treatment has opposite effects on covariates (strong)
+d$X2.strong <- d$t*-12 + d$X2
+
+
+
+
+```
+  
+  
+```{r}
+#random, no treatment effect
+psm.1 <- WhatsMatching::matched.data(t~X1+X2, d, "Propensity Score")
+mdm.1 <- WhatsMatching::matched.data(t~X1+X2, d, "Mahalanobis")
+
+psp.1 <- plot.matches(psm.1, "Propensity Score Matches - Random Data")
+mdp.1 <- plot.matches(mdm.1, "Mahalanobis Distance Matches - Random Data")
+
+
+psm.2 <- WhatsMatching::matched.data(t~X1.mild+X2, d, "Propensity Score")
+mdm.2 <- WhatsMatching::matched.data(t~X1.mild+X2, d, "Mahalanobis")
+
+psp.2 <- plot.matches(psm.2, "Propensity Score Matches - Mild treatment effect on X1")
+mdp.2 <- plot.matches(mdm.2, "Mahalanobis Distance Matches - Mild treatment effect on X1")
+
+
+psm.3 <- WhatsMatching::matched.data(t~X1.strong+X2, d, "Propensity Score")
+mdm.3 <- WhatsMatching::matched.data(t~X1.strong+X2, d, "Mahalanobis")
+
+psp.3 <- plot.matches(psm.3, "Propensity Score Matches - Strong treatment effect on X1")
+mdp.3 <- plot.matches(mdm.3, "Mahalanobis Distance Matches - Strong treatment effect on X1")
+
+
+psm.4 <- WhatsMatching::matched.data(t~X1.mild+X2.mild, d, "Propensity Score")
+mdm.4 <- WhatsMatching::matched.data(t~X1.mild+X2.mild, d, "Mahalanobis")
+
+psp.4 <- plot.matches(psm.4, "Propensity Score Matches - Mild treatment effect on X1 and X2")
+mdp.4 <- plot.matches(mdm.4, "Mahalanobis Distance Matches - Mild treatment effect on X1 and X2")
+
+
+psm.5 <- WhatsMatching::matched.data(t~X1.strong+X2.strong, d, "Propensity Score")
+mdm.5 <- WhatsMatching::matched.data(t~X1.strong+X2.strong, d, "Mahalanobis")
+
+psp.5 <- plot.matches(psm.5, "Propensity Score Matches - Strong treatment effect on X1 and X2")
+mdp.5 <- plot.matches(mdm.5, "Mahalanobis Distance Matches - Strong treatment effect on X1 and X2")
+
+
+
+# ggpubr::ggarrange(psp.1, mdp.1, common.legend = TRUE)
+# ggpubr::ggarrange(psp.2, mdp.2, common.legend = TRUE)
+# ggpubr::ggarrange(psp.3, mdp.3, common.legend = TRUE)
+# ggpubr::ggarrange(psp.4, mdp.4, common.legend = TRUE)
+# ggpubr::ggarrange(psp.5, mdp.5, common.legend = TRUE)
+
+ggpubr::ggarrange(psp.1,psp.2,psp.3, mdp.1, mdp.2, mdp.3, common.legend = TRUE, legend = "right", align = "hv")
+
+
+ggpubr::ggarrange(psp.1,psp.4,psp.5, mdp.1, mdp.4, mdp.5, common.legend = TRUE, legend = "right")
+
+```
+  
+  
+  
+  
+  
+  
+  
+  For the purposes of simplicity and uniformity the `optmatch` package has been used to generate a distance matrix using the `match_on` function. The format of the data that is returned is the same for both the Mahalanobis Distance and the Propensity Score. We'll also be use the `fev` dataset from the `mplot` package which contains a data that is useful for demonstrating the matching process.     
+  
+  
 ```{r setup, echo=FALSE}
 #function to load data directly to named variable instead of
 #the variable being loaded into the global environment
 load.data <- function(dt, pkg){
   
   # make sure the relevant library is available
-  require(pkg, character.only = T)
+  library(pkg, character.only = T)
   #create environment for loading, otherwise loads into global
   e <- new.env()
   #get data
@@ -45,15 +276,18 @@ load.data <- function(dt, pkg){
   return(d)
 }
 
+fig.count <- 1
+#this is a custom function for loading data into named variable
+dt <- load.data("fev", "mplot")
 
 ```
-
+  
+  Let's have a quick look at the data so we know what we're dealing with.
 
 ```{r preview data}
-#this is a custom function for loading data into named variable
-d <- load.data("fev", "mplot")
 
-head(d)
+head(dt)
+
 ```
 
   As we can see, there are 5 columns. All the data here is numeric. For the purpose of this exercise, we want to see what the effect of smoke is on forced expiratory volume. Therefore, we will use the `smoke` variable as the treatment and `fev` is the outcome. The remaining covariates are `age`, `height`, and `sex`.  
@@ -61,15 +295,12 @@ head(d)
   Let's have a quick look at the data using `ggplot2`.  
   
 ```{r data plots}
-
 library(dplyr)
 library(ggplot2)
 
-dt <- d %>% mutate(Sex=ifelse(sex==0,"Female","Male"),
+#add meaningful labels
+dt <- dt %>% mutate(Sex=ifelse(sex==0,"Female","Male"),
                    Smokes=ifelse(smoke==0,"No","Yes"))
-# ,
-#                    Age=age+rnorm(nrow(.),0,0.2),
-#                    Height=Height+rnorm(nrow(.),0,0.2))
 
 p1 <- ggplot(dt, aes(x=Smokes)) 
 
@@ -85,16 +316,34 @@ p2.1 <- p2 + geom_point(aes(x=age, color=Smokes), alpha=0.5)
 p2.2 <- p2 + geom_point(aes(x=height, color=Smokes), alpha=0.5)
 p2.3 <- p2 + geom_boxplot(aes(x=Sex, fill=Smokes))
 p2.4 <- p2 + geom_boxplot(aes(x=Smokes, fill=Smokes))
+```
 
 
-ggpubr::ggarrange(p1.1,p1.2,p1.3,p1.4)
+#### Fig `r fig.count`  
 
-ggpubr::ggarrange(p2.1,p2.2,p2.3,p2.4)
+```{r data plots1}
+ggpubr::ggarrange(p1.1,p1.2,p1.3,p1.4, common.legend = T)
+fig.count <- fig.count + 1
 ```
   
+#### Fig `r fig.count`  
+
+```{r data plots2}
+ggpubr::ggarrange(p2.1,p2.2,p2.3,p2.4, common.legend = T)
+fig.count <- fig.count + 1
+```
+
+  
+  
+
+  
   We can see from this quick look at the data that smokers are older, taller and appear to have a larger FEV. They are also a small subset of the overall population in the dataset. If we were to map out the relationships in a directed acyclic graph, it might look something like this:
+  
+#### Fig `r fig.count`
 
 ```{r dag}
+fig.count <- fig.count + 1
+
 #smoke, age, height, sex, fev
 fev.dag <- dagitty::dagitty('dag{
                  age -> height
@@ -129,7 +378,7 @@ plot(fev.dag)
 f <- smoke~age+height
 
 #fit model
-fev.mod <- glm(f, data=d, family="binomial") 
+fev.mod <- glm(f, data=dt, family="binomial") 
 
 #get matrix using the fitted values from the model (propensity scores)
 #the matrix is generated using the treatment variable (y in the model output) 
@@ -141,7 +390,7 @@ ps.dm <- optmatch::match_on(x=fev.mod$fitted.values, z=fev.mod$y)
   
 ```{r create mahalanobis matrix}
 #Mahalanobis distance matrix
-md.dm <- optmatch::match_on(x=f, data=d, method="mahalanobis")
+md.dm <- optmatch::match_on(x=f, data=dt, method="mahalanobis")
 
 ```
 
@@ -161,7 +410,8 @@ md.dm <- optmatch::match_on(x=f, data=d, method="mahalanobis")
 #to make this repeatable I'm just going to wrap this is a function
 match.ids <- function(dm){ 
     
-  #we can get the row and column names from the matrix to make looping a bit easier. It will be the same for both methods in this case.
+  #we can get the row and column names from the matrix to make looping a bit easier. 
+  #It will be the same for both methods in this case.
   t.names <- attributes(dm)$dimnames$treatment
   c.names <- attributes(dm)$dimnames$control
   
@@ -195,7 +445,8 @@ match.ids <- function(dm){
   
 }
 
-#we can specify @.Data to get the matrix explictly as the optmatch object has some other parts we don't require
+#we can specify @.Data to get the matrix explictly as the optmatch 
+#object has some other parts we don't require
 ps.dm <- ps.dm@.Data
 md.dm <- md.dm@.Data
 
@@ -211,7 +462,6 @@ table(ps.ids$control==md.ids$control)
   OK. Now we have our matches for each method. Let's see what they look like visually using `ggplot2`.  
   
 ```{r plot matches}
-
 ps.matches <- rbind(
   cbind(dt[ps.ids$treatment,], subclass=ps.ids$treatment),
   cbind(dt[ps.ids$control,], subclass=ps.ids$treatment))
@@ -221,24 +471,35 @@ md.matches <- rbind(
   cbind(dt[md.ids$control,], subclass=md.ids$treatment))
 
 mp1 <- ggplot(ps.matches, aes(height, age, group=subclass)) +
-  geom_point(data=d, aes(height, age), colour="black", alpha=0.3,
+  geom_point(data=dt, aes(height, age), colour="black", alpha=0.3,
              inherit.aes = F, size=1) + 
   geom_point(aes(color=Smokes), alpha=0.6, size=3) + 
   geom_line(color="black") +
   labs(title="Propensity Score Matching matches")
 
 mp2 <- ggplot(md.matches, aes(height, age, group=subclass)) +
-  geom_point(data=d, aes(height, age), colour="black", alpha=0.3,
+  geom_point(data=dt, aes(height, age), colour="black", alpha=0.3,
              inherit.aes = F, size=1) + 
   geom_point(aes(color=Smokes), alpha=0.6, size=3) + 
   geom_line(color="black") +
   labs(title="Mahalanobis Distance Matching matches")
+```
 
+
+#### Fig `r fig.count`
+  
+```{r plot matches1}
 mp1
-mp2
-
+fig.count <- fig.count + 1
 ```
   
+#### Fig `r fig.count`
+  
+```{r plot matches2}
+mp2
+fig.count <- fig.count + 1
+```
+    
   We can see from these two plots that the matches between the groups are slightly different between methods. For example, the smoker that is `age`=15 and `height`=60 is paired with very different non-smokers. Overall the matches look quite similar in the distribution even though there are a few differences between them. Let's see if that changes the treatment effect.  
   
   There are two ways we can specify how we estimate the treatment effect on the matched data. The purpose of the matching is to control confounding and bias. If we are happy that has been done by virtue of the matching then we need only specify `fev ~ smoke`. Alternatively, if we wanted to cover our bases, we could include the covariates in the model as well - `fev ~ age + height + smoke`. Let's compare them to a model that contains all the data.  
@@ -310,5 +571,71 @@ dagitty::localTests(fev.dag, md.matches, type="cis.chisq")
 
 
 
+
+  
+  
+  
+  The propensity score is a popular choice for matching but using it appropriately has been a contentious topic in recent years. Let's look at why that might be. Below, some data has been simulated with both `X1` and `X2` being mediators between `t` (the treatment variable) and `y` (the outcome variable). There is a large treatment effect between `t` and `X2` which carries on to `y`. We can see on the plot below that there is complete separation between the treated and control groups with respect to these covariates.
+  
+  
+```{r}
+# library(WhatsMatching)
+library(ggplot2)
+
+#sample size
+n <- 200
+#treatment effect
+te <- 4
+
+#treatment variable with less treated units
+t <- rbinom(200,1,0.4)
+#covariates
+X1 <- rnorm(n,20,5)
+X2 <- rnorm(n,10,2)
+
+#lets make a big treatment effect on one of the covariates
+#t*10 will double the value of X2 for treated units (on average)
+X2 <- X2 + t*2
+
+y <- t*te + X1 + X2 + rnorm(n)
+
+dt <- cbind(t, X1, X2, y) %>% as.data.frame()
+
+dt %>% ggplot() + geom_point(aes(X1, X2, color=factor(t)))
+```
+
+
+```{r}
+# mod <- glm(formula=t~X1, data=dt, family="binomial")
+# 
+# c(var="X1", estimate=coef(mod)["X1"], confint(mod)["X1",])
+# coef(mod)[["X1"]]
+# 
+# dt.match <- matched.data(t~X1, dt, "Mahalanobis")
+# 
+# get.estimates(match.data=dt.match, f=y~t+X1+X2)
+# 
+# lm(y~X1+X2, data=dt.match$data)
+# 
+# dt.match$treatment
+
+
+a <- c("smoke", "fev", "t", "y")[c("fev", "smoke", "t", "y") %in% colnames(fev)]
+
+a <- NULL
+
+
+
+paste(NULL,a, sep="+", collapse=" ")
+
+noquote(paste("y", "~", "t", paste(NULL,NULL, sep="+ ", collapse = " ")))
+
+
+as.formula(t~y+X1)
+
+```
+  
+  
+  
 
 

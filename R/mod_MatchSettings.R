@@ -10,37 +10,75 @@
 mod_MatchSettings_ui <- function(id){
   ns <- NS(id)
   tagList(
-    fluidPage(markdown("For the purposes of this simulation, all data is simulated
-                        using the variables `t`, `X1`, `X2`, and `y`. The formula
-                        the matching is conducted with is `t ~ X1 + X2`."), br(),
-              selectizeInput("treat.f", "Formula for matching treated and control units",
-                          c("t ~ X1 + X2", "t ~ X1", "t ~ X2"),
-                          "t ~ X1 + X2"), br(),
-              fluidRow(column(6, "Matching Method 1"), column(6, "Matching Method 2"),
+    fluidPage(markdown("Please select the covariates that you would like to match on
+                        and the covariates you would like to use calculate the estimate of
+                        the treatment effect. Other matching settings can also be adjusted
+                        for two methods to compare below."), br(),
 
-                       column(6, selectInput("Dist1", "First Matching Distance",
+              fluidRow(column(6, strong("Select the covariates to match on"), br(),
+                              selectizeInput("treat.f", span("Formula: ",htmlOutput("t.formula", inline = T)),
+                                  c("X1", "X2"), c("X1","X2"), multiple = T)),
+                       column(6, strong("Select covariates to calculate the estimates"), br(),
+                              selectizeInput("outcome.f", span("Formula: ",htmlOutput("y.formula", inline = T)),
+                                                c("X1", "X2"), multiple=T))),
+              hr(),
+
+              fluidRow(column(4, h4("Matching Method 1"), offset = 4), column(4, h4("Matching Method 2"))),
+
+              fluidRow(
+                       column(3, strong("Matching Distance"),
+                       icon("question-sign", lib = "glyphicon", id = ns("distance")),
+                       bsPopover(
+                         id = ns("distance"),
+                         title = "<strong>Matching Distance</strong>",
+                         content = "Select the distance type you would like to match with. The options are 'Propensity Score' or 'Mahalanobis'.",
+                         placement = "right",
+                         options = list(container = "body")
+                       )),
+
+                       column(4, selectInput("Dist1", NULL,#"First Matching Distance",
                                              c("Mahalanobis", "Propensity Score"),
                                              "Mahalanobis")),
-                       column(6, selectInput("Dist2", "Second Matching Distance",
+                       column(4, selectInput("Dist2", NULL,#"Second Matching Distance",
                                              c("Mahalanobis", "Propensity Score"),
-                                             "Propensity Score")),
+                                             "Propensity Score"))),
 
-                       column(6, selectInput("Ord1", "First Matching Order",
+              fluidRow(column(3, strong("Matching Order"),
+                              icon("question-sign", lib = "glyphicon", id = ns("ord")),
+                              bsPopover(
+                                id = ns("ord"),
+                                title = "<strong>Matching Distance</strong>",
+                                content = "Select the order you would like to have the matches conducted in. Options are 'data', 'largest', 'smallest', 'random'.",
+                                placement = "right",
+                                options = list(container = "body")
+                              )),
+                       column(4, selectInput("Ord1", NULL,#"First Matching Order",
                                              c("data", "largest", "smallest", "random"),
                                              "data")),
-                       column(6, selectInput("Ord2", "Second Matching Order",
+                       column(4, selectInput("Ord2", NULL,#"Second Matching Order",
                                              c("data", "largest", "smallest", "random"),
-                                             "data")),
+                                             "data"))),
 
-                       column(6, checkboxInput("Rep1", "Use Replacement")),
-                       column(6, checkboxInput("Rep2", "Use Replacement"))
-              ),
-              selectizeInput("outcome.f", "Formula for calculating estimates",
-                          c("y ~ t", "y ~ t + X1 + X2", "y ~ t + X1", "y ~ t + X2"),
-                          "y ~  t"),
+              fluidRow(column(3, strong("Use Replacement"),
+                              icon("question-sign", lib = "glyphicon", id = ns("rep")),
+                              bsPopover(
+                                id = ns("rep"),
+                                title = "<strong>Use Replacement</strong>",
+                                content = "Select whether or not to use replacement with the matches.",
+                                placement = "right",
+                                options = list(container = "body")
+                              )),
+                       column(4,  checkboxInput("Rep1", NULL)),
+                       column(4, checkboxInput("Rep2", NULL))),
+
+              # fluidRow(
+              #   selectizeInput("outcome.f", htmlOutput("y.formula"),
+              #             c("X1", "X2"), #y ~ t", "y ~ t + X1 + X2", "y ~ t + X1", "y ~ t + X2"),
+              #             multiple=T)),
+              br(),
+
               actionButton("usematching", "Use these matching settings",
-                           width = "100%", style="font-weight: bold"),
-              textOutput("test")
+                           width = "100%", style="font-weight: bold")
     )
   )
 }

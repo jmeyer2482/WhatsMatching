@@ -29,9 +29,12 @@ Imports:
     shinythemes,
     smd,
     stats,
+    stringi,
+    tidyr,
     utils
 Suggests: 
     dagitty,
+    devtools,
     ggpubr,
     knitr,
     rmarkdown

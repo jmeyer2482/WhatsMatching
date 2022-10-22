@@ -1,0 +1,19 @@
+---
+title: "Vignette 3 - Applications"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette 3 - Applications}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(WhatsMatching)
+```
