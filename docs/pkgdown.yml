@@ -2,10 +2,8 @@ pandoc: '2.18'
 pkgdown: 2.0.6
 pkgdown_sha: ~
 articles:
-  Applications: Applications.html
-  Background: Background.html
-  TheApp: TheApp.html
-  WhatsMatching-HowTo: WhatsMatching-HowTo.html
-  WhatsMatching-Theory: WhatsMatching-Theory.html
+  Background: ../doc/Background.html
+  Applications: ../doc/Applications.html
+  TheApp: ../doc/TheApp.html
 last_built: 2022-10-22T11:56Z
 
