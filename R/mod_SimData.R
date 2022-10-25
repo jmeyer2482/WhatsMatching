@@ -515,9 +515,9 @@ mod_SimData_ui <- function(id) {
                 "sim4.X1t",
                 "X1",
                 ticks = F,
-                min = -0.9,
-                max = 0.9,
-                value = 0,
+                min = 0,
+                max = 1,
+                value = 0.5,
                 step = .1
               )
             ),
@@ -527,9 +527,9 @@ mod_SimData_ui <- function(id) {
                 "sim4.X2t",
                 "X2",
                 ticks = F,
-                min = -0.2,
-                max = 2,
-                value = 0,
+                min = 0,
+                max = 1,
+                value = 1,
                 step = .1
               )
             )),

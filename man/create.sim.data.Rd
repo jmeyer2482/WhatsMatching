@@ -13,13 +13,13 @@ create.sim.data(
   g2_shift_X1 = 1,
   g2_shift_X2 = 1,
   n = 200,
-  mean1 = 40,
+  mean1 = 50,
   mean2 = 40,
   sd1 = 5,
-  sd2 = 10,
-  rho = 0,
-  weight_t1 = 0.9,
-  weight_t2 = 0.9,
+  sd2 = 5,
+  rho = 0.2,
+  weight_t1 = 0.5,
+  weight_t2 = 0.5,
   weight_y0 = 20,
   weight_y1 = 1.2,
   weight_y2 = 0.8,
@@ -28,9 +28,9 @@ create.sim.data(
 )
 }
 \arguments{
-\item{sim}{a integer referencing the simulation - 1, 2 or 3}
+\item{sim}{a integer referencing the simulation - 1, 2, 3, or 4}
 
-\item{te}{a number represnting the treatment effect, specify for all simulations.}
+\item{te}{a number representing the treatment effect, specify for all simulations.}
 
 \item{jitter}{controls the SD of the rnorm function that is used to add jitter to the outcome variable}
 
@@ -42,7 +42,7 @@ create.sim.data(
 
 \item{g2_shift_X2}{Simulation 2 - how far to shift the X2 value for a control group}
 
-\item{n}{the number of observations to populate for simulation 2 and 3}
+\item{n}{the number of observations to populate for simulation 2, 3, and 4}
 
 \item{mean1}{Simulation 3 and 4 - X1 mean value for a normal distribution}
 
@@ -76,5 +76,6 @@ A function for simulating data
 }
 \examples{
 # generate a simulated dataframe
-create.sim.data(1,2)
+d <- create.sim.data(1,2)
+head(d)
 }

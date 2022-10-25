@@ -91,9 +91,10 @@ golem::add_fct("multimatchplot", with_test = F)
 # usethis::use_vignette("WhatsMatching-Theory")
 # usethis::use_vignette("WhatsMatching-HowTo")
 
-usethis::use_vignette("Background", title="Vignette 1 - Background")
-usethis::use_vignette("TheApp", title="Vignette 2 - The App")
-usethis::use_vignette("Applications", title="Vignette 3 - Applications")
+usethis::use_vignette("a-Background", title="Vignette 1 - Background")
+usethis::use_vignette("b-TheApp", title="Vignette 2 - The App")
+usethis::use_vignette("c-Applications", title="Vignette 3 - Applications")
+usethis::use_vignette("d-References", title="References")
 devtools::build_vignettes()
 
 ## Code Coverage----
@@ -143,3 +144,11 @@ devtools::build_vignettes()
 rstudioapi::navigateToFile("dev/03_deploy.R")
 
 devtools::load_all()
+
+usethis::use_pkgdown()
+pkgdown::build_site()
+pkgdown::build_reference(lazy=F)
+pkgdown::build_articles(lazy=F)
+
+pkgdown::build_favicons()
+

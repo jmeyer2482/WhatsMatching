@@ -477,12 +477,6 @@ app_server <- function(input, output, session) {
     updateActionButton(session, "usedata",
                        label = "Use the data from Simulation 3")
 
-    # updateSelectInput(session,
-    #                   "outcome.f",
-    #                   choices = c("y ~ t", "y ~ t + X1 + X2", "y ~ t + X1", "y ~ t + X2"))
-
-    # values$d.set <<- "sim"
-
     p <- plot.data(d)
 
     values$data.plots <<- p
@@ -528,10 +522,8 @@ app_server <- function(input, output, session) {
     values$TE <<- TE
     values$d <<- d
 
-    # updateActionButton(session, "usedata",
-    #                    label = "Use the data from Simulation 4")
-    #
-    # values$d.set <<- "sim"
+    updateActionButton(session, "usedata",
+                       label = "Use the data from Simulation 4")
 
     p <- plot.data(d)
 
@@ -729,21 +721,22 @@ app_server <- function(input, output, session) {
 
     shinyBS::toggleModal(session, "modMatchSettings", toggle = "close")
 
-    # if (is.null(values$d)) {
-    #   d <- values$selected.d
-    # } else {
-    #   d <- values$d
-    # }
+    #values$d is null at initialisation. covers random use case.
+    if (is.null(values$d)) {
+      d <- values$selected.d
+    } else {
+      d <- values$d
+    }
 
     a <- NULL
 
     t.f <- values$treat.f
 
+    #Check for more characters on right side of formula
     test1 <- nchar(t.f) - stringi::stri_locate_first_fixed(t.f,"~")[1] <= 2
 
-    # if(!is.formula(values$outcome.f)) a <- "The formula for calculating the outcome is incomplete"
+    #If there isn't, generate an error message
     if(test1) a <- "The formula for calculating the matches is incomplete"
-
 
 
     if(is.null(a)) {
@@ -752,6 +745,8 @@ app_server <- function(input, output, session) {
       values$selected.d <<- d
 
     } else {
+
+      shinyjs::disable()
 
       showModal(
         modalDialog(
@@ -763,9 +758,6 @@ app_server <- function(input, output, session) {
   }) %>%
     bindEvent(input$usematching)
 
-  # observe({
-
-    # print(values$selected.p)
     #render data plots
     output$dataPlot <- plotly::renderPlotly({values$selected.p})
 
@@ -793,9 +785,6 @@ app_server <- function(input, output, session) {
 
       M.list
       }, striped = T, hover = T, bordered = T, rownames = T, colnames = T)
-#
-#     }) %>%
-#     bindEvent(input$butViewData)
 
   observe({
     a <- input$sim4.X1t

@@ -11,23 +11,43 @@ matched.data(f, data, dist, order = "data", replace = FALSE)
 
 \item{data}{a dataframe of the data that is to be used for matching}
 
-\item{dist}{a matching distance. Either "propensity" or "mahalanobis"}
+\item{dist}{a matching distance, either "Propensity Score" or "Mahalanobis"}
 
 \item{order}{a named order of "data", "smallest", "largest", "random" to perform matches and is only relevant if replace = TRUE
-*"data" just uses the order the data is already in
-*"smallest" matches by the smallest propensity score first
-*"largest" matches by the largest propensity score first
-*"random" matches on a random order every time}
+\itemize{
+\item "data" just uses the order the data is already in
+\item "smallest" matches by the smallest propensity score first
+\item "largest" matches by the largest propensity score first
+\item "random" matches on a random order every time
+}}
 
 \item{replace}{boolean value of whether to replace matched units or not}
 }
 \value{
-Returns a dataframe with the variable t, Allocation, X1, X2, y
-
-A list of items that are generated from the mathcing process
+A list of items that are generated from the matching process
 }
 \description{
 A function for simulating data
+}
+\details{
+The output contains the following items:
+\itemize{
+\item $paired.data a dataframe of the matched pairs of data (prefix t. for treated group and c. for control group) with the calculated distance and order of matching
+\item $matched.data a dataframe with the matched data ready for analysis
+\item $data a dataframe of the original data
+\item $formula the formula used for matching
+\item $distance the distance used for matching
+\item $propensity a numeric vector of propensity scores in the same order as the original data
+\item $stratification a factored vector which has stratified the propensity score into groups (between 5 and 10)
+\item $wt.ATE a numeric vector of the average treatment effect based on the propensity score
+\item $wt.ATT a numeric vector of the average treatment effect on the treated based on the propensity score
+\item $wt.Matched a vector of weights based on how the matching occurred
+\item $d.m the 'DenseMatrix' output from the \code{\link[optmatch:match_on-methods]{optmatch::match_on()}} function used for matching
+\item $pairs a dataframe with the row labels for each treated unit and it's matched control with the calculated distance between them
+\item $treatment the treatment variable
+\item $order the order the matches were conducted in
+\item $replacement was replacement used to match, TRUE or FALSE
+}
 }
 \examples{
 #simulate some data

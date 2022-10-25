@@ -26,6 +26,7 @@ Imports:
     plotly,
     shiny (>= 1.7.1),
     shinyBS,
+    shinyjs,
     shinythemes,
     smd,
     stats,
@@ -33,9 +34,6 @@ Imports:
     tidyr,
     utils
 Suggests: 
-    dagitty,
-    devtools,
-    ggpubr,
     knitr,
     rmarkdown
 VignetteBuilder: 

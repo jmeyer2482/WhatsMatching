@@ -4,17 +4,20 @@
 #'
 #'
 #'
-#' @param sim a integer referencing the simulation - 1, 2 or 3
+#' @param sim a integer referencing the simulation - 1, 2, 3, or 4
 #'
-#' @param te a number represnting the treatment effect, specify for all simulations.
+#' @param te a number representing the treatment effect, specify for all simulations.
 #'
-#' @param n the number of observations to populate for simulation 2 and 3
+#' @param n the number of observations to populate for simulation 2, 3, and 4
 #' @param jitter controls the SD of the rnorm function that is used to add jitter to the outcome variable
 #'
 #' @param g1_min Simulation 2 - minimum value of for uniform distribution
 #' @param g1_max Simulation 2 - maximum value of for uniform distribution
 #' @param g2_shift_X1 Simulation 2 - how far to shift the X1 value for a control group
 #' @param g2_shift_X2 Simulation 2 - how far to shift the X2 value for a control group
+#'
+#' @param relX1 Simulation 3 - the causal relationship of X1 in the data. Can be 'mediator', 'confounder', 'collider', 'ancestor to y', 'ancestor to t'
+#' @param relX2 Simulation 3 - the causal relationship of X2 in the data. Can be 'mediator', 'confounder', 'collider', 'ancestor to y', 'ancestor to t'
 #'
 #' @param mean1 Simulation 3 and 4 - X1 mean value for a normal distribution
 #' @param mean2 Simulation 3 and 4 - X2 mean value for a normal distribution
@@ -26,14 +29,12 @@
 #' @param weight_y0 Simulation 3 and 4 - the unaffected value of the outcome y
 #' @param weight_y1 Simulation 3 and 4 - the weight of X1 on the outcome variable y
 #' @param weight_y2 Simulation 3 and 4 - the weight of X2 on the outcome variable y
-#' @param relX1 Simulation 3 - the causal relationship of X1 in the data. Can be 'mediator', 'confounder', 'collider', 'ancestor to y', 'ancestor to t'
-#' @param relX2 Simulation 3 - the causal relationship of X2 in the data. Can be 'mediator', 'confounder', 'collider', 'ancestor to y', 'ancestor to t'
 #'
 #'
 #' @return A dataframe with a 2 covariates, X1 and X2, and a treatment and outcome variable for the purposes of matching
 #'
 #' @importFrom dplyr mutate %>% select case_when
-#' @importFrom stats runif rbinom rnorm pnorm
+#' @importFrom stats runif rbinom rnorm
 #' @importFrom MASS mvrnorm
 #' @importFrom arm invlogit
 #' @importFrom tidyr expand_grid
@@ -43,7 +44,8 @@
 #'
 #' @examples
 #' # generate a simulated dataframe
-#' create.sim.data(1,2)
+#' d <- create.sim.data(1,2)
+#' head(d)
 
 create.sim.data <- function(
     sim = 1,
@@ -53,9 +55,9 @@ create.sim.data <- function(
     g1_min=0, g1_max=5, g2_shift_X1=1, g2_shift_X2=1,
 
     # Generating X1 and X2
-    n = 200, mean1 = 40, mean2 = 40, sd1 = 5, sd2 = 10, rho = 0,
+    n = 200, mean1 = 50, mean2 = 40, sd1 = 5, sd2 = 5, rho = 0.2,
     # Generating t
-    weight_t1 = 0.9, weight_t2 = 0.9,
+    weight_t1 = .5, weight_t2 = .5,
     # Generating y
     weight_y0 = 20, weight_y1 = 1.2, weight_y2 = 0.8,
 
@@ -172,8 +174,8 @@ create.sim.data <- function(
     d$t <- rbinom(n, 1, 0.4)
 
     #get weighted probabilities
-    prX1 <- pnorm(weight_t1*d$X1, mean1, sd1)
-    prX2 <- pnorm(weight_t2*d$X1, mean2, sd2)
+    prX1 <- (max(d$X1)-d$X1)/(max(d$X1)-min(d$X1))*weight_t1
+    prX2 <- (max(d$X2)-d$X2)/(max(d$X2)-min(d$X2))*weight_t2
 
     #update t based on causal relationships
     d$t <- switch(dir.t,
@@ -224,13 +226,14 @@ create.sim.data <- function(
 
     varcovarMat <- matrix(c(sd1^2, sd1*sd2*rho, sd1*sd2*rho, sd2^2),2)
 
+    #create the covariates X1 and X2
+    d <- data.frame(MASS::mvrnorm(n, mu = means, Sigma = varcovarMat))# %>%
 
     #get weighted probabilities
-    prX1 <- pnorm(weight_t1*d$X1, mean1, sd1)
-    prX2 <- pnorm(weight_t2*d$X1, mean2, sd2)
+    prX1 <- (max(d$X1)-d$X1)/(max(d$X1)-min(d$X1))*weight_t1
+    prX2 <- (max(d$X2)-d$X2)/(max(d$X2)-min(d$X2))*weight_t2
 
     #create the data
-    d <- data.frame(MASS::mvrnorm(n, mu = means, Sigma = varcovarMat))# %>%
     pr <- (prX1 + prX2)/2
     t <- rbinom(n, 1, prob=pr)
     y <- weight_y0 + te*t + weight_y1*d$X1 + weight_y2*d$X2

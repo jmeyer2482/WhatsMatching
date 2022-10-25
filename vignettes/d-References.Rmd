@@ -1,0 +1,23 @@
+---
+title: "References"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{References}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: ../inst/app/App_References.bib
+csl: ../inst/app/ama.csl
+nocite: '@*'
+link-citations: true
+linkcolor: blue
+always_allow_html: true
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## References  

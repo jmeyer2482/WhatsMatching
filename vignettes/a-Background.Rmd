@@ -1,0 +1,131 @@
+---
+title: "Vignette 1 - Background"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette 1 - Background}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: ../inst/app/App_References.bib
+csl: ../inst/app/ama.csl
+link-citations: yes
+linkcolor: blue
+always_allow_html: true
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Overview  
+  
+  
+  
+### The problem of observational data  
+  
+  In observational data there is no ability to control which people receive treatment and which do not. In fact, there is often little control over the available covariates that may help inform the outcomes. This potentially exposes observational data to selection bias and confounding. 
+  
+  Observational data has long been used to investigate effects in the real world. Thanks to computers and the internet the volume of observational data available has exploded and, while it is excellent to have all this data, making inferences from it should be approached with caution. Why is that? Well, it's because using data that hasn't been generated with the purpose of proving your hypothesis isn't likely to have all the information required to make an accurate estimate of the treatment effect and may include data that will confound the results.  
+  
+  When using observational data to make causal inferences regarding some sort of "treatment", the analyst is looking for the randomised experiment within the data. However, observational data from many sources is not designed for this purpose and often doesn't contain all the information required or contains a sample size that is larger and not necessarily representative of the group of interest, or both. This has led to the development of methods to assist in the pre-processing of data to obtain the most accurate results possible. 
+  
+### Approaches to dealing with observational data  
+  
+  There are a number of established approaches to dealing with observational data. The primary aim of these methods is to reduce bias in the estimation of the casual effect, especially confounding. Some options may include:  
+  - restricting the data on the confounding covariate to one level/group, for example females
+  - propensity score weighting uses the inverse probability of treatment as an adjustment on the model
+  - stratifying can be used on the available data to analyse groups separately then average the effect over the groups, equally this can be done with the propensity score    
+  - matching pairs treated and untreated individuals within the data that are "close" together
+  - multivariate regression includes the covariates in the regression model for estimating the effect
+  
+  We will be looking at matching methods and methods that use the propensity score.  
+  
+## Matching methods  
+  
+  Matching is a methodology that is used in the analysis of observational data. Matching is used as a pre-processing step to assist in improving the estimate of a given causal effect on an outcome of interest. The causal variable is generally framed as a binary treatment. Matching occurs by pairing the individuals, or units, in the dataset across the treated and control (untreated) groups. The purpose of pairing, or matching, the data is to find a hidden randomised experiment within the data. That is to say, to find data within the dataset that is free from confounding and other bias that is usually automatically accounted for by selection in a true randomised experiment.
+  
+  Essentially, when matching is conducted, a type of distance is used to see how far apart all the treated units are from all the controls. Then an iterative process takes place whereby each unit is matched to its "neighbour". This process can occur in an order of the analysts choosing and with or without replacement. At the end, the remaining units that are unmatched are removed and the analysis occurs on the matched data which, hopefully, is the hidden experiment being looked for.  
+  
+### Propensity score  
+  
+  Rosenbaum and Rubin (1983) defined the propensity score as the “conditional probability of assignment to a particular treatment given a vector of observed covariates” 1. It is one of the most widely used statistical methods when analysing observational data2,3. In most cases, the propensity score is estimated from available data using a simple logistic regression on a binary treatment assignment indicator. However, the estimation method is at the discretion of the analyst and is not limited to logistic regression.
+  
+  The propensity score allows the reduction of a multidimensional space to a single dimension for easy comparison between treated and untreated units. Mathematically, it can be formulated as $e(x_i) = pr(Z_i=1|x)$ where $e(x_i)$ is the propensity score, $Z$ is the treatment variable, $x$ is a vector of covariates, and $i$ represents an individual1,3. Therefore, the propensity score is the probability of receiving treatment given covariates $x$.
+  
+  The objective of using the propensity score in data analysis is to replicate a randomised experiment within observational data as a means of bias reduction and covariate balancing. The propensity score can be used in multiple way to achieve this, notably matching, weighting and stratification (aka subclassification)2,4. 
+
+  The propensity score is also widely used for other methods to improve estimates including weighting and stratification. While these methods are not the primary purpose of the app, their outcomes have been provided in the outputs to give some further insights into what alternative methods may demonstrate. 
+  
+### Applications of propensity scores – matching, weighting and stratification  
+  
+#### Matching  
+  
+  The propensity score is the most common way of conducting matching. It reduces a multidimensional space to a single dimension which allows for easy matching between units. It is based on theory by Rosenbaum and Rubin[ref] and relies on logistic regression to determine the probability that a unit will be treated. Mathematically, $e(x_i) = pr(Z_i=1|x)$ where $e(x_i)$ is the propensity score, $Z$ is the treatment variable, $x$ is a vector of covariates, and $i$ represents an individual. 
+  
+  Many packages in `R` that perform matching analysis take the leg work out of calculating the type of distance being used. When calculating the propensity score for matching the logistic regression formula looks like $t \sim x_1 + x_2 + ... + x_n$ where $t$ is the treatment variable and $x$ represents a chosen covariate to match on. Once the probabilities have been calculated then treated units are paired with control units that have the same or similar probability of treatment.  
+  
+  Matching requires that a type of distance between units is calculated. This distance is then used to pair or match units that are close together while discarding or pruning those that are not. Once pruning has occurred to the satisfaction of the analyst, the treatment effect can be estimated on the pruned dataset. Many methods of matching have been explored in the literature2,3 and while the propensity score is perhaps the most used distance metric, other distance metrics are available, including the Mahalanobis distance.
+  
+  It is important to note that estimates should generally be based on the average treatment effect on the treated (ATT) when using matching methods. This makes sense intuitively as matching effectively removes individuals from the data that could not be considered both treated and untreated. This is referred to as strongly ignorable treatment assignment and is a key assumption for providing unbiased estimates with the propensity score1.
+  
+  PSM is usually conducted using nearest neighbour matching. The application of callipers can be used to control matching units that are considered too far apart. Matching can be performed with or without replacement and it should be noted that the order of the dataset when passed to the matching algorithm can play a significant role in how units are matched when matching without replacement2. 
+  
+#### Weighting  
+  
+  Weighting with the propensity score differs from matching as no units are pruned from the dataset. This is an advantage over matching in the sense that all data can remain in the analysis, giving the opportunity to calculate the average treatment effect on all units (ATE), as opposed to the ATT.
+  
+  The formulas for weighting vary depending on the method you want to employ. The data being analysed, by virtue of its source, may be more appropriately analysed for the ATT and not the ATE. The formulas for these weights are:  
+$$ATE, w(W,x)=\frac{W}{\hat{e}(x)}+\frac{1-W}{1-\hat{e}(x)}$$  
+$$ATT, w(W,x)=W+(1-W)\frac{\hat{e}(x)}{1-\hat{e}(x)}$$  
+  where $\hat{e}(x)$ indicates the estimated propensity score conditional on observed $x$ covariates1,3.
+  
+#### Stratification (aka Subclassification)  
+  
+  The stratification method varies from matching and weighting in that it relies on the use of the propensity score to group units into quantiles. Once the number of groups has been established, the literature suggests this is between five and ten depending on the size of the dataset5, the treatment effect is estimated across the groups and then averaged to give a mean difference ATE1,3.
+
+### Mahalanobis matching  
+  
+  The Mahalanobis Distance was developed by Prasanta Chandra Mahalanobis in 1936 as a means of comparing skulls based on their measurements. It's normal application calculates how many standard deviations a point is from the mean of the specified variables and can give a good indication of outliers in a group. In matching, the application is similar but not quite the same. Instead of using the mean as a comparator, each treated unit is compared, pairwise, with each of the units in the control group. 
+  
+  The pairwise Mahalanobis Distance is calculated by $D_{ij} = (X_i−X_j)W^{−1}(X_i−X_j)^T$ (https://stats.stackexchange.com/questions/65705/pairwise-mahalanobis-distances) where $X_i$ and $X_j$ represent the matrix of covariates for the treated and control groups and $W^{-1}$ is the covariance matrix. Similar to the Propensity Score, the Mahalanobis Distance reduces a multidimensional space to a single value representing the distance between units. A major difference, which will soon be seen, is how the matches occur between the methods. The Mahalanobis Distance uses the raw information to calculate the distance between individual units which is in contrast to the Propensity Score which uses the probability of being treated to then determine the distance. 
+  
+### Exact and coarsened exact matching  
+  
+  There are many methods of matching available. Two others that are similar to the aforementioned are exact matching and coarsened exact matching. 
+  
+  Exact matching is as it sounds where matches require exactly the same covariate values to be paired together. This method can be too biased in its matching and result in a low number of matches but may be suited to a large dataset where the covariates are discrete or categorical. With categorical data in particular, there may be some utility in using or adding exact matching as calculating a "distance" between categorical groups is often not suitable.  
+  
+  Similar to exact matching, coarsened exact matching (CEM) uses buckets to group data together based on the covariate values. If you were looking at a two dimensional plot it would look like a grid. With CEM, only the grid squares with both treated and control units in them would be kept. This can be a good trade off between keeping more observations while still improving covariate balance.  
+  
+## Gaps in Understanding  
+  
+  The process and underlying logic of the matching process belies it's complexity. The propensity score matching process appears to be straight forward and require little effort to implement, which is reflected in its ubiquitous use. However, as King and Neilsen point out, there are many situations where the use of the propensity score for matching may not be suitable. Their 2019 paper gives many insights into the use of the propensity score and why other methods, like CEM and the Mahalanobis distance, may be better choices. While some of the explanations do make intuitive sense it can be difficult to decipher the practical application and implications of the advice.  
+  
+### The propensity score paradox  
+  
+  King and Neilsen presented a paradox that arises when using the propensity score for matching2. They were able to demonstrate that, when compared to other matching distances like the Mahalanobis distance, matching on the propensity score only approximated a randomised experiment as opposed to a more efficient fully blocked experiment. 
+  
+  As the matching algorithm proceeds, unmatched observations are pruned from the dataset. Initially, this reduces the imbalance between the treated and untreated groups with corresponding improvements to the estimated treatment effect. However, after a certain threshold is reached, further pruning the dataset starts to result in more biased estimates of the treatment effect. This is the PSM paradox. 
+  
+  The authors postulated that this made matching on the propensity score inferior and were able to demonstrate this concept visually but were unable to provide mathematical proofs of the implications for real data.
+
+### Model Dependence  
+  
+  Another issue that can arise generally with causal inference, but then also specifically with matching, is model dependence. This is essentially where the model selection still plays a large role in predicting the estimate of the treatment effect. This is a problem because that probably means that matching has not fixed the issue of confounding and now selection bias needs to be managed as well.
+  
+## Statement of research aim  
+  
+  The aim of this research is to explore some basic matching methodology and provide an interactive and educational space for people who want to understand matching and propensity score methods better. The space will be provided with a ShinyApp that can be accessed publically and supported by a website and R package stored on Github. This will allow novices to experiment with different matching methods and more experienced users to simulate their own matching experiments in the R environment.
+  
+  
+## Interactive applications to support learning  
+  
+  Learning by doing has been demonstrated to significantly improve learning when properly scaffolded, especially as part of Massive Open Online Courses (MOOCs), which are a key component of the modern educational tool kit in tertiary settings9. This project is aimed at the development of an educational tool where users can build an intuitive understanding of matching methods and compare different methods as discussed above. Using this educational tool, students will be able to generate data and visualise the matching process as it unfolds Users will also be able to compare the performance of matching with different degrees of pruning to the weighting and stratification applications of the propensity score that don’t involve pruning, and to matching approaches using the alternative Mahalanobis distance. 
+  
+### A few examples  
+  
+## The space for app development  
+  
+  
