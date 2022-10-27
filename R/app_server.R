@@ -299,10 +299,10 @@ app_server <- function(input, output, session) {
     ))
 
     #assign from reactivevalues to ensure values are static
-    o.f <- as.formula(values$outcome.f)
+    o.f <- stats::as.formula(values$outcome.f)
     d <- values$selected.d
     TE <- values$TE
-    t.f <- as.formula(values$treat.f)
+    t.f <- stats::as.formula(values$treat.f)
     D1 <- values$M1.dist
     O1 <- values$M1.ord
     R1 <- values$M1.rep

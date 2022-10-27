@@ -39,6 +39,7 @@ golem::add_fct("matches", with_test = F)
 golem::add_fct("matchplot", with_test = F)
 golem::add_fct("multimatchplot", with_test = F)
 
+
 # golem::add_utils("helpers", with_test = TRUE)
 
 ## External resources
@@ -95,6 +96,7 @@ usethis::use_vignette("a-Background", title="Vignette 1 - Background")
 usethis::use_vignette("b-TheApp", title="Vignette 2 - The App")
 usethis::use_vignette("c-Applications", title="Vignette 3 - Applications")
 usethis::use_vignette("d-References", title="References")
+# usethis::use_vignette("-References", title="References")
 devtools::build_vignettes()
 
 ## Code Coverage----
@@ -150,5 +152,4 @@ pkgdown::build_site()
 pkgdown::build_reference(lazy=F)
 pkgdown::build_articles(lazy=F)
 
-pkgdown::build_favicons()
-
+pkgdown::build_favicons(overwrite = T)

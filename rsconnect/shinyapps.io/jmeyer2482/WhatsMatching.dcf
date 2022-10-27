@@ -1,0 +1,14 @@
+name: WhatsMatching
+title: WhatsMatching
+username:
+account: jmeyer2482
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 7437871
+bundleId: 6446973
+url: https://jmeyer2482.shinyapps.io/WhatsMatching/
+when: 1666874753.03379
+lastSyncTime: 1666874753.0338
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: _pkgdown.yml|dev/01_start.R|dev/02_dev.R|dev/03_deploy.R|dev/run_dev.R

@@ -22,15 +22,15 @@ mod_Info_ui <- function(id){
       tabPanel("App Assumptions",withMathJax(), br(),
             includeMarkdown("inst/app/www/Assumptions.html")),
       tabPanel("Causal Inference",withMathJax(), br(),
-            includeMarkdown("inst/app/www/causal_inference.html")),
+            includeMarkdown("inst/app/www/Causal_Inference.html")),
       tabPanel("Matching", br(),
-            htmltools::includeMarkdown("inst/app/www/matching.html")),
+            htmltools::includeMarkdown("inst/app/www/Matching.html")),
       tabPanel("Propensity Score",withMathJax(),br(),
-            includeHTML("inst/app/www/propensity_score.html")),
+            includeHTML("inst/app/www/Propensity_Score.html")),
       tabPanel("Mahalanobis", br(),
-            includeMarkdown("inst/app/www/mahalanobis.html")),
+            includeMarkdown("inst/app/www/Mahalanobis.html")),
       tabPanel("PSM Paradox", br(),
-            includeMarkdown("inst/app/www/PSM_paradox.html"))
+            includeMarkdown("inst/app/www/PSM_Paradox.html"))
      )#tabpanel
 
     )#fluidpage

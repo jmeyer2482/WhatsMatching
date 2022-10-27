@@ -40,9 +40,15 @@ usethis::use_readme_rmd(open = FALSE)
 usethis::use_code_of_conduct(contact = "Jason Meyer")
 usethis::use_lifecycle_badge("Stable")
 usethis::use_news_md(open = FALSE)
+usethis::use_github_links()
 
 ## Use git ----
 usethis::use_git(message = "testing use_git")
+usethis::use_git_config(user.name= "jmeyer2482", user.email="jmeyer2482@gmail.com")
+usethis::create_github_token()
+credentials::set_github_pat("YourPAT")
+
+usethis::git_sitrep()
 
 ## Init Testing Infrastructure ----
 ## Create a template for tests

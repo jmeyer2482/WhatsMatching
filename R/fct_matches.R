@@ -35,14 +35,8 @@
 #' * $replacement was replacement used to match, TRUE or FALSE
 #'
 #'
-#' @importFrom dplyr mutate
-#' @importFrom dplyr %>%
-#' @importFrom dplyr select
-#' @importFrom dplyr row_number
-#' @importFrom dplyr arrange
-#' @importFrom stats glm
-#' @importFrom stats lm
-#' @importFrom stats quantile
+#' @importFrom dplyr mutate %>% select row_number arrange
+#' @importFrom stats glm lm quantile binomial
 #' @importFrom optmatch match_on
 #'
 #' @export
@@ -148,7 +142,7 @@ distance.matrix <- function(f, data, dist = "Propensity Score"){
   #a matching distance. Either "propensity" or "mahalanobis"
 
   #calculate the propensity score using logistic regression
-  p.scores <- glm(formula = f, data = data, family = "binomial")
+  p.scores <- stats::glm(formula = f, data = data, family = "binomial")
 
   #create a distance matrix using optmatch based on selected distance
   #the matrix returned is n x p where n is treated and p is control
