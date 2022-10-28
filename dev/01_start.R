@@ -28,8 +28,12 @@ golem::fill_desc(
   repo_url = "https://github.com/jmeyer2482/WhatsMatching" # The URL of the GitHub Repo (optional)
 )
 
+
+
 ## Set {golem} options ----
 golem::set_golem_options()
+
+golem::sanity_check()
 
 ## Create Common Files ----
 ## See ?usethis for more information

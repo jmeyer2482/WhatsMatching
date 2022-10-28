@@ -6,6 +6,7 @@
 #' @import shiny
 #' @import ggplot2
 #' @import dplyr
+#' @import markdown
 #' @rawNamespace import(plotly, except = last_plot)
 #' @import shinyBS
 #' @importFrom stats as.formula
@@ -29,6 +30,7 @@ library(shinyBS)
 library(htmltools)
 library(shinythemes)
 library(DT)
+library(markdown)
 # library(mplot)
 
 
@@ -746,7 +748,7 @@ app_server <- function(input, output, session) {
 
     } else {
 
-      shinyjs::disable()
+      # shinyjs::disable()
 
       showModal(
         modalDialog(

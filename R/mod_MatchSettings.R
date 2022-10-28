@@ -10,7 +10,7 @@
 mod_MatchSettings_ui <- function(id){
   ns <- NS(id)
   tagList(
-    fluidPage(markdown("Please select the covariates that you would like to match on
+    fluidPage(shiny::markdown("Please select the covariates that you would like to match on
                         and the covariates you would like to use calculate the estimate of
                         the treatment effect. Other matching settings can also be adjusted
                         for two methods to compare below."), br(),

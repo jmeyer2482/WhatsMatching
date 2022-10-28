@@ -151,5 +151,6 @@ usethis::use_pkgdown()
 pkgdown::build_site()
 pkgdown::build_reference(lazy=F)
 pkgdown::build_articles(lazy=F)
+pkgdown::build_home()
 
 pkgdown::build_favicons(overwrite = T)

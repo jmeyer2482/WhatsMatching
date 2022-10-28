@@ -42,7 +42,11 @@ golem::add_dockerfile_shinyproxy()
 golem::add_dockerfile_heroku()
 
 
-
 rsconnect::setAccountInfo(name='jmeyer2482',
-                          token='C5C2F89630BCB30C99C721E0AD9FBC8A',
-                          secret='NMextOp1PfJCY0Vo5rcL/crlJ30bKOkIHiQDk2p4')
+                          token='1D657AE94157F3BE40248BFFD25884BF',
+                          secret='ucqnT4iv1o1QUFE6WmuBIekd5nFpAm5OdjK55fb0')
+
+#
+# rsconnect::setAccountInfo(name='jmeyer2482',
+#                           token='C5C2F89630BCB30C99C721E0AD9FBC8A',
+#                           secret='NMextOp1PfJCY0Vo5rcL/crlJ30bKOkIHiQDk2p4')
