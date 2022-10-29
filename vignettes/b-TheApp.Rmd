@@ -19,6 +19,41 @@ knitr::opts_chunk$set(
 ```
 
 
+## The nuts and bolts (“the server side”)  
+
+This project has been developed as a Shiny app using the Golem framework to support it's production. There are a number of key functions that have been implemented to generate the data and matching processes. Let's have a look in a bit more detail. 
+
+### The golem framework  
+
+The <a href="https://golemverse.org/" target="_blank">Golem framework</a> is the brain child of Colin Fay. In essence, Shiny apps are ideal for development as a R package. That is to say that, the package structure lends itself well to the development of production grade Shiny apps.  
+
+The `golem` package itself provides functions and helpers to generate and create a framework that can be used for the development of the Shiny app. In addition, there are theoretical underpinnings and best practice advice provided to give the best chance of developing a high quality application.
+
+### Key functions and functionality  
+
+There are <a href="https://jmeyer2482.github.io/WhatsMatching/reference/index.html" target="_blank">four key functions</a> that have been developed as part of the package in order to make data generation and analysis as straightforward as possible. They are `create.sim.data`, `matched.data`, `matching.plot`, and `combined.plot`. The functions have been designed to follow and iterative process.
+
+ - `create.sim.data()`
+
+
+[WhatsMatching::create.sim.data()]  
+
+
+### Deployment (The app is here, the code is here and the vignettes are here)  
+
+## Simulations (“the UI side”)  
+
+### Example A (data | user options | screenshot)  
+
+### Example B (data | user options | screenshot)  
+
+### Example C (data | user options | screenshot)  
+
+### Example D (data | user options | screenshot)  
+
+### Example E (data | user options | screenshot)  
+
+
 ## Introduction  
   
   This Shiny App package has been developed with the intention of providing educational support for understanding matching methods in the context of causal inference. The initial intention was to deal specifically with the Propensity Score Paradox highlighted by King and Neilsen[ref]. Over the development of the app we decided that the underlying theoretical concepts that inform how matching is conducted by might be more useful and engaging in an educational environment. This document outlines the theoretical concepts and development process that was undertaken to develop the app.  

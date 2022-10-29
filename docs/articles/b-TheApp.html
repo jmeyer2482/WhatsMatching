@@ -89,6 +89,73 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># library(WhatsMatching)</span></span></code></pre></div>
 <div class="section level2">
+<h2 id="the-nuts-and-bolts-the-server-side">The nuts and bolts (“the server side”)<a class="anchor" aria-label="anchor" href="#the-nuts-and-bolts-the-server-side"></a>
+</h2>
+<p>This project has been developed as a Shiny app using the Golem
+framework to support it’s production. There are a number of key
+functions that have been implemented to generate the data and matching
+processes. Let’s have a look in a bit more detail.</p>
+<div class="section level3">
+<h3 id="the-golem-framework">The golem framework<a class="anchor" aria-label="anchor" href="#the-golem-framework"></a>
+</h3>
+<p>The <a href="https://golemverse.org/" target="_blank" class="external-link">Golem
+framework</a> is the brain child of Colin Fay. In essence, Shiny apps
+are ideal for development as a R package. That is to say that, the
+package structure lends itself well to the development of production
+grade Shiny apps.</p>
+<p>The <code>golem</code> package itself provides functions and helpers
+to generate and create a framework that can be used for the development
+of the Shiny app. In addition, there are theoretical underpinnings and
+best practice advice provided to give the best chance of developing a
+high quality application.</p>
+</div>
+<div class="section level3">
+<h3 id="key-functions-and-functionality">Key functions and functionality<a class="anchor" aria-label="anchor" href="#key-functions-and-functionality"></a>
+</h3>
+<p>There are
+<a href="https://jmeyer2482.github.io/WhatsMatching/reference/index.html" target="_blank" class="external-link">four
+key functions</a> that have been developed as part of the package in
+order to make data generation and analysis as straightforward as
+possible. They are <code>create.sim.data</code>,
+<code>matched.data</code>, <code>matching.plot</code>, and
+<code>combined.plot</code>. The functions have been designed to follow
+and iterative process.</p>
+<ul>
+<li><code><a href="../reference/create.sim.data.html">create.sim.data()</a></code></li>
+</ul>
+<p>[WhatsMatching::create.sim.data()]</p>
+</div>
+<div class="section level3">
+<h3 id="deployment-the-app-is-here-the-code-is-here-and-the-vignettes-are-here">Deployment (The app is here, the code is here and the vignettes are
+here)<a class="anchor" aria-label="anchor" href="#deployment-the-app-is-here-the-code-is-here-and-the-vignettes-are-here"></a>
+</h3>
+</div>
+</div>
+<div class="section level2">
+<h2 id="simulations-the-ui-side">Simulations (“the UI side”)<a class="anchor" aria-label="anchor" href="#simulations-the-ui-side"></a>
+</h2>
+<div class="section level3">
+<h3 id="example-a-data-user-options-screenshot">Example A (data | user options | screenshot)<a class="anchor" aria-label="anchor" href="#example-a-data-user-options-screenshot"></a>
+</h3>
+</div>
+<div class="section level3">
+<h3 id="example-b-data-user-options-screenshot">Example B (data | user options | screenshot)<a class="anchor" aria-label="anchor" href="#example-b-data-user-options-screenshot"></a>
+</h3>
+</div>
+<div class="section level3">
+<h3 id="example-c-data-user-options-screenshot">Example C (data | user options | screenshot)<a class="anchor" aria-label="anchor" href="#example-c-data-user-options-screenshot"></a>
+</h3>
+</div>
+<div class="section level3">
+<h3 id="example-d-data-user-options-screenshot">Example D (data | user options | screenshot)<a class="anchor" aria-label="anchor" href="#example-d-data-user-options-screenshot"></a>
+</h3>
+</div>
+<div class="section level3">
+<h3 id="example-e-data-user-options-screenshot">Example E (data | user options | screenshot)<a class="anchor" aria-label="anchor" href="#example-e-data-user-options-screenshot"></a>
+</h3>
+</div>
+</div>
+<div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
 <p>This Shiny App package has been developed with the intention of

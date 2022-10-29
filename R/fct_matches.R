@@ -35,8 +35,8 @@
 #' * $replacement was replacement used to match, TRUE or FALSE
 #'
 #'
-#' @importFrom dplyr mutate %>% select row_number arrange
-#' @importFrom stats glm lm quantile binomial
+#' @import dplyr
+#' @importFrom stats glm lm quantile
 #' @importFrom optmatch match_on
 #'
 #' @export

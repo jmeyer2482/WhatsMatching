@@ -28,12 +28,8 @@ golem::fill_desc(
   repo_url = "https://github.com/jmeyer2482/WhatsMatching" # The URL of the GitHub Repo (optional)
 )
 
-
-
 ## Set {golem} options ----
 golem::set_golem_options()
-
-golem::sanity_check()
 
 ## Create Common Files ----
 ## See ?usethis for more information
@@ -44,15 +40,9 @@ usethis::use_readme_rmd(open = FALSE)
 usethis::use_code_of_conduct(contact = "Jason Meyer")
 usethis::use_lifecycle_badge("Stable")
 usethis::use_news_md(open = FALSE)
-usethis::use_github_links()
 
 ## Use git ----
 usethis::use_git(message = "testing use_git")
-usethis::use_git_config(user.name= "jmeyer2482", user.email="jmeyer2482@gmail.com")
-usethis::create_github_token()
-credentials::set_github_pat("YourPAT")
-
-usethis::git_sitrep()
 
 ## Init Testing Infrastructure ----
 ## Create a template for tests
@@ -65,9 +55,9 @@ golem::use_recommended_deps()
 golem::get_golem_wd()
 ## Favicon ----
 # If you want to change the favicon (default is golem's one)
-golem::use_favicon(path="inst/app/www/matches.ico") # path = "path/to/ico". Can be an online file.
+golem::use_favicon() # path = "path/to/ico". Can be an online file.
 # golem::remove_favicon() # Uncomment to remove the default favicon
-
+golem::favicon()
 ## Add helper functions ----
 golem::use_utils_ui()
 golem::use_utils_server()

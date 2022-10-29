@@ -1,15 +1,22 @@
 #' multimatchplot
 #'
-#' @description A fct function
+#' @description ReA fct function
 #'
-#' @return The return value, if any, from executing the function.
+#' @param xvar a scalar character of the name of the variable you want on the x-axis
+#' @param yvar a scalar character of the name of the variable you want on the y-axis
+#' @param M1 the output from the `matched.data()` function
+#' @param M2 the output from the `matched.data()` function
+#' @param te the treatment effect you would like displayed, can be NULL (default)
+#' @param outcome.f a two-sided formula to estimate the the effect of treatment on the outcome, must at least contain the treatment variable on the right side (e.g. outcome ~ treatment)
+#'
+#' @return Returns a Plotly object with 2 matching comparisons as specified in M1 and M2 as well as a  plot showing the standardised mean differences between covariates and matching methods and a plot showing the estimated treatment effect for the two matching methods with the raw, and weighted and stratified propensity score estimates.
 #'
 #' @import ggplot2
 #' @rawNamespace import(plotly, except = last_plot)
 #' @importFrom stats coef
 #'
 #'
-#' @noRd
+#'
 
 combined.plot <- function(xvar, yvar, M1, M2, te=NULL,
                           outcome.f=y~t){
