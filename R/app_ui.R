@@ -24,7 +24,10 @@ app_ui <- function(request) {
 
 #set up fluidpage
     fluidPage(
-      theme = shinytheme("spacelab"), br(),
+      useShinyjs(),  # Set up shinyjs
+      shinythemes::themeSelector(),
+      # theme = shinytheme("flatly"),
+      br(),
 
       #Settings
       bsPopover(id="butGetData",title=HTML(paste(strong("Data and Match Settings"))),
@@ -54,12 +57,10 @@ app_ui <- function(request) {
                 "right",options = list(container = "body")
       ),
 
-      #Info
+      #Info - links to pkgdown webpage
       bsPopover(id="butInfo",title=HTML(paste(strong("App Information"))),
                 content="See all the information about the app and the research that underpins it.",
                 "right",options = list(container = "body")),
-      bsModal(id="modInfo", title="App Information", trigger = "butInfo",
-              size = "large", mod_Info_ui("Info_1")),
 
   shiny::sidebarLayout(position="right",
 
@@ -94,7 +95,8 @@ app_ui <- function(request) {
           actionButton("butRandom",label=NULL, icon=icon("shuffle"), width = "20%"),
 
           #Info
-          actionButton("butInfo",label=NULL, icon=icon("info"), width = "20%"))
+          actionButton("butInfo",label=NULL, icon=icon("info"), width = "20%",
+                       onclick ="window.open('https://jmeyer2482.github.io/WhatsMatching/', '_blank')"))
     ),
 
 

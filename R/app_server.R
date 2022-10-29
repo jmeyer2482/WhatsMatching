@@ -13,7 +13,8 @@
 #' @importFrom htmltools HTML
 #' @importFrom DT JS renderDT
 #' @importFrom utils data
-#' @importFrom stringi stri_locate_first_fixed
+#' @importFrom stringi stri_locate_first_fixed stri_split_fixed
+#' @importFrom shinyjs enable disable useShinyjs
 #' @import mplot
 #'
 #' @noRd
@@ -132,61 +133,57 @@ match.detail <- function(M, M.num, outcome.f, treat.f) {
 
 
 random.msg <- function() {
-  n <- round(runif(1, 0.51, 10.49), 0)
 
-  switch(
-    n,
-    "1" = paste(
+  sample(c(
+    paste(
       "In 2019, King and Neilsen identified a paradox when using",
       "the propensity score for matching and demonstrated that",
       "extensive matching on the propensity score can increase",
       "bias despite improving covariate balance."
     ),
-    "2" = paste(
+    paste(
       "The propensity score can be used in multiple way to achieve",
       "this, notably matching, weighting and stratification (aka",
       "subclassification)"
     ),
-    "3" = paste(
+    paste(
       "Matching requires that a type of distance between units",
       "is calculated. This distance is then used to pair or match",
       "units that are close together while discarding or pruning",
       "those that are not."
     ),
-    "4" = paste(
+    paste(
       "Weighting with the propensity score differs from matching",
       "as no units are pruned from the dataset. This is an advantage",
       "over matching in the sense that all data can remain in the",
       "analysis, giving the opportunity to calculate the average",
       "treatment effect on all units, as opposed to only the treated ones."
     ),
-    "5" = paste(
+    paste(
       "Stratification relies on the use of the propensity score to group",
       "units into quantiles. Once the number of groups has been",
       "established, usually between 5 and 10, the treatment",
       "effect is estimated across the groups and then averaged to",
       "give a mean difference average treatment effect."
     ),
-    "6" = paste(
+    paste(
       "Rosenbaum and Rubin (1983) defined the propensity score as",
       "the 'conditional probability of assignment to a particular",
       "treatment given a vector of observed covariates'. It is one",
       "of the most widely used statistical methods when analysing",
       "observational data."
     ),
-    "7" = paste(
+    paste(
       "In most cases, the propensity score is estimated from",
       "available data using a simple logistic regression on a binary",
       "treatment assignment indicator."
     ),
-    "8" = paste(
+    paste(
       "The propensity score is the probability of receiving treatment which",
       "reduces a multidimensional space to a single dimension for easy",
       "comparison between treated and untreated units."
-    ),
-    "9" = paste("Test 9"),
-    "10" = paste("Test 10")
-  )
+    )),
+  1)
 }
 
 
@@ -202,22 +199,22 @@ app_server <- function(input, output, session) {
   values$TE <- 2
   values$outcome.f <- y ~ t
   values$M1.dist <- "Mahalanobis"
-  values$M1.ord <- sample(x = c("data", "smallest", "largest", "random"),
-                          size = 1)
-  values$M1.rep <- sample(x = c(F, T), 1)
+  values$M1.ord <- "data"
+  #sample(x = c("data", "smallest", "largest", "random"),size = 1)
+  values$M1.rep <- F #sample(x = c(F, T), 1)
   values$M2.dist <- "Propensity Score"
-  values$M2.ord <- sample(
-                     x = c("data", "smallest", "largest", "random"),
-                     size = 1)
-  values$M2.rep <- sample(x = c(F, T), 1)
-  values$selected.d <- NULL#random.data(2)
-  values$outcome.f <-
-    sample(c(y ~ t, y ~ t + X1, y ~ t + X2, y ~ t + X1 + X2), 1)[[1]]
-  values$treat.f <- t ~ X1 + X2
+  values$M2.ord <- "data"
+  #sample(x = c("data", "smallest", "largest", "random"),size = 1)
+  values$M2.rep <- F #sample(x = c(F, T), 1)
+  values$selected.d <- create.sim.data(1)
+  values$outcome.f <- "y ~ t"
+  #sample(c("y ~ t", "y ~ t + X1", "y ~ t + X2", "y ~ t + X1 + X2"), 1)[[1]]
+  values$treat.f <- "t ~ X1 + X2"
   values$d <- NULL
   values$d.set <- "sim"
   values$selected.p <- NULL
   values$jitter <- 1
+  values$cols <- NULL
 
 
   #open the settings dialogue
@@ -260,8 +257,8 @@ app_server <- function(input, output, session) {
 
     #assign matching variables to session for use in another function
     values$outcome.f <<-
-      sample(c(y ~ t, y ~ t + X1, y ~ t + X2, y ~ t + X1 + X2), 1)[[1]]
-    values$treat.f <<- t ~ X1 + X2
+      sample(c("y ~ t", "y ~ t + X1", "y ~ t + X2", "y ~ t + X1 + X2"), 1)[[1]]
+    values$treat.f <<- "t ~ X1 + X2"
 
     values$M1.dist <<- dist[[1]]
     values$M1.ord <<- ord[[1]]
@@ -276,8 +273,10 @@ app_server <- function(input, output, session) {
 
     #random data based on treatment effect
     d <- random.data(values$TE)
-    values$selected.d <<- d
+
+    values$d <<- d
     values$selected.p <<- plot.data(d)
+    values$selected.d <<- d
 
 
   }) %>%
@@ -332,18 +331,18 @@ app_server <- function(input, output, session) {
 
     #outputs for sidebar on main page
     output$txt.M.TE <- renderText(TE)
-    output$txt.M.o.f <- renderText(deparse1(o.f))
-    output$txt.M.t.f <- renderText(deparse1(t.f))
+    output$txt.M.o.f <- renderText(values$outcome.f)
+    output$txt.M.t.f <- renderText(values$treat.f)
 
     #update options so settings reflect current outputs
-    updateSelectizeInput(session, "treat.f", selected = deparse(t.f))
+    updateSelectizeInput(session, "treat.f", selected = values$treat.f)
     updateSelectInput(session, "Dist1", selected = D1)
     updateSelectInput(session, "Dist2", selected = D2)
     updateSelectInput(session, "Ord1", selected = O1)
     updateSelectInput(session, "Ord2", selected = O2)
     updateCheckboxInput(session, "Rep1", value = R1)
     updateCheckboxInput(session, "Rep2", value = R2)
-    updateSelectizeInput(session, "outcome.f", selected = deparse(o.f))
+    updateSelectizeInput(session, "outcome.f", selected = values$outcome.f)
 
     #create a table of information about the plot outputs
     m.info <- list(
@@ -368,7 +367,6 @@ app_server <- function(input, output, session) {
     output$distPlot <- plotly::renderPlotly(cp)
 
     #close the modal now that everything is finished
-    #sleep for 5 extra seconds so plotly object has time to load
     removeModal()
 
   }) %>%
@@ -498,8 +496,8 @@ app_server <- function(input, output, session) {
 
     # X1m <- 0
     # X2m <- 0
-    X1sd <- input$sim4.X1sd
-    X2sd <- input$sim4.X2sd
+    # X1sd <- input$sim4.X1sd
+    # X2sd <- input$sim4.X2sd
     X1t <- input$sim4.X1t
     X2t <- input$sim4.X2t
     X1y <- input$sim4.X1y
@@ -510,15 +508,15 @@ app_server <- function(input, output, session) {
       te = TE,
       rho = rho,
       weight_y0 = y,
-      # mean1 = X1m,
-      # mean2 = X2m,
-      sd1 = X1sd,
-      sd2 = X2sd,
+      mean1 = 0,
+      mean2 = 0,
+      sd1 = 1,
+      sd2 = 1,
       weight_t1 = X1t,
       weight_t2 = X2t,
       weight_y1 = X1y,
       weight_y2 = X2y,
-      jitter=values$jitter
+      jitter=1
     )
 
     values$TE <<- TE
@@ -609,47 +607,57 @@ app_server <- function(input, output, session) {
   }) %>%
     bindEvent(input$applyFEV)
 
+  #plot FEV data
   output$FEVplot <- plotly::renderPlotly(plotFEV.data())
 
+
   observe({
+
     shinyBS::toggleModal(session, "modGetData", toggle = "close")
     shinyBS::toggleModal(session, "modMatchSettings", toggle = "open")
 
-    values$selected.p <<- values$data.plots
 
-  }) %>%
-    bindEvent(input$usedata)
-
-  observe({
+    values$M1.dist <<- input$Dist1
+    values$M1.ord <<- input$Ord1
+    values$M1.rep <<- input$Rep1
+    values$M2.dist <<- input$Dist2
+    values$M2.ord <<- input$Ord2
+    values$M2.rep <<- input$Rep2
 
     d <- values$d
+
+    # t.y <- c("smoke", "fev", "t", "y")[c("fev", "smoke", "t", "y") %in% colnames(d)]
+
+    # values$outcome.f <<- paste(t.y[2], "~", t.y[1], paste(NULL, input$outcome.f, sep="+ ", collapse = " "))
+    #
+    # values$treat.f <<- paste(t.y[1], "~",paste(input$treat.f, collapse = " + "))
+
+
+    values$selected.p <<- values$data.plots
+
+  # }) %>%
+  #   bindEvent(input$usedata)
+  #
+  # observe({
+
+    # d <- values$d
 
     cols <- colnames(d)
 
     opts <- cols[!cols %in% c("smoke", "fev", "t", "y", "Allocation")]
 
+    if(is.null(values$treat.f)){
+        sel.t <- NULL
+      } else {
+        sel.t <- stringi::stri_split_fixed(values$treat.f," ")[[1]][-c(1:2)]
+        sel.t <- sel.t[sel.t!="+"]
+      }
+    # sel.t <- cols[all.vars(as.formula(values$treat.f))[-1] %in% cols]
 
     updateSelectizeInput(
       session,
       "outcome.f",
       choices = opts,
-        # switch(
-        # values$d.set,
-        # "sim" = c("y ~ t",
-        #           "y ~ t + X1 + X2",
-        #           "y ~ t + X1",
-        #           "y ~ t + X2"),
-        # "fev" = c(
-        #   "fev ~ smoke",
-        #   "fev ~ smoke + age",
-        #   "fev ~ smoke + height",
-        #   "fev ~ smoke + sex",
-        #   "fev ~ smoke + age + height",
-        #   "fev ~ smoke + sex + height",
-        #   "fev ~ smoke + age + sex",
-        #   "fev ~ smoke + age + height + sex"
-        # )
-      # ),
       options = list(
         render = I(
           "
@@ -665,21 +673,8 @@ app_server <- function(input, output, session) {
     updateSelectizeInput(
       session,
       "treat.f",
-      # selected = switch(values$d.set,
-      #                   "sim" = "t ~ X1 + X2",
-      #                   "fev" = "smoke ~ age + height"),
+      selected = sel.t,
       choices = opts,
-      selected = opts,
-      # switch(
-      #   values$d.set,
-      #   "sim" = c("t ~ X1 + X2"),
-      #   "fev" = c(
-      #     "smoke ~ age + sex",
-      #     "smoke ~ height + sex",
-      #     "smoke ~ age + height",
-      #     "smoke ~ age + height + sex"
-      #   )
-      # ),
       options = list(
         render = I(
           "
@@ -693,30 +688,54 @@ app_server <- function(input, output, session) {
     )
 
   }) %>%
-    bindEvent(values$d)
+    # bindCache(values$d, input$butRandom) %>%
+    bindEvent(input$usedata)
 
   #observer to update reactive values if they are changed
+  # observe({
+  #
+  #   values$M1.dist <<- input$Dist1
+  #   values$M1.ord <<- input$Ord1
+  #   values$M1.rep <<- input$Rep1
+  #   values$M2.dist <<- input$Dist2
+  #   values$M2.ord <<- input$Ord2
+  #   values$M2.rep <<- input$Rep2
+  #
+  #   d <- values$d
+  #
+  #   t.y <- c("smoke", "fev", "t", "y")[c("fev", "smoke", "t", "y") %in% colnames(d)]
+  #
+  #   values$outcome.f <<- paste(t.y[2], "~", t.y[1], paste(NULL, input$outcome.f, sep="+ ", collapse = " "))
+  #
+  #   values$treat.f <<- paste(t.y[1], "~",paste(input$treat.f, collapse = " + "))
+  # }, priority=1000) %>%
+  #   bindEvent(input$usedata)
+
+  #set the displayed formula based on the selected dataset
   observe({
+    #get the column names
+    d.cols <- colnames(values$selected.d)
 
-    values$M1.dist <<- input$Dist1
-    values$M1.ord <<- input$Ord1
-    values$M1.rep <<- input$Rep1
-    values$M2.dist <<- input$Dist2
-    values$M2.ord <<- input$Ord2
-    values$M2.rep <<- input$Rep2
+    #get the treatment and outcome variables in order
+    t.y <- c("smoke", "fev", "t", "y")[c("fev", "smoke", "t", "y") %in% d.cols]
 
-    d <- values$d
+    #get the selections
+    sel.o <- input$outcome.f
+    sel.t <- input$treat.f
 
-    t.y <- c("smoke", "fev", "t", "y")[c("fev", "smoke", "t", "y") %in% colnames(d)]
+    #generate the formula for matching and estimating
+    y.f <- paste(t.y[2], "~", t.y[1], paste(NULL, sel.o, sep="+ ", collapse = " "))
+    t.f <- paste(t.y[1], "~",paste(sel.t, collapse = " + "))
 
-    values$outcome.f <<- paste(t.y[2], "~", t.y[1], paste(NULL, input$outcome.f, sep="+ ", collapse = " "))
+    #display the formulas
+    output$y.formula <- renderUI(code(noquote(y.f)))
+    output$t.formula <- renderUI(code(noquote(t.f)))
 
-    values$treat.f <<- paste(t.y[1], "~",paste(input$treat.f, collapse = " + "))
   })
-
-  output$y.formula <- renderUI(code(noquote(values$outcome.f)))
-
-  output$t.formula <- renderUI(code(noquote(values$treat.f)))
+  #
+  # output$y.formula <- renderUI(code(noquote(values$outcome.f)))
+  #
+  # output$t.formula <- renderUI(code(noquote(values$treat.f)))
 
   #start matching process
   observe({
@@ -734,28 +753,8 @@ app_server <- function(input, output, session) {
 
     t.f <- values$treat.f
 
-    #Check for more characters on right side of formula
-    test1 <- nchar(t.f) - stringi::stri_locate_first_fixed(t.f,"~")[1] <= 2
-
-    #If there isn't, generate an error message
-    if(test1) a <- "The formula for calculating the matches is incomplete"
-
-
-    if(is.null(a)) {
-
-      values$selected.d <<- NULL
-      values$selected.d <<- d
-
-    } else {
-
-      # shinyjs::disable()
-
-      showModal(
-        modalDialog(
-          title = "Error",
-          easyClose = F, a)
-        )
-    }
+    values$selected.d <<- NULL
+    values$selected.d <<- d
 
   }) %>%
     bindEvent(input$usematching)
@@ -771,6 +770,22 @@ app_server <- function(input, output, session) {
         initComplete = DT::JS("function(){$(this).addClass('compact');}")
       )
     )
+
+    #toggle use matching button based on formula being complete
+    observe({
+
+      f <- input$treat.f
+
+      if(is.null(f)){
+        shinyjs::disable("usematching")
+        shiny::updateActionButton(session, "usematching",
+                                  label = "The formula for calculating the matches is incomplete")
+      } else {
+        shinyjs::enable("usematching")
+        shiny::updateActionButton(session, "usematching",
+                                  label = "Use these matching settings")
+      }
+    })
 
     #render information table
     output$matchtable <- renderTable({
@@ -788,30 +803,30 @@ app_server <- function(input, output, session) {
       M.list
       }, striped = T, hover = T, bordered = T, rownames = T, colnames = T)
 
-  observe({
-    a <- input$sim4.X1t
-
-    updateSliderInput(session, "sim3.X2t",
-                      max=abs(a)-0.1, step=.1)
-
-  }) %>% bindEvent(input$sim4.X1t)
-
-
-  observe({
-    a <- input$sim4.X2t
-
-    updateSliderInput(session, "sim3.X1t",
-                      max=abs(a)-0.1, step=.1)
-
-  }) %>% bindEvent(input$sim4.X2t)
+  # observe({
+  #   a <- input$sim4.X1t
+  #
+  #   updateSliderInput(session, "sim3.X2t",
+  #                     max=abs(a)-0.1, step=.1)
+  #
+  # }) %>% bindEvent(input$sim4.X1t)
+  #
+  #
+  # observe({
+  #   a <- input$sim4.X2t
+  #
+  #   updateSliderInput(session, "sim3.X1t",
+  #                     max=abs(a)-0.1, step=.1)
+  #
+  # }) %>% bindEvent(input$sim4.X2t)
 
   #render outcome formula
   output$f.outcome <-
-    renderText(paste(code(deparse1(values$outcome.f))))
+    renderText(paste(code(noquote(values$outcome.f))))
 
   #render treatment formula
   output$f.treat <-
-    renderText(paste(code(deparse1(values$treat.f))))
+    renderText(paste(code(noquote(values$treat.f))))
 
   #render treatment effect
   output$TE <- renderText(values$TE)
@@ -820,7 +835,7 @@ app_server <- function(input, output, session) {
   mod_SimData_server("SimData_1")
   mod_ViewData_server("ViewData_1")
   mod_MatchSettings_server("MatchSettings_1")
-  mod_Info_server("Info_1")
+  # mod_Info_server("Info_1")
 
 
 }

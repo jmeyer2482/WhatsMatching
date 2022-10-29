@@ -38,6 +38,7 @@
 #' @importFrom MASS mvrnorm
 #' @importFrom arm invlogit
 #' @importFrom tidyr expand_grid
+#' @importFrom boot inv.logit
 #'
 #'
 #' @export
@@ -50,16 +51,16 @@
 create.sim.data <- function(
     sim = 1,
 
-    te=2, jitter = 0,
+    te=2, jitter = 1,
 
     g1_min=0, g1_max=5, g2_shift_X1=1, g2_shift_X2=1,
 
     # Generating X1 and X2
-    n = 200, mean1 = 50, mean2 = 40, sd1 = 5, sd2 = 5, rho = 0.2,
+    n = 200, mean1 = 0, mean2 = 0, sd1 = 1, sd2 = 1, rho = 0.2,
     # Generating t
     weight_t1 = .5, weight_t2 = .5,
     # Generating y
-    weight_y0 = 20, weight_y1 = 1.2, weight_y2 = 0.8,
+    weight_y0 = 5, weight_y1 = -1, weight_y2 = 1,
 
     #sim4 vars
     relX1="Mediator", relX2="Confounder"
@@ -174,24 +175,27 @@ create.sim.data <- function(
     d$t <- rbinom(n, 1, 0.4)
 
     #get weighted probabilities
-    prX1 <- (max(d$X1)-d$X1)/(max(d$X1)-min(d$X1))*weight_t1
-    prX2 <- (max(d$X2)-d$X2)/(max(d$X2)-min(d$X2))*weight_t2
+    pr <- switch(dir.t,
+                 "X1"=boot::inv.logit(-1 + weight_t1*d$X1),
+                 "X2"=boot::inv.logit(-1 + weight_t2*d$X2),
+                 "both"=boot::inv.logit(-1 + weight_t1*d$X1 + weight_t2*d$X2),
+                 "none"=d$t)
 
     #update t based on causal relationships
     d$t <- switch(dir.t,
-                   "X1"=rbinom(n, 1, prob = prX1),
-                   "X2"=rbinom(n, 1, prob = prX2),
-                   "both"=rbinom(n, 1, prob = (prX1+prX2)/2),
+                   "X1"=rbinom(n, 1, prob = pr),
+                   "X2"=rbinom(n, 1, prob = pr),
+                   "both"=rbinom(n, 1, prob = pr),
                    "none"=d$t)
 
     #simulate X1 and X2 if they are mediators
     #they are effected by t before calculating y
     d$X1 <- switch(relX1,
-                   "Mediator"=d$X1+d$t*1.5,
+                   "Mediator"=d$X1+d$t*3,
                    d$X1)
 
     d$X2 <- switch(relX2,
-                   "Mediator"=d$X2+d$t*1.5,
+                   "Mediator"=d$X2+d$t*3,
                    d$X2)
 
     #simluate y
@@ -204,11 +208,11 @@ create.sim.data <- function(
     #simulate X1 and X2 if they are colliders
     #they are effected by both t and y
     d$X1 <- switch(relX1,
-                   "Collider"=d$X1+d$t+d$y,
+                   "Collider"=d$X1 + d$t*weight_t1 + d$y*weight_y1,
                    d$X1)
 
     d$X2 <- switch(relX2,
-                   "Collider"=d$X2+d$t+d$y,
+                   "Collider"=d$X2 + d$t*weight_t2 + d$y*weight_y2,
                    d$X2)
 
 
@@ -229,18 +233,26 @@ create.sim.data <- function(
     #create the covariates X1 and X2
     d <- data.frame(MASS::mvrnorm(n, mu = means, Sigma = varcovarMat))# %>%
 
-    #get weighted probabilities
-    prX1 <- (max(d$X1)-d$X1)/(max(d$X1)-min(d$X1))*weight_t1
-    prX2 <- (max(d$X2)-d$X2)/(max(d$X2)-min(d$X2))*weight_t2
 
-    #create the data
-    pr <- (prX1 + prX2)/2
-    t <- rbinom(n, 1, prob=pr)
-    y <- weight_y0 + te*t + weight_y1*d$X1 + weight_y2*d$X2
-    Allocation <- ifelse(t==0,"Control","Treated")
+    d <- d %>%
+      mutate(p = boot::inv.logit(-1 + weight_t1*X1 + weight_t2*X2),
+             t = rbinom(n, 1, p),
+             y = weight_y0 + te*t + weight_y1*X1 + weight_y2*X2,
+             Allocation = ifelse(t==0,"Control","Treated"))
+    #
+    # #get weighted probabilities
+    # prX1 <- (max(d$X1)-d$X1)/(max(d$X1)-min(d$X1))*weight_t1
+    # prX2 <- (max(d$X2)-d$X2)/(max(d$X2)-min(d$X2))*weight_t2
+    #
+    # #create the data
+    # pr <- (prX1 + prX2)/2
+    # t <- rbinom(n, 1, prob=pr)
+    # y <- weight_y0 + te*t + weight_y1*d$X1 + weight_y2*d$X2
+    # Allocation <- ifelse(t==0,"Control","Treated")
 
-    d <- list(t=t, Allocation=Allocation, X1=d$X1, X2=d$X2, y=y) %>%
-        as.data.frame()
+    d <- d[c("t", "Allocation", "X1", "X2", "y")]
+    # list(t=t, Allocation=Allocation, X1=d$X1, X2=d$X2, y=y) %>%
+        # as.data.frame()
 
   }
 

@@ -418,8 +418,8 @@ mod_SimData_ui <- function(id) {
               sliderInput(
                 "sim4.TE",
                 label = NULL,
-                min = -5,
-                max = 5,
+                min = -2,
+                max = 2,
                 value = 2,
                 step = .1,
                 ticks = F
@@ -451,50 +451,50 @@ mod_SimData_ui <- function(id) {
               sliderInput(
                 "sim4.rho",
                 label = NULL,
-                min = -1,
-                max = 1,
-                value = 0,
+                min = -0.5,
+                max = 0.5,
+                value = 0.5,
                 step = 0.1,
                 ticks = F
               )
             )),
-
-        #standard deviation
-            fluidRow(
-              strong("Standard Deviation"),
-              icon("question-sign", lib = "glyphicon", id = ns("sd")),
-              bsPopover(
-                id = ns("sd"),
-                title = NULL,
-                content = sd.txt ,
-                "right",
-                options = list(container = "body")
-              )
-            ),
-            fluidRow(column(
-              6,
-              sliderInput(
-                "sim4.X1sd",
-                "X1",
-                ticks = F,
-                min = 0.2,
-                max = 5,
-                value = 2,
-                step = 0.2
-              )
-            ),
-            column(
-              6,
-              sliderInput(
-                "sim4.X2sd",
-                "X2",
-                ticks = F,
-                min = 0.2,
-                max = 5,
-                value = 2,
-                step = 0.2
-              )
-            )),
+#
+#         #standard deviation
+#             fluidRow(
+#               strong("Standard Deviation"),
+#               icon("question-sign", lib = "glyphicon", id = ns("sd")),
+#               bsPopover(
+#                 id = ns("sd"),
+#                 title = NULL,
+#                 content = sd.txt ,
+#                 "right",
+#                 options = list(container = "body")
+#               )
+#             ),
+#             fluidRow(column(
+#               6,
+#               sliderInput(
+#                 "sim4.X1sd",
+#                 "X1",
+#                 ticks = F,
+#                 min = 0.2,
+#                 max = 5,
+#                 value = 2,
+#                 step = 0.2
+#               )
+#             ),
+#             column(
+#               6,
+#               sliderInput(
+#                 "sim4.X2sd",
+#                 "X2",
+#                 ticks = F,
+#                 min = 0.2,
+#                 max = 5,
+#                 value = 2,
+#                 step = 0.2
+#               )
+#             )),
 
 
         #effect on treatment
@@ -515,7 +515,7 @@ mod_SimData_ui <- function(id) {
                 "sim4.X1t",
                 "X1",
                 ticks = F,
-                min = 0,
+                min = -1,
                 max = 1,
                 value = 0.5,
                 step = .1
@@ -527,7 +527,7 @@ mod_SimData_ui <- function(id) {
                 "sim4.X2t",
                 "X2",
                 ticks = F,
-                min = 0,
+                min = -1,
                 max = 1,
                 value = 1,
                 step = .1
@@ -553,9 +553,9 @@ mod_SimData_ui <- function(id) {
                 "sim4.X1y",
                 "X1",
                 ticks = F,
-                min = -3,
-                max = 3,
-                value = 2,
+                min = -1,
+                max = 1,
+                value = 1,
                 step = .1
               )
             ),
@@ -565,9 +565,9 @@ mod_SimData_ui <- function(id) {
                 "sim4.X2y",
                 "X2",
                 ticks = F,
-                min = -3,
-                max = 3,
-                value = 2,
+                min = -1,
+                max = 1,
+                value = 0,
                 step = .1
               )
             )),

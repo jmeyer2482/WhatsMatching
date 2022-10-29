@@ -13,7 +13,8 @@ mod_MatchSettings_ui <- function(id){
     fluidPage(shiny::markdown("Please select the covariates that you would like to match on
                         and the covariates you would like to use calculate the estimate of
                         the treatment effect. Other matching settings can also be adjusted
-                        for two methods to compare below."), br(),
+                        for two methods to compare below."),
+              hr(),
 
               fluidRow(column(6, strong("Select the covariates to match on"), br(),
                               selectizeInput("treat.f", span("Formula: ",htmlOutput("t.formula", inline = T)),
@@ -23,7 +24,7 @@ mod_MatchSettings_ui <- function(id){
                                                 c("X1", "X2"), multiple=T))),
               hr(),
 
-              fluidRow(column(4, h4("Matching Method 1"), offset = 4), column(4, h4("Matching Method 2"))),
+              fluidRow(align="left", column(4, h4("Matching Method 1"), offset = 4), column(4, h4("Matching Method 2"))),
 
               fluidRow(
                        column(3, strong("Matching Distance"),
@@ -89,7 +90,6 @@ mod_MatchSettings_ui <- function(id){
 mod_MatchSettings_server <- function(id){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
-
   })
 }
 

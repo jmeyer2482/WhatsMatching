@@ -17,7 +17,7 @@
 ## Amend DESCRIPTION with dependencies read from package code parsing
 attachment::att_amend_desc()
 devtools::document()
-attachment::att_from_namespace()
+# attachment::att_from_namespace()
 
 
 ## Add modules ----
@@ -154,3 +154,5 @@ pkgdown::build_articles(lazy=F)
 pkgdown::build_home()
 
 pkgdown::build_favicons(overwrite = T)
+
+pkgdown::build_home_index()
