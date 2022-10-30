@@ -142,12 +142,15 @@ estimates.plot <- function(M1, M2, outcome.f, te){
   comb.match.ests.cum <- comb.match.ests %>%
     accumulate_by(~.data$idx)
 
-  if(is.null(te)){
+  if(is.null(te) & is.null(M1$data$te)){
     agg.ests <- cbind(get.estimates(M1, outcome.f))
     ys <- c(comb.match.ests[['estimate']],agg.ests[1,2:4] %>% unlist())
     } else {
-    agg.ests <- cbind(get.estimates(M1, outcome.f), te=te)
-    ys <- c(comb.match.ests[['estimate']],agg.ests[1,2:5] %>% unlist())
+
+      if(!is.null(M1$data$te)) te <- max(M1$data$te)
+
+      agg.ests <- cbind(get.estimates(M1, outcome.f), te=te)
+      ys <- c(comb.match.ests[['estimate']],agg.ests[1,2:5] %>% unlist())
     }
 
   # ys <- c(comb.match.ests[['estimate']],agg.ests[1,2:5] %>% unlist())

@@ -34,11 +34,11 @@ When using observational data to make causal inferences regarding some sort of "
 ### Approaches to dealing with observational data  
   
 There are a number of established approaches to dealing with observational data. The primary aim of these methods is to reduce bias in the estimation of the casual effect, especially confounding. Some options may include:  
-- restricting the data on the confounding covariate to one level/group, for example females
-- propensity score weighting uses the inverse probability of treatment as an adjustment on the model
-- stratifying can be used on the available data to analyse groups separately then average the effect over the groups, equally this can be done with the propensity score    
-- matching pairs treated and untreated individuals within the data that are "close" together
-- multivariate regression includes the covariates in the regression model for estimating the effect
+* restricting the data on the confounding covariate to one level/group, for example females  
+* propensity score weighting uses the inverse probability of treatment as an adjustment on the model  
+* stratifying can be used on the available data to analyse groups separately then average the effect over the groups, equally this can be done with the propensity score    
+* matching pairs treated and untreated individuals within the data that are "close" together  
+* multivariate regression includes the covariates in the regression model for estimating the effect  
   
 We will be looking at matching methods and methods that use the propensity score.  
   

@@ -191,11 +191,11 @@ create.sim.data <- function(
     #simulate X1 and X2 if they are mediators
     #they are effected by t before calculating y
     d$X1 <- switch(relX1,
-                   "Mediator"=d$X1+d$t*3,
+                   "Mediator"=d$X1+weight_t1*d$t,
                    d$X1)
 
     d$X2 <- switch(relX2,
-                   "Mediator"=d$X2+d$t*3,
+                   "Mediator"=d$X2+weight_t2*d$t,
                    d$X2)
 
     #simluate y
@@ -258,10 +258,15 @@ create.sim.data <- function(
 
   #add jitter
   #if jitter is 0 it adds 0, jitter 0 by default
-  d$y <- d$y + rnorm(n,0,jitter)
+  j <- rnorm(n,0,jitter)
+  d$y <- d$y + j
+
+  jit.te <-  mean(j[d$t==1], na.rm = T)-mean(j[d$t==0], na.rm = T)
+  d$te <- te + jit.te
+  # rnorm(n,0,jitter)
 
   #rounded values
-  d <- d %>% mutate(across(3:5, ~ round(.x,3)))
+  d <- d %>% mutate(across(3:6, ~ round(.x,3)))
 
 
   return(d)

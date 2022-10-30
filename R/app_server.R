@@ -331,19 +331,21 @@ app_server <- function(input, output, session) {
     }
 
     #outputs for sidebar on main page
-    output$txt.M.TE <- renderText(TE)
-    output$txt.M.o.f <- renderText(values$outcome.f)
-    output$txt.M.t.f <- renderText(values$treat.f)
+    output$txt.M.TE <- renderText(max(d$te))
+    output$txt.M.o.f <- renderText(deparse(o.f))
+    output$txt.M.t.f <- renderText(deparse(M1$formula))#values$treat.f)
 
     #update options so settings reflect current outputs
-    updateSelectizeInput(session, "treat.f", selected = values$treat.f)
+    # updateSelectizeInput(session, "treat.f", selected = values$treat.f)
     updateSelectInput(session, "Dist1", selected = D1)
     updateSelectInput(session, "Dist2", selected = D2)
     updateSelectInput(session, "Ord1", selected = O1)
     updateSelectInput(session, "Ord2", selected = O2)
     updateCheckboxInput(session, "Rep1", value = R1)
     updateCheckboxInput(session, "Rep2", value = R2)
-    updateSelectizeInput(session, "outcome.f", selected = values$outcome.f)
+    # updateSelectizeInput(session, "outcome.f", selected = values$outcome.f)
+
+
 
     #create a table of information about the plot outputs
     m.info <- list(
@@ -614,9 +616,6 @@ app_server <- function(input, output, session) {
 
   observe({
 
-    shinyBS::toggleModal(session, "modGetData", toggle = "close")
-    shinyBS::toggleModal(session, "modMatchSettings", toggle = "open")
-
 
     values$M1.dist <<- input$Dist1
     values$M1.ord <<- input$Ord1
@@ -624,6 +623,11 @@ app_server <- function(input, output, session) {
     values$M2.dist <<- input$Dist2
     values$M2.ord <<- input$Ord2
     values$M2.rep <<- input$Rep2
+
+  })
+
+
+  observe({
 
     d <- values$d
 
@@ -645,7 +649,7 @@ app_server <- function(input, output, session) {
 
     cols <- colnames(d)
 
-    opts <- cols[!cols %in% c("smoke", "fev", "t", "y", "Allocation")]
+    opts <- cols[!cols %in% c("smoke", "fev", "t", "y", "Allocation", "te")]
 
     if(is.null(values$treat.f)){
         sel.t <- NULL
@@ -688,8 +692,10 @@ app_server <- function(input, output, session) {
       )
     )
 
+    shinyBS::toggleModal(session, "modGetData", toggle = "close")
+    shinyBS::toggleModal(session, "modMatchSettings", toggle = "open")
+
   }) %>%
-    # bindCache(values$d, input$butRandom) %>%
     bindEvent(input$usedata)
 
   #observer to update reactive values if they are changed
@@ -715,10 +721,10 @@ app_server <- function(input, output, session) {
   #set the displayed formula based on the selected dataset
   observe({
     #get the column names
-    d.cols <- colnames(values$selected.d)
+    d.cols <- colnames(values$d)
 
     #get the treatment and outcome variables in order
-    t.y <- c("smoke", "fev", "t", "y")[c("fev", "smoke", "t", "y") %in% d.cols]
+    t.y <- c("smoke", "fev", "t", "y")[c("smoke", "fev", "t", "y") %in% d.cols]
 
     #get the selections
     sel.o <- input$outcome.f
@@ -731,6 +737,10 @@ app_server <- function(input, output, session) {
     #display the formulas
     output$y.formula <- renderUI(code(noquote(y.f)))
     output$t.formula <- renderUI(code(noquote(t.f)))
+
+    #store the formulas
+    values$outcome.f <<- y.f
+    values$treat.f <<- t.f
 
   })
   #
@@ -749,10 +759,6 @@ app_server <- function(input, output, session) {
     } else {
       d <- values$d
     }
-
-    a <- NULL
-
-    t.f <- values$treat.f
 
     values$selected.d <<- NULL
     values$selected.d <<- d

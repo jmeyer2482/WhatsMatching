@@ -66,9 +66,10 @@ app_ui <- function(request) {
 
     shiny::sidebarPanel(width = 3,
         h4("Treatment Effect Settings"),#br(),
-        "Formula: ", code(textOutput("txt.M.o.f", inline = T), .noWS="outside"), br(),
-        "Treatment Effect: ", textOutput("txt.M.TE", inline = T), br(),
+        "Estimate Formula: ", code(textOutput("txt.M.o.f", inline = T), .noWS="outside"), br(),
+        "Actual Treatment Effect: ", textOutput("txt.M.TE", inline = T), br(),
         h4("Match settings"),
+        "Matching formula: ", code(textOutput("txt.M.t.f", inline = T)),br(),
         tableOutput("m.info"),
         includeMarkdown("inst/app/www/main_side.html")
     ),

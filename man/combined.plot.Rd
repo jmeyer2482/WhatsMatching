@@ -11,9 +11,9 @@ combined.plot(xvar, yvar, M1, M2, te = NULL, outcome.f = y ~ t)
 
 \item{yvar}{a scalar character of the name of the variable you want on the y-axis}
 
-\item{M1}{the output from the [matched.data()] function}
+\item{M1}{the output from the `matched.data()` function}
 
-\item{M2}{the output from the [matched.data()] function}
+\item{M2}{the output from the `matched.data()` function}
 
 \item{te}{the treatment effect you would like displayed, can be NULL (default)}
 
