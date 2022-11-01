@@ -77,7 +77,7 @@ app_ui <- function(request) {
   #title
     fluidRow(
       align = "center",
-      h1("What is Matching? An Exploratory Shiny App")
+      h1("What's Matching? An Exploratory Shiny App")
     ),
 
   #main page

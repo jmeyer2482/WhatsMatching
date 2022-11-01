@@ -4,19 +4,37 @@
     <loc>/404.html</loc>
   </url>
   <url>
-    <loc>/articles/a-Background.html</loc>
+    <loc>/CODE_OF_CONDUCT.html</loc>
+  </url>
+  <url>
+    <loc>/LICENSE-text.html</loc>
+  </url>
+  <url>
+    <loc>/LICENSE.html</loc>
   </url>
   <url>
     <loc>/articles/Applications.html</loc>
+  </url>
+  <url>
+    <loc>/articles/Background.html</loc>
+  </url>
+  <url>
+    <loc>/articles/TheApp.html</loc>
+  </url>
+  <url>
+    <loc>/articles/WhatsMatching-HowTo.html</loc>
+  </url>
+  <url>
+    <loc>/articles/WhatsMatching-Theory.html</loc>
+  </url>
+  <url>
+    <loc>/articles/a-Background.html</loc>
   </url>
   <url>
     <loc>/articles/b-Applications.html</loc>
   </url>
   <url>
     <loc>/articles/b-TheApp.html</loc>
-  </url>
-  <url>
-    <loc>/articles/Background.html</loc>
   </url>
   <url>
     <loc>/articles/c-Applications.html</loc>
@@ -31,28 +49,10 @@
     <loc>/articles/index.html</loc>
   </url>
   <url>
-    <loc>/articles/TheApp.html</loc>
-  </url>
-  <url>
-    <loc>/articles/WhatsMatching-HowTo.html</loc>
-  </url>
-  <url>
-    <loc>/articles/WhatsMatching-Theory.html</loc>
-  </url>
-  <url>
     <loc>/authors.html</loc>
   </url>
   <url>
-    <loc>/CODE_OF_CONDUCT.html</loc>
-  </url>
-  <url>
     <loc>/index.html</loc>
-  </url>
-  <url>
-    <loc>/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>/LICENSE.html</loc>
   </url>
   <url>
     <loc>/reference/create.sim.data.html</loc>
