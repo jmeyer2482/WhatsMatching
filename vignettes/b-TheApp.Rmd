@@ -75,31 +75,67 @@ Here, we provide some examples that highlight the difficulties in making decisio
 This example uses one of the simulations from King and Neilsen's 2019 paper. It takes three groups representing a fully blocked experiment, a random experiment and a group of all controls. Covariates X1 and X2 are generated with the fully blocked experiment being almost identically paired between treated and control units and the random experiment group has, as you would guess, randomly placed  treated and control units. The control group consists of only control units and no treated units.  
 
 The methods being compared in this example are the use of the Mahalanobis distance, which is calculated using the distance between a treated and control unit in the context of the covariance matrix, and the Propensity Score, which is essentially logistic regression on the treatment variable using selected covariates. The outcome demonstrated is that, under these conditions, the Mahalanobis distance is superior to the Propensity score in selecting the fully blocked experiment first. This occurs because the Propensity score, once calculated, is blind to the real data that informs the probability of treatment.  
+Settings: Data from Simulation 1  
+Method 1 - Mahalanobis ordered by data without replacement
+Method 2 - Propensity score ordered by data without replacement
+Matched on `X1` and `X2`
+Treatment effect calculated using `y ~ t`
 
-![Figure 2. Replacement](../man/figures/Ex-fullyblocked.PNG){width=100%}   
+![Figure 2. Fully Block Experiment](../man/figures/Ex-fullyblocked.PNG){width=100%}   
+
+Take home message:  
+The propensity score may not be the best choice for achieving covariate balance, which is a primary aim of matching.
 
 ### Example B (data | user options | screenshot)  
 
-We demonstrate in Fig. 2. that the intuitiveness behind using replacement may not be clear.  
+We demonstrate in Fig. 3. that the intuitiveness behind using replacement may not be clear. This simulation is also from the King ans Neilsen paper. `X1` and `X2` constitute 2 overlapping uniform distributions for the treated and control groups. There are 200 units in the dataset with 100 units in each group. For this simulation we have only changed whether the matches are conducted with replacement.  
+
+You can clearly see that there are a number of the control units that are unmatched. This has occurred because there are other "closer" controls who can be matched to the treated units. If we look at *Plot 3* in the panel we can see that the covariate balance has been maintained and, as we expect, the estimate treatment effect approaches the true effect.      
+
+Settings: Data from Simulation 2  
+Method 1 - Propensity score ordered by data with replacement  
+Method 2 - Propensity score ordered by data without replacement  
+Matched on `X1` and `X2`  
+Treatment effect calculated using `y ~ t`  
 
 ![Figure 3. Replacement](../man/figures/Ex-replacement.PNG){width=100%}  
 
+Take home message:  
+Datasets where the treated and control groups are approximately equal may require the consideration of different settings to achieve covariate balance and thus a more accurate estimate of the treatment effect.  
 
 ### Example C (data | user options | screenshot)  
 
+For this example we are using the same simulation as in Fig. 2. This time we are comparing the ordering of the matches. In this case comparison is starting with the smallest propensity score versus starting with the largest. This essentially boils down to matching the treated units with the lowest probability of being treated first or starting with those with the highest probability of being treated.  
+
+We can see below in Fig. 4. that *Plot 1* has made some unusual pairings. This makes some sense as when you pair units that have the highest probability of being treated first then you quickly increase the distances between the remaining units that need to be paired. This means that the "good matches" are getting further and further away.  
+
+This is a problem that can occur for any matching method as most matching methods use nearest neighbour methodology. If the best nearest neighbour is already paired then the process just moves to the next available one no matter the distance. This further highlights the advantage of using replacement which conveniently ignores ordering and selects the nearest partner irrespective of if it is matched. 
+
+Settings: Data from Simulation 1  
+Method 1 - Propensity score ordered by largest without replacement  
+Method 2 - Propensity score ordered by smallest without replacement  
+Matched on `X1` and `X2`  
+Treatment effect calculated using `y ~ t`  
+
 ![Figure 4. Ordering](../man/figures/Ex-ordering.PNG){width=100%}   
+
+Take home message:  
+The ordering or optimisation method of how the matches are selected can impact what data is selected for analysis.   
 
 ### Example D (data | user options | screenshot)  
 
+Covariate specification and model selection are important when undertaking matching. Ideally, the matching occurs in such a way that the model specification is less important (another problem for causal inference in observational data!) which will remove some of the bias. In this simulation we have a bivariate normal distribution that has been adjusted based on the user selections. The data generation here allows users to select the treatment effect and how `X1` and `X2` fit into the data from a causal aspect. In this case, `X1` is a confounder between `t` and `y`, and `X2` is a mediator between `t` and `y`.  
 
-![Figure 5. Specification](../man/figures/Ex-specification.PNG){width=100%}  
+There are a few things to unpick here. Firstly, we have only matched on the confounding variable, `X1`, and we have included in the model for the estimate. Interestingly, there is little difference between the the 2 methods for matching, and therefore the covarate balance and estimates are very similar. We can tell the pairing is baised to `X1` because the lines the demonstrate the pairs are vertical. That tells us the shortest distance between the units is horizontal (aka the x-axis or `X1`).
 
-### Example E (data | user options | screenshot)  
+Settings: Data from Simulation 4
+Method 1 - Mahalanobis ordered by data without replacement  
+Method 2 - Propensity score ordered by data without replacement  
+Matched on `X1`  
+Treatment effect calculated using `y ~ t + X1` 
+Both `X1` and `X2` set to have a effect on outcome and treatment to 1
 
+![Figure 5. Specification](../man/figures/Ex-Forgotten-confounder.png.PNG){width=100%}  
 
-![Figure 6. Confounding-wrong](../man/figures/Ex-Confounding-wrong.PNG){width=100%}  
-
-
-![Figure 7. Confounding-right](../man/figures/Ex-Confounding-right.PNG){width=100%}  
 
 

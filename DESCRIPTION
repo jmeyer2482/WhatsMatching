@@ -1,8 +1,10 @@
 Package: WhatsMatching
 Title: What is Matching?
 Version: 0.0.0.9000
-Authors@R: 
-    person("Jason", "Meyer", , "jmeyer2482@gmail.com", role = c("cre", "aut"))
+Authors@R: c(
+    person("Jason Meyer <jmeyer2482@gmail.com> [cre, aut] (<https://orcid.org/0000-0002-9344-1280>)"),
+    person("Mark Hanly [dgs] (<https://orcid.org/0000-0002-9279-7453>)")
+  )
 Description: The WhatsMatching package demonstrates how propensity score
     matching and mahalanobis distance matching compare under different
     circumstances. The aim of the app is to provide educational insights
@@ -26,6 +28,7 @@ Imports:
     mplot,
     optmatch,
     plotly,
+    rlang,
     shiny (>= 1.7.1),
     shinyBS,
     shinyjs,

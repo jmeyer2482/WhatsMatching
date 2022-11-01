@@ -22,11 +22,30 @@ golem::fill_desc(
   pkg_name = "WhatsMatching", # The Name of the package containing the App
   pkg_title = "What is Matching?", # The Title of the package containing the App
   pkg_description = "The WhatsMatching package demonstrates how propensity score matching and mahalanobis distance matching compare under different circumstances. The aim of the app is to provide educational insights into matching methods.", # The Description of the package containing the App
-  author_first_name = "Jason", # Your First Name
-  author_last_name = "Meyer", # Your Last Name
-  author_email = "jmeyer2482@gmail.com", # Your Email
+  author_first_name = "X", # Your First Name
+  author_last_name = "X", # Your Last Name
+  author_email = "X", # Your Email
   repo_url = "https://github.com/jmeyer2482/WhatsMatching" # The URL of the GitHub Repo (optional)
 )
+
+description <- desc::description$new()
+lapply(
+  c(person(given = "Jason",
+           family = "Meyer",
+           role = c("cre", "aut"),
+           email = "jmeyer2482@gmail.com",
+           comment = c(ORCID = "0000-0002-9344-1280")),
+    person(given = "Mark",
+           family = "Hanly",
+           role = "dgs",
+           comment = c(ORCID = "0000-0002-9279-7453"))),
+  function(x){
+    description$add_author(as.character(x))
+  }
+)
+description$del_author("X")
+description$write(file = "DESCRIPTION")
+
 
 ## Set {golem} options ----
 golem::set_golem_options()
