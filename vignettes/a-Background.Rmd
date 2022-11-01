@@ -131,6 +131,7 @@ There has been a recent growth in the use of interactive learning websites like 
   
 ## The space for app development  
   
-Currently, there is no available interactive options to simulate matching methods. From an educational perspective, a students understanding of the matching process is virtually entirely theoretical. The purpose of the app is to provide educational support and the ability for for users to play with and visualise how matching occurs. In addition, this app has been developed as a package which makes easy to use functions available to more advanced users who may want to investigate their own data.
-
+Currently, there is no available interactive options to simulate matching methods. From an educational perspective, a students understanding of the matching process is virtually entirely theoretical. The purpose of the app is to provide educational support and the ability for for users to play with and visualise how matching occurs. In addition, this app has been developed as a package which contains easy to use functions that are available to more advanced users who may want to investigate without the constrains of the Shiny App.
+  
+  
 

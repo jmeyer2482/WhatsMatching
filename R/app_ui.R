@@ -25,8 +25,8 @@ app_ui <- function(request) {
 #set up fluidpage
     fluidPage(
       shinyjs::useShinyjs(),  # Set up shinyjs
-      shinythemes::themeSelector(),
-      # theme = shinytheme("flatly"),
+      # shinythemes::themeSelector(),
+      theme = shinytheme("cerulean"),
       br(),
 
       #Settings

@@ -58,7 +58,7 @@ create.sim.data <- function(
     # Generating X1 and X2
     n = 200, mean1 = 0, mean2 = 0, sd1 = 1, sd2 = 1, rho = 0.2,
     # Generating t
-    weight_t1 = .5, weight_t2 = .5,
+    weight_t1 = -1, weight_t2 = 1,
     # Generating y
     weight_y0 = 5, weight_y1 = -1, weight_y2 = 1,
 
@@ -117,7 +117,6 @@ create.sim.data <- function(
 
 
   if (sim==3) {
-
 
     # Collider, Mediator, Confounder
     txt <- c("Mediator", "Collider", "Confounder", "Ancestor of t", "Ancestor of y")

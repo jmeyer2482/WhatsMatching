@@ -15,6 +15,7 @@
 #' @importFrom utils data
 #' @importFrom stringi stri_locate_first_fixed stri_split_fixed
 #' @importFrom shinyjs enable disable useShinyjs
+#' @importFrom rlang is_empty
 #' @import mplot
 #'
 #' @noRd
@@ -66,30 +67,28 @@ plot.data <- function(d) {
   control.col <-'#3772ff'
   treat.col <- '#df2935'
 
-  p1 <-
-    ggplot(d, aes(.data$X1, .data$X2, colour = .data$Allocation)) +
+  p1 <- ggplot(d, aes(.data$X1, .data$X2, colour = .data$Allocation)) +
     geom_point(alpha = 0.5) + theme(legend.position = "none") +
-    # guides(colour = "Group") +
-    scale_color_manual(values=c(control.col, treat.col), name="Group")
+    scale_color_manual(values=c(control.col, treat.col), name="Group") +
+    theme_bw()
   p1 <- ggplotly(p1) %>% layout(xaxis = a.set, yaxis = a.set)
 
-  p2 <-
-    ggplot(d, aes(.data$Allocation, .data$y, fill = .data$Allocation)) +
+  p2 <- ggplot(d, aes(.data$Allocation, .data$y, fill = .data$Allocation)) +
     geom_boxplot(alpha=0.5) + xlab("") + theme(legend.position = "none") +
-    # guides(colour = "Group") +
-    scale_fill_manual(values=c(control.col, treat.col), name="Group")
+    scale_fill_manual(values=c(control.col, treat.col), name="Group") +
+    theme_bw()
   p2 <- ggplotly(p2) %>% layout(xaxis = a.set, yaxis = a.set)
 
   p3 <- ggplot(d, aes(.data$X1, .data$y, colour = .data$Allocation)) +
     geom_point(alpha = 0.5) + theme(legend.position = "none") +
-    # guides(colour = "Group") +
-    scale_color_manual(values=c(control.col, treat.col), name="Group")
+    scale_color_manual(values=c(control.col, treat.col), name="Group") +
+    theme_bw()
   p3 <- ggplotly(p3) %>% layout(xaxis = a.set, yaxis = a.set)
 
   p4 <- ggplot(d, aes(.data$X2, .data$y, colour = .data$Allocation)) +
     geom_point(alpha = 0.5) + theme(legend.position = "none") +
-    # guides(colour = "Group") +
-    scale_color_manual(values=c(control.col, treat.col), name="Group")
+    scale_color_manual(values=c(control.col, treat.col), name="Group") +
+    theme_bw()
   p4 <- ggplotly(p4) %>% layout(xaxis = a.set, yaxis = a.set)
 
   return(
@@ -102,7 +101,7 @@ plot.data <- function(d) {
       titleX = T,
       titleY = T,
       margin = 0.05
-    ) %>% config(displayModeBar = F)
+    ) %>% layout(showlegend=FALSE) %>% config(displayModeBar = F)
   )
 }
 
@@ -651,17 +650,27 @@ app_server <- function(input, output, session) {
 
     opts <- cols[!cols %in% c("smoke", "fev", "t", "y", "Allocation", "te")]
 
+    #get the covariates out of the formula
     if(is.null(values$treat.f)){
         sel.t <- NULL
       } else {
         sel.t <- stringi::stri_split_fixed(values$treat.f," ")[[1]][-c(1:2)]
         sel.t <- sel.t[sel.t!="+"]
       }
-    # sel.t <- cols[all.vars(as.formula(values$treat.f))[-1] %in% cols]
+
+    #get the non-treatment covariates out of the formula
+    if(is.null(values$outcome.f)){
+      sel.y <- NULL
+    } else {
+      sel.y <- stringi::stri_split_fixed(values$outcome.f," ")[[1]][-c(1:4)]
+      sel.y <- sel.y[sel.y!="+"]
+      if(rlang::is_empty(sel.t)) sel.t <- NULL
+    }
 
     updateSelectizeInput(
       session,
       "outcome.f",
+      selected = sel.y,
       choices = opts,
       options = list(
         render = I(
@@ -722,6 +731,8 @@ app_server <- function(input, output, session) {
   observe({
     #get the column names
     d.cols <- colnames(values$d)
+
+    if (is.null(d.cols)) d.cols <- colnames(values$selected.d)
 
     #get the treatment and outcome variables in order
     t.y <- c("smoke", "fev", "t", "y")[c("smoke", "fev", "t", "y") %in% d.cols]

@@ -48,10 +48,10 @@ matching.plot <- function(match.data, xvar, yvar, multi=F, plot.n=1){
     mutate(Allocation=ifelse(t==0,"Control","Treated"),
            txt=paste0(.data$Allocation,
                       "<br>Matched using: ", mdist, " Distance",
-                      "<br>Distance between pair: ", round(.data$pair.dist,3),
+                      "<br>Distance between pair: ", .data$pair.dist,
                       "<br>Pair number: ", .data$subclass,
-                      "<br>", xvar,": ", round(.data$x,3),
-                      "<br>", yvar, ": ", round(.data$y,3)))
+                      "<br>", xvar,": ", .data$x,
+                      "<br>", yvar, ": ", .data$y))
   # %>%
   #   arrange(.data$pair.dist, .data$subclass) %>%
   #   mutate(ord=(row_number(.data$pair.dist) + (row_number(.data$pair.dist)%%2))/2)
@@ -62,6 +62,8 @@ matching.plot <- function(match.data, xvar, yvar, multi=F, plot.n=1){
     t.y=match.data$paired.data[[paste0("t.",yvar)]],
     c.x=match.data$paired.data[[paste0("c.",xvar)]],
     c.y=match.data$paired.data[[paste0("c.",yvar)]],
+    t.t="Treated",
+    c.t="Control",
     subclass=rownames(match.data$paired.data),
     pair.dist=match.data$paired.data[["dist"]],
     ord=match.data$paired.data[["d.order"]]) %>%
@@ -69,14 +71,14 @@ matching.plot <- function(match.data, xvar, yvar, multi=F, plot.n=1){
                         "<br>Matched using: ", mdist, " Distance",
                         "<br>Distance between pair: ", round(.data$pair.dist,3),
                         "<br>Pair number: ", .data$subclass,
-                        "<br>", xvar,": ", round(.data$c.x,3),
-                        "<br>", yvar, ": ", round(.data$c.y,3)),
+                        "<br>", xvar,": ", .data$c.x,
+                        "<br>", yvar, ": ", .data$c.y),
            txt.t=paste0("Treated",
                         "<br>Matched using: ", mdist, " Distance",
                         "<br>Distance between pair: ", round(.data$pair.dist,3),
                         "<br>Pair number: ", .data$subclass,
-                        "<br>", xvar,": ", round(.data$t.x,3),
-                        "<br>", yvar, ": ", round(.data$t.y,3)))
+                        "<br>", xvar,": ", .data$t.x,
+                        "<br>", yvar, ": ", .data$t.y))
 
   d.ann <- m.data %>% mutate(distance = mdist, frame=.data$ord)
 
@@ -96,10 +98,14 @@ matching.plot <- function(match.data, xvar, yvar, multi=F, plot.n=1){
   p <- ggplot(d, aes(x=.data$t.x, y=.data$t.y, frame=.data$frame)) +
     geom_segment(aes(x=.data$t.x, y=.data$t.y, xend=.data$c.x, yend=.data$c.y),
                  color="black") +
-    geom_point(aes(x=.data$t.x, y=.data$t.y, text=.data$txt.t),
-               color=treat.col, shape=6, size=3, stroke=0.8, alpha=0.8) +
-    geom_point(aes(x=.data$c.x, y=.data$c.y, text=.data$txt.c),
-               color=control.col, shape=2, size=3, stroke=0.8, alpha=0.8) +
+    geom_point(aes(x=.data$t.x, y=.data$t.y, text=.data$txt.t,
+                   color=t.t, shape=t.t),
+               size=3, stroke=0.8, alpha=0.8) +
+    geom_point(aes(x=.data$c.x, y=.data$c.y, text=.data$txt.c,
+                   color=c.t, shape=c.t),
+               size=3, stroke=0.8, alpha=0.8) +
+    scale_color_manual(name="Allocation",values=c(control.col,treat.col)) +
+    scale_shape_manual(name="Allocation",values=c(2,6)) +
     theme_bw()
   # +
   #   theme(legend.title = element_blank(), legend.position='none')

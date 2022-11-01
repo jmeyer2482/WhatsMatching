@@ -64,7 +64,7 @@ The development process for this app has meant that it has been most practical t
 
 The end result result of this developmental process means that there is a Shiny App and Package Website that can be used in an educational format. The GitHub hosting means that the package can be installed by running `devtools::install_github("jmeyer2482/Whatsmatching")` in an `R` environment making the functions available to more advanced users.  
 
-![Figure 1. Developmental Relationships](../man/figures/dev_relationships.png)
+![Figure 1. Developmental Relationships](../man/figures/dev_relationships.png){width=50%}
 
 ## Simulations (“the UI side”)  
 
@@ -72,26 +72,34 @@ Here, we provide some examples that highlight the difficulties in making decisio
 
 ### Example A (data | user options | screenshot)  
 
-We demonstrate in Fig. 2. that the intuitiveness behind using replacement may not be clear.  
+This example uses one of the simulations from King and Neilsen's 2019 paper. It takes three groups representing a fully blocked experiment, a random experiment and a group of all controls. Covariates X1 and X2 are generated with the fully blocked experiment being almost identically paired between treated and control units and the random experiment group has, as you would guess, randomly placed  treated and control units. The control group consists of only control units and no treated units.  
 
+The methods being compared in this example are the use of the Mahalanobis distance, which is calculated using the distance between a treated and control unit in the context of the covariance matrix, and the Propensity Score, which is essentially logistic regression on the treatment variable using selected covariates. The outcome demonstrated is that, under these conditions, the Mahalanobis distance is superior to the Propensity score in selecting the fully blocked experiment first. This occurs because the Propensity score, once calculated, is blind to the real data that informs the probability of treatment.  
 
-
-![Figure 2. Replacement](../man/figures/Ex-replacement.PNG)  
+![Figure 2. Replacement](../man/figures/Ex-fullyblocked.PNG){width=100%}   
 
 ### Example B (data | user options | screenshot)  
 
-![Figure 2. Replacement](../man/figures/Ex-fullyblocked.PNG)   
+We demonstrate in Fig. 2. that the intuitiveness behind using replacement may not be clear.  
+
+![Figure 3. Replacement](../man/figures/Ex-replacement.PNG){width=100%}  
 
 
 ### Example C (data | user options | screenshot)  
 
-![Figure 2. Replacement](../man/figures/Ex-ordering.PNG)   
+![Figure 4. Ordering](../man/figures/Ex-ordering.PNG){width=100%}   
 
 ### Example D (data | user options | screenshot)  
 
 
-![Figure 2. Replacement](../man/figures/Ex-specification.PNG)  
+![Figure 5. Specification](../man/figures/Ex-specification.PNG){width=100%}  
 
 ### Example E (data | user options | screenshot)  
+
+
+![Figure 6. Confounding-wrong](../man/figures/Ex-Confounding-wrong.PNG){width=100%}  
+
+
+![Figure 7. Confounding-right](../man/figures/Ex-Confounding-right.PNG){width=100%}  
 
 

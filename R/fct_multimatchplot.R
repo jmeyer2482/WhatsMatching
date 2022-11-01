@@ -40,6 +40,9 @@ combined.plot <- function(xvar, yvar, M1, M2, te=NULL,
     layout(legend = list(
       title=list(text='<b>Legend</b><br>Items can be toggled<br>',
                  font=list(color="#2d2d2d"))),
+      # paper_bgcolor="#272b30",
+      # font=list(color="#aaa",
+      #           family='system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"'),
       plot_bgcolor="#FCFAF9") %>%
     animation_opts(transition = 0, redraw=T, frame=400) %>%
     animation_slider(currentvalue = list(prefix = "Number of pairs matched: ",
@@ -166,7 +169,7 @@ estimates.plot <- function(M1, M2, outcome.f, te){
                   color=.data$method, linetype=.data$method
               )) + geom_line(size=1) +
           scale_color_manual(values = c("Method 1"='#FED148', "Method 2"='#B241B4')) +
-          theme_bw()
+    theme_bw()
 
   gg <- ggplotly(gg, tooltip = "text") %>%
     animation_opts(transition = 0, redraw=T, frame=400)
