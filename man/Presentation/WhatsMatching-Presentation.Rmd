@@ -1,0 +1,56 @@
+---
+title: "What's Matching"
+author: "Jason Meyer"
+output: 
+  ioslides_presentation:
+    bootstrap: 5
+    bootswatch: zephyr
+    logo: logo.png
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## What's Matching  
+
+Introduce yourself and the project.  
+
+<div class="notes">
+This is my *note*.
+
+- It can contain markdown
+- like this list
+</div>
+
+## Slide 1. The problem of causal inference from observational data 
+
+Ideal is RCT but often not feasible 
+
+Electronic health records offer opportunities but challenge is to find the RCT hidden in the  
+
+## Slide 2. Matching  
+
+## Slide 3. Decisions, decisions, decisions  
+
+## Slide 4. Statement of the aim   
+
+## Slide 5. Shiny and using interactivity in education  
+
+## Slide 6. Developmental schematic  
+
+## Slide 7. Screenshots of application + App loaded in background for demo  
+
+Demo of app 
+
+Say “Here we are comparing situation x and situation y” 
+
+Explain what each figure plots 
+
+Press play and explain 
+
+Then show you can superimpose the weighted and stratified lines 
+
+## Slide 8. Lessons you can demo  
+
+## Slide 9. Thanks you and links (website + app + code)  

@@ -329,6 +329,14 @@ app_server <- function(input, output, session) {
       cp <- combined.plot("X1", "X2", M1, M2, te = TE, o.f)
     }
 
+    fonts <- list(list(color="#495057",
+                       family='system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";'))
+
+    cp <- cp %>% layout(
+      paper_bgcolor="#272b30",
+      font=fonts, legend=list(font=fonts)
+    )
+
     #outputs for sidebar on main page
     output$txt.M.TE <- renderText(max(d$te))
     output$txt.M.o.f <- renderText(deparse(o.f))

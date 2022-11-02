@@ -135,7 +135,7 @@ Matched on `X1`
 Treatment effect calculated using `y ~ t + X1` 
 Both `X1` and `X2` set to have a effect on outcome and treatment to 1
 
-![Figure 5. Specification](../man/figures/Ex-Forgotten-confounder.png.PNG){width=100%}  
+![Figure 5. Specification](../man/figures/Ex-Forgotten-confounder.PNG){width=100%}  
 
 
 
