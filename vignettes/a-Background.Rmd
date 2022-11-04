@@ -56,7 +56,7 @@ knitr::opts_chunk$set(
   
   Perhaps the most widely used distance metric is the propensity score, defined as the probability of an individual receiving the treatment. Another possible distance metric is the Mahalanobis distance, which is analogous to a multivariate Euclidean distance.   
   
-  The advantage of both the propensity score and the Mahalanobis distance metrics is that the multidimensional covariate space is reduced to a single dimension: matching can be undertaken on the univariate distance distance measure rather than attempting to match each individual covariate. The covariates that define the distance metric are balanced between the treated and untreated groups, on average, in the resulting matched dataset.  
+  The advantage of both the propensity score and the Mahalanobis distance metrics is that the multidimensional covariate space is reduced to a single dimension: matching can be undertaken on the univariate distance measure rather than attempting to match each individual covariate. The covariates that define the distance metric are balanced between the treated and untreated groups, on average, in the resulting matched dataset.  
 
 
 ### The propensity score  

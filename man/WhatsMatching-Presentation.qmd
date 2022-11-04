@@ -1,0 +1,182 @@
+---
+title: "What's Matching?"
+authors: c("Jason Meyer","Dr Mark Hanly")
+format:
+  revealjs:
+    theme: beige
+    slide-number: true
+title-slide-attributes: 
+  data-background-image: figures/logo.png
+  data-background-position: 17% 44%
+  data-background-size: 15%
+logo: figures/logo.png
+footer: "Dissertation Project: What's Matching. Author: Jason Meyer. Supervisor: Dr Mark Hanly"
+header: "What's Matching"
+center: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+# What's Matching? {style="text-align: center; margin-top: 6px;" background-size="15%" background-position="17% 44%" background-image="figures/logo.png" auto-animate=true}
+
+```{css, echo=FALSE}
+.ch h2 {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+
+mermaid.flowchartConfig = {
+    width: 600px
+}
+```
+
+
+:::notes
+-   Hi everyone, My name is Jason Meyer\
+-   I've spent the last year, part-time developing my project with my spervisor Dr Mark Hanly\
+-   Today I'd like to spend some time telling you about it.
+-   In this project we were interested in the methodological approach of matching.
+-   This is a very popular approach but it is black box.
+-   What I've done is crack open the matching algorithm so that people can see the guts of it and how it works.
+-   I have implemented this in an app and today I will briefly show you the app and outline some of the lessons that can be learned from this tool.
+:::
+
+## Background {.build .ch}
+
+-   RCTs are the gold standard but often not feasible
+
+-   EHRs and other data sources are now plentiful
+
+::: notes
+-   We'd do RCTs for everything if we could unfortunately that's not practical, feasible or ethical in many cases.\
+-   Enter electronic data sources, which have exploded in recent history, particularly in the health care arena\
+-   This provides us with lots of opportunity for using data to solve or observe things we may not be able to under normal circumstance\
+-   It is not without challenges though. Observational data is not built for this purpose and so the analysis and conclusions need to be considered carefully\
+:::
+
+## Matching {.ch}
+
+-   Matching is one popular approach for addressing challenges in observational data
+
+:::notes
+
+:::
+
+## Decisions, decisions, decisions {.ch}
+
+:::{.columns}
+
+:::{.column width="50%"}
+-   Distance\
+-   Covariate selection\
+-   Replacement\
+-   Ordering\
+-   Caliper adjustment
+:::
+
+:::{.column width="50%"}
+<!-- ### MAGIC! {style="text-align: center;"} -->
+
+![](https://media.giphy.com/media/l0MYw6Cu1TfY3gsWk/giphy.gif){fig-align="center"}
+
+<!--::: {.footnote style="font-size: 10px; text-align: right;"}
+source: <https://media.giphy.com/media/l0MYw6Cu1TfY3gsWk/giphy.gif>
+::: -->
+
+:::
+
+:::
+
+> "Any sufficiently advanced technology is indistinguishable from magic." — Arthur C. Clarke.
+
+
+:::notes
+distances 
+- propensity score
+- mahalanobis
+- euclidean
+- exact
+- coarsened exact
+
+covariate selection
+- selection/model bias/variance
+
+replacement
+- should we replace, what are the implications
+
+ordering
+- how can that change what's happening!?
+
+calipers
+- what is a useful caliper adjustment
+
+:::
+
+## We wanted to provide an interactive environment for people to learn about matching {.ch}
+
+# Demonstration time!
+
+
+## {}
+  
+![](figures/App_Main.jpeg)
+
+:::notes
+explanation of plot panels
+
+I have selected the clearest example to demonstrate the impact of several choices that could impact the outcome of the estimate
+We have generated data based on a simulation from King and Neilsen's paper on the Propensity score para
+
+Now I'm going to show you what's been done 
+
+DEMO
+
+
+:::
+
+## How do we use it
+
+-   Simulate data
+-   Choose settings
+-   Watch
+
+## What questions can we answer
+- examples of questions that can be posed
+
+
+## Development Process
+
+```{mermaid}
+%%{init: {'theme':'default', 'flowchart': {'curve': 'basis'} }}%%
+
+flowchart LR
+G[Golem Framework] -.-> R[R Package] & S[Shiny App]
+R & S --> D[Documentation]
+S --> SW[(Shiny Website)] 
+S <--> R
+D --> GW[(GitHub Website)]
+%%GW --> SW
+subgraph GitHub
+    Repository
+    GW
+end
+subgraph Code
+    R
+    S
+    D
+end
+Code ==> Repository
+
+click SW href "https://jmeyer2482.shinyapps.io/WhatsMatching/" _blank
+click GW href "jmeyer2482.github.io/WhatsMatching/" _blank
+
+classDef default stroke:#333,stroke-width:2px;
+%%classDef mainpanel stroke:#333,stroke-width:2px;
+%%classDef subpanel stroke:#333,stroke-width:2px,padding-top:5em;
+```
+
+## Thanks you and links (website + app + code) {.ch}
+

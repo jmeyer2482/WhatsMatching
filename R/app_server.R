@@ -30,9 +30,10 @@ library(plotly)
 library(shiny)
 library(shinyBS)
 library(htmltools)
-library(shinythemes)
+# library(shinythemes)
 library(DT)
 library(markdown)
+library(bslib)
 # library(mplot)
 
 
@@ -333,7 +334,7 @@ app_server <- function(input, output, session) {
                        family='system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";'))
 
     cp <- cp %>% layout(
-      paper_bgcolor="#272b30",
+      paper_bgcolor="#fff",
       font=fonts, legend=list(font=fonts)
     )
 
