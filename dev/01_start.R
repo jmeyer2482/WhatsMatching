@@ -28,24 +28,28 @@ golem::fill_desc(
   repo_url = "https://github.com/jmeyer2482/WhatsMatching" # The URL of the GitHub Repo (optional)
 )
 
-description <- desc::description$new()
-lapply(
-  c(person(given = "Jason",
+# description <- desc::description$new()
+# lapply(
+p <- c(person(given = "Jason",
            family = "Meyer",
            role = c("cre", "aut"),
            email = "jmeyer2482@gmail.com",
            comment = c(ORCID = "0000-0002-9344-1280")),
     person(given = "Mark",
            family = "Hanly",
-           role = "dgs",
-           comment = c(ORCID = "0000-0002-9279-7453"))),
-  function(x){
-    description$add_author(as.character(x))
-  }
-)
-description$del_author("X")
-description$write(file = "DESCRIPTION")
+           role = c("dgs", "ctb"),
+           email = "m.hanly@unsw.edu.au",
+           comment = c(ORCID = "0000-0002-9279-7453")))
+#   function(x){
+#     description$add_author(as.character(x))
+#   }
+# )
+# description$del_author("X")
+# description$write(file = "DESCRIPTION")
 
+
+
+desc::desc_set_authors(p)
 
 ## Set {golem} options ----
 golem::set_golem_options()

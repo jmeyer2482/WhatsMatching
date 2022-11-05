@@ -99,10 +99,10 @@ matching.plot <- function(match.data, xvar, yvar, multi=F, plot.n=1){
     geom_segment(aes(x=.data$t.x, y=.data$t.y, xend=.data$c.x, yend=.data$c.y),
                  color="black") +
     geom_point(aes(x=.data$t.x, y=.data$t.y, text=.data$txt.t,
-                   color=t.t, shape=t.t),
+                   color=.data$t.t, shape=.data$t.t),
                size=3, stroke=0.8, alpha=0.8) +
     geom_point(aes(x=.data$c.x, y=.data$c.y, text=.data$txt.c,
-                   color=c.t, shape=c.t),
+                   color=.data$c.t, shape=.data$c.t),
                size=3, stroke=0.8, alpha=0.8) +
     scale_color_manual(name="Allocation",values=c(control.col,treat.col)) +
     scale_shape_manual(name="Allocation",values=c(2,6)) +

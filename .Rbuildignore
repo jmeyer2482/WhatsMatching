@@ -12,3 +12,7 @@ $run_dev.*
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
+^man\WhatsMatching-Presentation_files$
+^man\WhatsMatching-Presentation.*
+^logo.png
+^index.md

@@ -1,7 +1,6 @@
 #' The application server-side
 #'
-#' @param input,output,session Internal parameters for {shiny}.
-#'     DO NOT REMOVE.
+#' @param input,output,session Internal parameters for {shiny}. DO NOT REMOVE.
 #'
 #' @import shiny
 #' @import ggplot2
@@ -30,11 +29,8 @@ library(plotly)
 library(shiny)
 library(shinyBS)
 library(htmltools)
-# library(shinythemes)
 library(DT)
 library(markdown)
-library(bslib)
-# library(mplot)
 
 
 #function for getting fev dataset

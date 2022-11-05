@@ -16,7 +16,7 @@ center: true
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = FALSE, fig.align = "center")
 ```
 
 # What's Matching? {style="text-align: center; margin-top: 6px;" background-size="15%" background-position="17% 44%" background-image="figures/logo.png" auto-animate=true}
@@ -24,24 +24,25 @@ knitr::opts_chunk$set(echo = FALSE)
 ```{css, echo=FALSE}
 .ch h2 {
   text-align: center;
-  margin-bottom: 25px;
 }
 
-
-mermaid.flowchartConfig = {
-    width: 600px
+.center {
+  display: table;
+  margin-right: auto;
+  margin-left: auto;
 }
+
 ```
 
 
 :::notes
 -   Hi everyone, My name is Jason Meyer\
--   I've spent the last year, part-time developing my project with my spervisor Dr Mark Hanly\
+-   I've spent the last year, part-time developing this project with my supervisor Dr Mark Hanly\
 -   Today I'd like to spend some time telling you about it.
 -   In this project we were interested in the methodological approach of matching.
--   This is a very popular approach but it is black box.
--   What I've done is crack open the matching algorithm so that people can see the guts of it and how it works.
--   I have implemented this in an app and today I will briefly show you the app and outline some of the lessons that can be learned from this tool.
+-   This is a very popular approach but it is a bit black box - we don't really see what's happening
+-   What's been done for this project is to crack open the matching algorithm so that people can see the guts of it and how it works.
+-   The project has been implemented in a Shiny app and today I will briefly show you the app and outline some of the lessons that can be learned from this tool.
 :::
 
 ## Background {.build .ch}
@@ -50,133 +51,192 @@ mermaid.flowchartConfig = {
 
 -   EHRs and other data sources are now plentiful
 
+![](https://www.rarst.net/images/Comicstripsasultimateformofdailytechhumo_13EF4/comic_dilbert.png){fig-align="center"}
+
 ::: notes
--   We'd do RCTs for everything if we could unfortunately that's not practical, feasible or ethical in many cases.\
--   Enter electronic data sources, which have exploded in recent history, particularly in the health care arena\
--   This provides us with lots of opportunity for using data to solve or observe things we may not be able to under normal circumstance\
+-   So, just some quick background...
+-   The gold standard for estimating treatment effects is RCTs
+-   Unfortunately not all treatments are able to investigated in this way due to feasibility, ethical issues or just being plain impractical
+-   Even without these barriers, we now have extensive access to electronic data, particularly in the health care arena\
+-   This provides us with lots of opportunity for using data to solve or observe things we may not be able to under normal circumstances\
 -   It is not without challenges though. Observational data is not built for this purpose and so the analysis and conclusions need to be considered carefully\
+-   One way to deal with these challenges is by using Matching
 :::
 
 ## Matching {.ch}
 
--   Matching is one popular approach for addressing challenges in observational data
+-   Commonly used
+-   Operations aren't always clear
+-   There's also a lot of...
+
+<!--
+
+:::{.columns}
+:::{.column width="25%"}
+
+![](https://media.giphy.com/media/l0MYw6Cu1TfY3gsWk/giphy.gif){fig-align="right" width="100%"}
+
+:::
+
+:::{.column width="75%" align="right"}
+
+> "Any sufficiently advanced technology is indistinguishable from magic."\
+> <p style='text-align: right;'> Arthur C. Clarke </p>
+
+:::
+:::
+-->
 
 :::notes
-
+-   Matching is a pre-processing step that is used, in particular, to assist with controlling confounding
+-   As I noted earlier, matching is a bit black box
+-   King and Neilsen also noted in their 2019 paper that poor applicaiton of the method was likely to be wide spread
+-   From working on this project I would say that, anecdotally, this is because there's a lot of...
 :::
 
 ## Decisions, decisions, decisions {.ch}
 
+<!--
 :::{.columns}
 
-:::{.column width="50%"}
+:::{.column width="50%"} -->
+
 -   Distance\
 -   Covariate selection\
 -   Replacement\
 -   Ordering\
 -   Caliper adjustment
+
+<!-- 
 :::
+
 
 :::{.column width="50%"}
-<!-- ### MAGIC! {style="text-align: center;"} -->
+### MAGIC! {style="text-align: center;"} 
 
-![](https://media.giphy.com/media/l0MYw6Cu1TfY3gsWk/giphy.gif){fig-align="center"}
-
-<!--::: {.footnote style="font-size: 10px; text-align: right;"}
+{.footnote style="font-size: 10px; text-align: right;"}
 source: <https://media.giphy.com/media/l0MYw6Cu1TfY3gsWk/giphy.gif>
-::: -->
-
+::: 
 :::
 
 :::
-
-> "Any sufficiently advanced technology is indistinguishable from magic." — Arthur C. Clarke.
-
+-->
 
 :::notes
-distances 
-- propensity score
-- mahalanobis
-- euclidean
-- exact
-- coarsened exact
-
-covariate selection
-- selection/model bias/variance
-
-replacement
-- should we replace, what are the implications
-
-ordering
-- how can that change what's happening!?
-
-calipers
-- what is a useful caliper adjustment
+-   decision, decisions, decisions!
+-   This list of options constitutes the basic suite of options that an analyst must consider when using matching
+-   This is not an exhaustive list of possible settings 
+-   Additional settings can be required based on what methods have been selected for matching
+-   In the interests of time, I won't go into detail here but it's safe to say there are quite a few decisions to make
 
 :::
 
 ## We wanted to provide an interactive environment for people to learn about matching {.ch}
 
-# Demonstration time!
+:::notes
+-   The theories that underpin the particular settings for each matching method are well documented
+-   What seems to be lacking is the practical application of the settings and what the implications might be
+-   We decided this was an opportunity to develop an interactive environment for people to learn about matching and to understand the possible implications of their decisions 
 
+:::
 
-## {}
+## The App {.ch}
   
-![](figures/App_Main.jpeg)
+![](figures/App_Main.jpeg){fig-align="center" height="550px"}
+
 
 :::notes
-explanation of plot panels
+-   And this is what we've come up with. 
+-   This screenshot is the interactive shiny app that we have developed.
+-   I'll just quickly give you some context for what you are seeing and then I'll do a demonstration
 
-I have selected the clearest example to demonstrate the impact of several choices that could impact the outcome of the estimate
-We have generated data based on a simulation from King and Neilsen's paper on the Propensity score para
+:::
 
-Now I'm going to show you what's been done 
+## Plot 1 and 2 - Matches of the Actual Data {.ch}
 
-DEMO
+<div class = 'center'>
+```{r, warning=FALSE}
+library(WhatsMatching)
+library(dplyr)
+
+d <- create.sim.data()
+
+m1 <- matched.data(t~X1+X2, d, "Mahalanobis")
+m2 <- matched.data(t~X1+X2, d, "Propensity Score")
+
+
+WhatsMatching::matching.plot(m1, "X1", "X2") %>% plotly::layout(showlegend=TRUE)
+
+```
+</div>
+
+:::notes
+
+-   In the app Plot 1 & 2 contain the actual data
+-   This is a standalone version of Plot 1
+-   There is a covariate represented on the x and y axes 
+-   the color represents their treatment group - red for treated, blue for control
+-   when a bolder observation appears, this represents a matched pair
+-   the circles around the single pair indicate the most recently matched pair
+-   Plots 1 & 2 are essentially the same. The only difference being that they show the matches for 2 different methods.
+
+:::
+
+## Plot 3 - Standardised Mean Difference {.ch}
+
+<div class = 'center'>
+```{r, warning=FALSE}
+WhatsMatching:::std.means.plot(m1,m2,"X1","X2","t") %>% 
+  plotly::animation_opts(transition = 0, redraw=T, frame=400) %>%
+  plotly::animation_slider(currentvalue = list(prefix = "Number of pairs matched: ",
+                                         xanchor = "left",
+                                         font = list(color="#2d2d2d"))) %>%
+  plotly::layout(showlegend=TRUE)
+```
+</div>
+
+:::notes
+
 
 
 :::
 
-## How do we use it
+## Plot 4 - The Estimate of the Treatment Effect {.ch}
+
+<div class = 'center'>
+```{r, warning=FALSE}
+WhatsMatching:::estimates.plot(m1,m2,y~t,NULL) %>% 
+  plotly::animation_opts(transition = 0, redraw=T, frame=400) %>%
+  plotly::animation_slider(currentvalue = list(prefix = "Number of pairs matched: ",
+                                         xanchor = "left",
+                                         font = list(color="#2d2d2d")))
+```
+</div>
+
+
+## How do we use it {.ch}
 
 -   Simulate data
 -   Choose settings
 -   Watch
 
-## What questions can we answer
+
+# Demonstration time!
+
+:::notes
+-   Ok, it's demonstration time. 
+-   First I'm going to give you a quick run down of the layout on a screenshot so it makes more sense when it's running 
+:::
+
+
+## What questions can we answer {.ch}
 - examples of questions that can be posed
 
 
-## Development Process
+## Development Process {.ch}
 
-```{mermaid}
-%%{init: {'theme':'default', 'flowchart': {'curve': 'basis'} }}%%
+![](figures/dev_pathway.png){fig-align="center"}
 
-flowchart LR
-G[Golem Framework] -.-> R[R Package] & S[Shiny App]
-R & S --> D[Documentation]
-S --> SW[(Shiny Website)] 
-S <--> R
-D --> GW[(GitHub Website)]
-%%GW --> SW
-subgraph GitHub
-    Repository
-    GW
-end
-subgraph Code
-    R
-    S
-    D
-end
-Code ==> Repository
-
-click SW href "https://jmeyer2482.shinyapps.io/WhatsMatching/" _blank
-click GW href "jmeyer2482.github.io/WhatsMatching/" _blank
-
-classDef default stroke:#333,stroke-width:2px;
-%%classDef mainpanel stroke:#333,stroke-width:2px;
-%%classDef subpanel stroke:#333,stroke-width:2px,padding-top:5em;
-```
 
 ## Thanks you and links (website + app + code) {.ch}
 
