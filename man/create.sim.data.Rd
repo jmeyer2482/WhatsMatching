@@ -69,7 +69,7 @@ create.sim.data(
 \item{relX2}{Simulation 3 - the causal relationship of X2 in the data. Can be 'mediator', 'confounder', 'collider', 'ancestor to y', 'ancestor to t'}
 }
 \value{
-A dataframe with a 2 covariates, X1 and X2, and a treatment and outcome variable for the purposes of matching
+A dataframe with a 2 covariates, X1 and X2, a random error variable, a treatment variable and an outcome variable for the purposes of matching
 }
 \description{
 A function for simulating data
