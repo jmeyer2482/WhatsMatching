@@ -197,21 +197,20 @@ app_server <- function(input, output, session) {
   values$outcome.f <- y ~ t
   values$M1.dist <- "Mahalanobis"
   values$M1.ord <- "data"
-  #sample(x = c("data", "smallest", "largest", "random"),size = 1)
-  values$M1.rep <- F #sample(x = c(F, T), 1)
+  values$M1.rep <- F
   values$M2.dist <- "Propensity Score"
   values$M2.ord <- "data"
-  #sample(x = c("data", "smallest", "largest", "random"),size = 1)
-  values$M2.rep <- F #sample(x = c(F, T), 1)
+  values$M2.rep <- F
   values$selected.d <- create.sim.data(1)
   values$outcome.f <- "y ~ t"
-  #sample(c("y ~ t", "y ~ t + X1", "y ~ t + X2", "y ~ t + X1 + X2"), 1)[[1]]
-  values$treat.f <- "t ~ X1 + X2"
+  values$treat.cov1 <- c("X1","X2")
+  values$treat.cov2 <- c("X1","X2")
   values$d <- NULL
   values$d.set <- "sim"
   values$selected.p <- NULL
   values$jitter <- 1
   values$cols <- NULL
+  values$trueTE <- NULL
 
 
   #open the settings dialogue
@@ -255,7 +254,10 @@ app_server <- function(input, output, session) {
     #assign matching variables to session for use in another function
     values$outcome.f <<-
       sample(c("y ~ t", "y ~ t + X1", "y ~ t + X2", "y ~ t + X1 + X2"), 1)[[1]]
-    values$treat.f <<- "t ~ X1 + X2"
+    # values$treat.f1 <<- "t ~ X1 + X2"
+    # values$treat.f2 <<- "t ~ X1 + X2"
+    values$treat.cov1 <- c("X1","X2")
+    values$treat.cov2 <- c("X1","X2")
 
     values$M1.dist <<- dist[[1]]
     values$M1.ord <<- ord[[1]]
@@ -296,11 +298,22 @@ app_server <- function(input, output, session) {
       footer = tagList()
     ))
 
+    d <- values$selected.d
+
+    #get the treatment and outcome variables in order
+    t.y <- c("smoke", "fev", "t", "y")[c("smoke", "fev", "t", "y") %in% colnames(d)]
+
+    #get the selections
+    sel.t1 <- values$treat.cov1
+    sel.t2 <- values$treat.cov2
+
+    #generate the formula for matching and estimating
+    t.f1 <- as.formula(paste(t.y[1], "~",paste(sel.t1, collapse = " + ")))
+    t.f2 <- as.formula(paste(t.y[1], "~",paste(sel.t2, collapse = " + ")))
+
     #assign from reactivevalues to ensure values are static
     o.f <- stats::as.formula(values$outcome.f)
-    d <- values$selected.d
     TE <- values$TE
-    t.f <- stats::as.formula(values$treat.f)
     D1 <- values$M1.dist
     O1 <- values$M1.ord
     R1 <- values$M1.rep
@@ -311,8 +324,8 @@ app_server <- function(input, output, session) {
     if(is.null(values$selected.p)) values$selected.p <<- plot.data(d)
 
     #get matched data for 2 methods
-    M1 <- matched.data(t.f, d, D1, O1, R1)
-    M2 <- matched.data(t.f, d, D2, O2, R2)
+    M1 <- matched.data(t.f1, d, D1, O1, R1)
+    M2 <- matched.data(t.f2, d, D2, O2, R2)
 
     #store the matched data
     values$M1 <<- M1
@@ -320,7 +333,7 @@ app_server <- function(input, output, session) {
 
     #check the treatment variable from the formula
     #assign plots accordingly
-    if (all.vars(t.f)[1] == "smoke") {
+    if (all.vars(o.f)[1] == "fev") {
       cp <- combined.plot("age", "height", M1, M2, te = TE, o.f)
     } else {
       cp <- combined.plot("X1", "X2", M1, M2, te = TE, o.f)
@@ -334,41 +347,69 @@ app_server <- function(input, output, session) {
       font=fonts, legend=list(font=fonts)
     )
 
-    #outputs for sidebar on main page
-    output$txt.M.TE <- renderText(max(d$te))
-    output$txt.M.o.f <- renderText(deparse(o.f))
-    output$txt.M.t.f <- renderText(deparse(M1$formula))#values$treat.f)
+    #get the treatment effect if it's in the simulated data
+    if(is.null(d$error)){
 
-    #update options so settings reflect current outputs
-    # updateSelectizeInput(session, "treat.f", selected = values$treat.f)
+      newTE <- "None"
+
+      } else {
+
+        err <-  mean(d$error[d$t==1], na.rm = T)-mean(d$error[d$t==0], na.rm = T)
+        newTE <- round(TE + err,3)
+        values$trueTE <<- newTE
+
+      }
+
+    #outputs for sidebar on main page
+    output$txt.M.TE <- renderText(newTE)
+    output$txt.M.o.f <- renderText(deparse(o.f))
+
+    #covers random cases
     updateSelectInput(session, "Dist1", selected = D1)
     updateSelectInput(session, "Dist2", selected = D2)
     updateSelectInput(session, "Ord1", selected = O1)
     updateSelectInput(session, "Ord2", selected = O2)
     updateCheckboxInput(session, "Rep1", value = R1)
     updateCheckboxInput(session, "Rep2", value = R2)
-    # updateSelectizeInput(session, "outcome.f", selected = values$outcome.f)
+
+    #mark up as code
+    t.cov1 <- HTML(paste(paste("<code>",sel.t1,"</code>", sep=""), collapse=", "))
+    t.cov2 <- HTML(paste(paste("<code>",sel.t2,"</code>", sep=""), collapse=", "))
 
 
+    #table of selections
+    output$m.info <- renderUI({
 
-    #create a table of information about the plot outputs
-    m.info <- list(
-      Distance = c(D1, D2),
-      Order = c(O1, O2),
-      Replace = c(ifelse(R1, "Yes", "No"), ifelse(R2, "Yes", "No"))
-    ) %>%
-      as.data.frame()
+      tags$table(
+        style = "width:100%",
+        tags$tr(
+          tags$th(""),
+          tags$th("Method 1"),
+          tags$th("Method 2")
+        ),
+        tags$tr(
+          tags$th("Covariates"),
+          tags$td(t.cov1),
+          tags$td(t.cov2)
+        ),
+        tags$tr(
+          tags$th("Distance"),
+          tags$td(D1),
+          tags$td(D2)
+        ),
+        tags$tr(
+          tags$th("Order"),
+          tags$td(O1),
+          tags$td(O2)
+        ),
+        tags$tr(
+          tags$th("Replace"),
+          tags$td(ifelse(R1, "Yes", "No")),
+          tags$td(ifelse(R2, "Yes", "No"))
+        )
+      )
 
-    #update the columns for output
-    rownames(m.info) <- c("Plot 1", "Plot 2")
-
-    #output table with matching info
-    output$m.info <- shiny::renderTable(
-      t(m.info),
-      rownames = T,
-      bordered = TRUE,
-      hover = TRUE
-    )
+    })
 
     #output the combined plots
     output$distPlot <- plotly::renderPlotly(cp)
@@ -396,12 +437,6 @@ app_server <- function(input, output, session) {
     updateActionButton(session, "usedata",
                        label = "Use the data from Simulation 1")
 
-    # updateSelectInput(session,
-    #                   "outcome.f",
-    #                   choices = c("y ~ t", "y ~ t + X1 + X2", "y ~ t + X1", "y ~ t + X2"))
-    #
-    # values$d.set <<- "sim"
-
     p <- plot.data(d)
 
     values$data.plots <<- p
@@ -414,8 +449,6 @@ app_server <- function(input, output, session) {
   output$sim1plot <- plotly::renderPlotly(plot1.data())
 
 
-
-
   observe({
     Val <- max(input$sim2.X1.val) - min(input$sim2.X1.val)
 
@@ -425,7 +458,7 @@ app_server <- function(input, output, session) {
   }) %>%
     bindEvent(input$sim2.X1.val)
 
-  #create plot for simulation 2
+#create plot for simulation 2
   #also store data in values
   #and update the label for the usedata button
   plot2.data <- reactive({
@@ -452,12 +485,6 @@ app_server <- function(input, output, session) {
     updateActionButton(session, "usedata",
                        label = "Use the data from Simulation 2")
 
-    # updateSelectInput(session,
-    #                   "outcome.f",
-    #                   choices = c("y ~ t", "y ~ t + X1 + X2", "y ~ t + X1", "y ~ t + X2"))
-
-    # values$d.set <<- "sim"
-
     p <- plot.data(d)
 
     values$data.plots <<- p
@@ -469,7 +496,7 @@ app_server <- function(input, output, session) {
 
   output$sim2plot <- plotly::renderPlotly(plot2.data())
 
-
+##Simulation 3
   plot3.data <- reactive({
     TE <- input$sim3.TE
     X1r <- input$sim3.X1rel
@@ -495,16 +522,12 @@ app_server <- function(input, output, session) {
 
   output$sim3plot <- plotly::renderPlotly(plot3.data())
 
-
+##Simulation 4
   plot4.data <- reactive({
     TE <- input$sim4.TE
     rho <- input$sim4.rho
     y <- 2
 
-    # X1m <- 0
-    # X2m <- 0
-    # X1sd <- input$sim4.X1sd
-    # X2sd <- input$sim4.X2sd
     X1t <- input$sim4.X1t
     X2t <- input$sim4.X2t
     X1y <- input$sim4.X1y
@@ -565,28 +588,24 @@ app_server <- function(input, output, session) {
     p1 <-
       ggplot(d, aes(.data$age, .data$height, colour = .data$Allocation)) +
       geom_point(alpha = 0.5) + theme(legend.position = "none") +
-      # guides(colour = "Group") +
       scale_color_manual(values=c(control.col, treat.col), name="Group")
     p1 <- ggplotly(p1) %>% layout(xaxis = a.set, yaxis = a.set)
 
     p2 <-
       ggplot(d, aes(.data$Allocation, .data$fev, fill = .data$Allocation)) +
       geom_boxplot(alpha=0.5) + xlab("") + theme(legend.position = "none") +
-      # guides(colour = "Group") +
       scale_fill_manual(values=c(control.col, treat.col), name="Group")
     p2 <- ggplotly(p2) %>% layout(xaxis = a.set, yaxis = a.set)
 
     p3 <-
       ggplot(d, aes(.data$age, .data$fev, colour = .data$Allocation)) +
       geom_point(alpha = 0.5) + theme(legend.position = "none") +
-      # guides(colour = "Group") +
       scale_color_manual(values=c(control.col, treat.col), name="Group")
     p3 <- ggplotly(p3) %>% layout(xaxis = a.set, yaxis = a.set)
 
     p4 <-
       ggplot(d, aes(.data$height, .data$age, colour = .data$Allocation)) +
       geom_point(alpha = 0.5) + theme(legend.position = "none") +
-      # guides(colour = "Group") +
       scale_color_manual(values=c(control.col, treat.col), name="Group")
     p4 <- ggplotly(p4) %>% layout(xaxis = a.set, yaxis = a.set)
 
@@ -635,33 +654,14 @@ app_server <- function(input, output, session) {
 
     d <- values$d
 
-    # t.y <- c("smoke", "fev", "t", "y")[c("fev", "smoke", "t", "y") %in% colnames(d)]
-
-    # values$outcome.f <<- paste(t.y[2], "~", t.y[1], paste(NULL, input$outcome.f, sep="+ ", collapse = " "))
-    #
-    # values$treat.f <<- paste(t.y[1], "~",paste(input$treat.f, collapse = " + "))
-
-
     values$selected.p <<- values$data.plots
 
-  # }) %>%
-  #   bindEvent(input$usedata)
-  #
-  # observe({
-
-    # d <- values$d
+    sel.t1 <- values$treat.cov1
+    sel.t2 <- values$treat.cov2
 
     cols <- colnames(d)
 
     opts <- cols[!cols %in% c("smoke", "fev", "t", "y", "Allocation", "te")]
-
-    #get the covariates out of the formula
-    if(is.null(values$treat.f)){
-        sel.t <- NULL
-      } else {
-        sel.t <- stringi::stri_split_fixed(values$treat.f," ")[[1]][-c(1:2)]
-        sel.t <- sel.t[sel.t!="+"]
-      }
 
     #get the non-treatment covariates out of the formula
     if(is.null(values$outcome.f)){
@@ -669,7 +669,7 @@ app_server <- function(input, output, session) {
     } else {
       sel.y <- stringi::stri_split_fixed(values$outcome.f," ")[[1]][-c(1:4)]
       sel.y <- sel.y[sel.y!="+"]
-      if(rlang::is_empty(sel.t)) sel.t <- NULL
+      if(rlang::is_empty(sel.y)) sel.y <- NULL
     }
 
     updateSelectizeInput(
@@ -691,8 +691,25 @@ app_server <- function(input, output, session) {
 
     updateSelectizeInput(
       session,
-      "treat.f",
-      selected = sel.t,
+      "treat.f1",
+      selected = sel.t1,
+      choices = opts,
+      options = list(
+        render = I(
+          "
+            {
+              item:   function(item, escape) { return '<div><code>' + item.label + '</code></div>'; },
+              option: function(item, escape) { return '<div><code>' + item.label + '</code></div>'; }
+            }
+          "
+        )
+      )
+    )
+
+    updateSelectizeInput(
+      session,
+      "treat.f2",
+      selected = sel.t2,
       choices = opts,
       options = list(
         render = I(
@@ -712,26 +729,6 @@ app_server <- function(input, output, session) {
   }) %>%
     bindEvent(input$usedata)
 
-  #observer to update reactive values if they are changed
-  # observe({
-  #
-  #   values$M1.dist <<- input$Dist1
-  #   values$M1.ord <<- input$Ord1
-  #   values$M1.rep <<- input$Rep1
-  #   values$M2.dist <<- input$Dist2
-  #   values$M2.ord <<- input$Ord2
-  #   values$M2.rep <<- input$Rep2
-  #
-  #   d <- values$d
-  #
-  #   t.y <- c("smoke", "fev", "t", "y")[c("fev", "smoke", "t", "y") %in% colnames(d)]
-  #
-  #   values$outcome.f <<- paste(t.y[2], "~", t.y[1], paste(NULL, input$outcome.f, sep="+ ", collapse = " "))
-  #
-  #   values$treat.f <<- paste(t.y[1], "~",paste(input$treat.f, collapse = " + "))
-  # }, priority=1000) %>%
-  #   bindEvent(input$usedata)
-
   #set the displayed formula based on the selected dataset
   observe({
     #get the column names
@@ -744,25 +741,17 @@ app_server <- function(input, output, session) {
 
     #get the selections
     sel.o <- input$outcome.f
-    sel.t <- input$treat.f
 
     #generate the formula for matching and estimating
     y.f <- paste(t.y[2], "~", t.y[1], paste(NULL, sel.o, sep="+ ", collapse = " "))
-    t.f <- paste(t.y[1], "~",paste(sel.t, collapse = " + "))
 
     #display the formulas
     output$y.formula <- renderUI(code(noquote(y.f)))
-    output$t.formula <- renderUI(code(noquote(t.f)))
 
     #store the formulas
     values$outcome.f <<- y.f
-    values$treat.f <<- t.f
 
   })
-  #
-  # output$y.formula <- renderUI(code(noquote(values$outcome.f)))
-  #
-  # output$t.formula <- renderUI(code(noquote(values$treat.f)))
 
   #start matching process
   observe({
@@ -782,83 +771,96 @@ app_server <- function(input, output, session) {
   }) %>%
     bindEvent(input$usematching)
 
-    #render data plots
-    output$dataPlot <- plotly::renderPlotly({values$selected.p})
 
-    #render data table of
-    output$dataTable <- DT::renderDT(
-      values$selected.d,
-      options = list(
-        pageLength = 25,
-        initComplete = DT::JS("function(){$(this).addClass('compact');}")
-      )
+  #toggle use matching button based on formula being complete
+  observe({
+
+    f1 <- input$treat.f1
+    f2 <- input$treat.f2
+
+    if(is.null(f1) | is.null(f2)){
+      shinyjs::disable("usematching")
+      shiny::updateActionButton(session, "usematching",
+                                label = "The formula for calculating the matches is incomplete")
+    } else {
+      shinyjs::enable("usematching")
+      shiny::updateActionButton(session, "usematching",
+                                label = "Use these matching settings")
+      values$treat.cov1 <<- f1
+      values$treat.cov2 <<- f2
+    }
+  })
+
+
+  #render data plots
+  output$dataPlot <- plotly::renderPlotly({values$selected.p})
+
+  #render data table of
+  output$dataTable <- DT::renderDT(
+    values$selected.d,
+    options = list(
+      pageLength = 25,
+      initComplete = DT::JS("function(){$(this).addClass('compact');}")
     )
+  )
 
-    #toggle use matching button based on formula being complete
-    observe({
-
-      f <- input$treat.f
-
-      if(is.null(f)){
-        shinyjs::disable("usematching")
-        shiny::updateActionButton(session, "usematching",
-                                  label = "The formula for calculating the matches is incomplete")
-      } else {
-        shinyjs::enable("usematching")
-        shiny::updateActionButton(session, "usematching",
-                                  label = "Use these matching settings")
-      }
-    })
 
     #render information table
-    output$matchtable <- renderTable({
-      Meth1 <- c(values$M1.dist, values$M1.ord, values$M1.rep)
-      Meth2 <- c(values$M2.dist, values$M2.ord, values$M2.rep)
+    output$matchtable <- renderUI({
 
-      M.list <- list(M1 = Meth1, M2 = Meth2)  %>% as.data.frame()
+      t.cov1 <- HTML(paste(paste("<code>",values$treat.cov1,"</code>", sep=""), collapse=", "))
+      t.cov2 <- HTML(paste(paste("<code>",values$treat.cov2,"</code>", sep=""), collapse=", "))
 
-      c.labs <- c("Method 1", "Method 2")
-      r.labs <- c("Distance", "Order", "Replacement")
 
-      colnames(M.list) <- c.labs
-      rownames(M.list) <- r.labs
+      tags$table(
+        style = "width:100%",
+        tags$tr(
+          tags$th(""),
+          tags$th("Method 1"),
+          tags$th("Method 2")
+        ),
+        tags$tr(
+          tags$th("Covariates"),
+          tags$td(t.cov1),
+          tags$td(t.cov2)
+        ),
+        tags$tr(
+          tags$th("Distance"),
+          tags$td(values$M1.dist),
+          tags$td(values$M2.dist)
+        ),
+        tags$tr(
+          tags$th("Order"),
+          tags$td(values$M1.ord),
+          tags$td(values$M2.ord)
+        ),
+        tags$tr(
+          tags$th("Replace"),
+          tags$td(ifelse(values$M1.rep, "Yes", "No")),
+          tags$td(ifelse(values$M2.rep, "Yes", "No"))
+        )
+      )
 
-      M.list
-      }, striped = T, hover = T, bordered = T, rownames = T, colnames = T)
-
-  # observe({
-  #   a <- input$sim4.X1t
-  #
-  #   updateSliderInput(session, "sim3.X2t",
-  #                     max=abs(a)-0.1, step=.1)
-  #
-  # }) %>% bindEvent(input$sim4.X1t)
-  #
-  #
-  # observe({
-  #   a <- input$sim4.X2t
-  #
-  #   updateSliderInput(session, "sim3.X1t",
-  #                     max=abs(a)-0.1, step=.1)
-  #
-  # }) %>% bindEvent(input$sim4.X2t)
+    })
 
   #render outcome formula
   output$f.outcome <-
     renderText(paste(code(noquote(values$outcome.f))))
 
   #render treatment formula
-  output$f.treat <-
-    renderText(paste(code(noquote(values$treat.f))))
+  output$f1.treat <-
+    renderText(paste(code(noquote(values$treat.f1))))
+
+  #render treatment formula
+  output$f2.treat <-
+    renderText(paste(code(noquote(values$treat.f2))))
 
   #render treatment effect
-  output$TE <- renderText(values$TE)
+  output$TE <- renderText(values$trueTE)
 
   ## To be copied in the server
   mod_SimData_server("SimData_1")
   mod_ViewData_server("ViewData_1")
   mod_MatchSettings_server("MatchSettings_1")
-  # mod_Info_server("Info_1")
-
 
 }

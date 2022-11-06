@@ -18,8 +18,6 @@ y.t <- code("y")
 
 te.txt <- HTML(
   paste0(
-    strong("Treatment Effect"),
-    br(),
     "The treatment effect controls the effect that the ",
     "treatment will have on the outcome (",
     y.t,
@@ -27,36 +25,8 @@ te.txt <- HTML(
   )
 )
 
-mean.txt <- HTML(
-  paste0(
-    strong("Mean (average)"),
-    br(),
-    "The mean is used to generate data drawn from a ",
-    "normal distribution for variables ",
-    X1.t,
-    " and ",
-    X2.t,
-    "."
-  )
-)
-
-sd.txt <- HTML(
-  paste0(
-    strong("Standard Deviation"),
-    br(),
-    "The standard deviation is used to generate data ",
-    "drawn from a normal distribution for variables ",
-    X1.t,
-    " and ",
-    X2.t,
-    "."
-  )
-)
-
 rho.txt <- HTML(
   paste0(
-    strong("Covariate Correlation"),
-    br(),
     "The covariate correlation is used to determine the strength ",
     "of the correlation between ",
     X1.t,
@@ -74,10 +44,6 @@ rho.txt <- HTML(
 
 xt.txt <- HTML(
     paste0(
-      strong("Effect on treatment ("),
-      t.t,
-      strong(")"),
-      br(),
       "The effect on treatment controls the degree to which ",
       X1.t,
       " and ",
@@ -90,8 +56,6 @@ xt.txt <- HTML(
 
 xy.txt <- HTML(
   paste0(
-    strong("Effect on outcome (", y.t, ")"),
-    br(),
     "The effect on outcome controls the degree to which ",
     X1.t,
     " and ",
@@ -104,11 +68,7 @@ xy.txt <- HTML(
 y.txt <-
   HTML(
     paste0(
-      strong("Value of "),
-      y.t,
-      strong(" (outcome)"),
-      br(),
-      "This is the value of the outcome before it has been ",
+     "This is the value of the outcome before it has been ",
       "subjected to the effects of ",
       X1.t,
       ", ",
@@ -121,8 +81,6 @@ y.txt <-
 
 range.txt <- HTML(
   paste0(
-    strong("Variable Range"),
-    br(),
     "This will set the range of a uniform distribution ",
     "for both ",
     X1.t,
@@ -134,8 +92,6 @@ range.txt <- HTML(
 
 overlap.txt <- HTML(
   paste0(
-    strong("Overlap"),
-    br(),
     "Use these sliders to adjust the amount of overlap ",
     "between the treated and control groups. Selecting 0 ",
     "represents no overlapSelect a value to set the mean value for the",
@@ -149,8 +105,6 @@ overlap.txt <- HTML(
 
 rel.txt <- HTML(
   paste0(
-    strong("Relationship"),
-    br(),
     "These two variable control how ", X1.t, " and ", X2.t,
     " are related to ", t.t, " and ", y.t, ". The direction ",
     "of these relationsips is outlined below.", br(), br(),
@@ -166,6 +120,94 @@ rel.txt <- HTML(
 mod_SimData_ui <- function(id) {
   ns <- NS(id)
   tagList(fluidPage(
+
+    ##Popovers
+    bsPopover(
+      id = ns("te1"),
+      title = "<strong>Treatment Effect</strong>",
+      content = paste0(
+        "The treatment effect controls the effect that the ",
+        "treatment will have on the outcome (",
+        y.t,
+        ")."
+      ) ,
+      "right",
+      options = list(container = "body")
+    ),
+    bsPopover(
+      id = ns("te2"),
+      title = "<strong>Treatment Effect</strong>",
+      content = te.txt,
+      "right",
+      options = list(container = "body")
+    ),
+
+    bsPopover(id = ns("range"),
+              title = "<strong>Range</strong>",
+              content = range.txt,
+              "right", options = list(container = "body")
+    ),
+    bsPopover(
+      id = ns("overlap"),
+      title = "<strong>Group Overlap</strong>",
+      content = overlap.txt,
+      "right",
+      options = list(container = "body")
+    ),
+    bsPopover(
+      id = ns("te3"),
+      title = "<strong>Treatment Effect</strong>",
+      content = te.txt ,
+      "right",
+      options = list(container = "body")
+    ),
+    bsPopover(
+      id = ns("rel"),
+      title = "<strong>Causal Relationship</strong>",
+      content = rel.txt ,
+      "right",
+      options = list(container = "body")
+    ),
+    bsPopover(
+      id = ns("te4"),
+      title = "<strong>Treatment Effect</strong>",
+      content = te.txt ,
+      "right",
+      options = list(container = "body")
+    ),
+    bsPopover(
+      id = ns("rho"),
+      title = "<strong>Covariate Correlation</strong>",
+      content = rho.txt ,
+      "right",
+      options = list(container = "body")
+    ),
+    bsPopover(
+      id = ns("xt"),
+      title = "<strong>Covariate Effect on Treatment</strong>",
+      content = xt.txt,
+      "right",
+      options = list(container = "body")
+    ),
+    bsPopover(
+      id = ns("xy"),
+      title = "<strong>Covariate Effect on Outcome</strong>",
+      content = xy.txt,
+      "right",
+      options = list(container = "body")
+    ),
+    bsPopover(
+      id = ns("fev.desc"),
+      title = "<strong>FEV</strong>",
+      content = paste0("This is a dataset from the <code>mplot</code> package. ",
+                    "It has 5 observations and 614 individuals. The observations ",
+                    "include <code>smoke</code>, <code>sex</code>, <code>age</code>",
+                    ", <code>height</code>, and <code>fev</code>."),
+      "right",
+      options = list(container = "body")
+    ),
+
+
     tabsetPanel(
       #type = "pills",
 
@@ -180,19 +222,7 @@ mod_SimData_ui <- function(id) {
             # create.sim1.data <- function(te=2)
             fluidRow(
               strong("Treatment Effect"),
-              icon("question-sign", lib = "glyphicon", id = ns("te1")),
-              bsPopover(
-                id = ns("te1"),
-                title = "<strong>Treatment Effect</strong>",
-                content = paste0(
-                  "The treatment effect controls the effect that the ",
-                  "treatment will have on the outcome (",
-                  y.t,
-                  ")."
-                ) ,
-                "right",
-                options = list(container = "body")
-              )
+              icon("question-sign", lib = "glyphicon", id = ns("te1"))
             ),
             fluidRow(column(
               12,
@@ -208,7 +238,7 @@ mod_SimData_ui <- function(id) {
             )),
             fluidRow(column(
               12, align = "right",
-              actionButton("applySim1", "Apply")
+              actionButton("applySim1", "Preview Data")
             ))
           ),
 
@@ -225,14 +255,7 @@ mod_SimData_ui <- function(id) {
 
             fluidRow(
               strong("Treatment Effect"),
-              icon("question-sign", lib = "glyphicon", id = ns("te2")),
-              bsPopover(
-                id = ns("te2"),
-                title = "<strong>Treatment Effect</strong>",
-                content = te.txt,
-                "right",
-                options = list(container = "body")
-              )
+              icon("question-sign", lib = "glyphicon", id = ns("te2"))
             ),
             fluidRow(column(
               12,
@@ -249,14 +272,7 @@ mod_SimData_ui <- function(id) {
 
             fluidRow(
               strong("Range"),
-              icon("question-sign", lib = "glyphicon", id = ns("range")),
-              bsPopover(
-                id = ns("range"),
-                title = "<strong>Range</strong>",
-                content = range.txt,
-                "right",
-                options = list(container = "body")
-              )
+              icon("question-sign", lib = "glyphicon", id = ns("range"))
             ),
 
             fluidRow(column(
@@ -274,15 +290,7 @@ mod_SimData_ui <- function(id) {
 
             fluidRow(
               strong("Group Overlap"),
-              icon("question-sign", lib = "glyphicon", id =
-                     ns("overlap")),
-              bsPopover(
-                id = ns("overlap"),
-                title = "<strong>Group Overlap</strong>",
-                content = overlap.txt,
-                "right",
-                options = list(container = "body")
-              )
+              icon("question-sign", lib = "glyphicon", id = ns("overlap"))
             ),
 
             fluidRow(column(
@@ -312,7 +320,7 @@ mod_SimData_ui <- function(id) {
 
             fluidRow(column(
               12, align = "right",
-              actionButton("applySim2", "Apply")
+              actionButton("applySim2", "Preview Data")
             ))
           ),
 
@@ -329,8 +337,7 @@ mod_SimData_ui <- function(id) {
 
             fluidRow(
               strong("Treatment Effect"),
-              icon("question-sign", lib = "glyphicon", id =
-                     ns("te3"))
+              icon("question-sign", lib = "glyphicon", id = ns("te3"))
             ),
             fluidRow(column(
               12,
@@ -342,27 +349,13 @@ mod_SimData_ui <- function(id) {
                 value = 2,
                 step = .1,
                 ticks = F
-              ),
-              bsPopover(
-                id = ns("te3"),
-                title = "<strong>Treatment Effect</strong>",
-                content = te.txt ,
-                "right",
-                options = list(container = "body")
               )
             )),
 
             fluidRow(
               strong("Relationships"),
               icon("question-sign", lib = "glyphicon", id =
-                     ns("rel")),
-              bsPopover(
-                id = ns("rel"),
-                title = NULL,
-                content = rel.txt ,
-                "right",
-                options = list(container = "body")
-              )
+                     ns("rel"))
             ),
             fluidRow(column(12,
                             selectInput(
@@ -379,13 +372,14 @@ mod_SimData_ui <- function(id) {
 
             fluidRow(column(
               12, align = "right",
-              actionButton("applySim3", "Apply")
+              actionButton("applySim3", "Preview Data")
             ))
           ),
           mainPanel(plotlyOutput("sim3plot", height = "700px"))
 
         )
       ),
+
       ###Simulation 4
       tabPanel(
         "Simulation 4",
@@ -409,7 +403,6 @@ mod_SimData_ui <- function(id) {
             # "Enter the treatment effect:",
 
             fluidRow(
-              #align="center",
               strong("Treatment Effect"),
               icon("question-sign", lib = "glyphicon", id = ns("te4"))
             ),
@@ -423,13 +416,6 @@ mod_SimData_ui <- function(id) {
                 value = 2,
                 step = .1,
                 ticks = F
-              ),
-              bsPopover(
-                id = ns("te4"),
-                title = "<strong>Treatment Effect</strong>",
-                content = te.txt ,
-                "right",
-                options = list(container = "body")
               )
             )),
 
@@ -437,14 +423,7 @@ mod_SimData_ui <- function(id) {
         #covariate correlation
             fluidRow(
               strong("Covariate Correlation"),
-              icon("question-sign", lib = "glyphicon", id = ns("rho")),
-              bsPopover(
-                id = ns("rho"),
-                title = "<strong>Covariate Correlation</strong>",
-                content = rho.txt ,
-                "right",
-                options = list(container = "body")
-              )
+              icon("question-sign", lib = "glyphicon", id = ns("rho"))
             ),
             fluidRow(column(
               12,
@@ -458,56 +437,11 @@ mod_SimData_ui <- function(id) {
                 ticks = F
               )
             )),
-#
-#         #standard deviation
-#             fluidRow(
-#               strong("Standard Deviation"),
-#               icon("question-sign", lib = "glyphicon", id = ns("sd")),
-#               bsPopover(
-#                 id = ns("sd"),
-#                 title = NULL,
-#                 content = sd.txt ,
-#                 "right",
-#                 options = list(container = "body")
-#               )
-#             ),
-#             fluidRow(column(
-#               6,
-#               sliderInput(
-#                 "sim4.X1sd",
-#                 "X1",
-#                 ticks = F,
-#                 min = 0.2,
-#                 max = 5,
-#                 value = 2,
-#                 step = 0.2
-#               )
-#             ),
-#             column(
-#               6,
-#               sliderInput(
-#                 "sim4.X2sd",
-#                 "X2",
-#                 ticks = F,
-#                 min = 0.2,
-#                 max = 5,
-#                 value = 2,
-#                 step = 0.2
-#               )
-#             )),
-
 
         #effect on treatment
             fluidRow(
               strong("Effect on treatment"),
-              icon("question-sign", lib = "glyphicon", id = ns("xt")),
-              bsPopover(
-                id = ns("xt"),
-                title = NULL,
-                content = xt.txt,
-                "right",
-                options = list(container = "body")
-              )
+              icon("question-sign", lib = "glyphicon", id = ns("xt"))
             ),
             fluidRow(column(
               6,
@@ -538,14 +472,7 @@ mod_SimData_ui <- function(id) {
       #Effect on y
           fluidRow(
               strong("Effect on outcome"),
-              icon("question-sign", lib = "glyphicon", id = ns("xy")),
-              bsPopover(
-                id = ns("xy"),
-                title = NULL,
-                content = xy.txt,
-                "right",
-                options = list(container = "body")
-              )
+              icon("question-sign", lib = "glyphicon", id = ns("xy"))
             ),
             fluidRow(column(
               6,
@@ -575,7 +502,7 @@ mod_SimData_ui <- function(id) {
       #apply settings
           fluidRow(column(
               12, align = "right",
-              actionButton("applySim4", "Apply")
+              actionButton("applySim4", "Preview Data")
             ))
           ),
           mainPanel(plotlyOutput("sim4plot", height = "700px"))
@@ -588,26 +515,13 @@ mod_SimData_ui <- function(id) {
                  sidebarPanel(
                    style = "height: 700px;",
                    fluidRow(
-                     strong("Treatment Effect"),
-                     icon("question-sign", lib = "glyphicon", id =
-                            ns("te1")),
-                     bsPopover(
-                       id = ns("te1"),
-                       title = "<strong>Treatment Effect</strong>",
-                       content = paste0(
-                         "The treatment effect controls the effect that the ",
-                         "treatment will have on the outcome (",
-                         y.t,
-                         ")."
-                       ) ,
-
-                       "right",
-                       options = list(container = "body")
-                     )
+                     strong("Forced Expiratory Volume"),
+                     icon("question-sign", lib = "glyphicon",
+                          id = ns("fev.desc"))
                    ),
                    fluidRow(column(
                      12, align = "right",
-                     actionButton("applyFEV", "Apply")
+                     actionButton("applyFEV", "Preview Data")
                    ))
                  ),
 

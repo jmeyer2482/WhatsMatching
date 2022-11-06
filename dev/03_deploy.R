@@ -50,3 +50,7 @@ rsconnect::setAccountInfo(name='jmeyer2482',
 # rsconnect::setAccountInfo(name='jmeyer2482',
 #                           token='C5C2F89630BCB30C99C721E0AD9FBC8A',
 #                           secret='NMextOp1PfJCY0Vo5rcL/crlJ30bKOkIHiQDk2p4')
+
+##INSTALL
+
+devtools::install_github("jmeyer2482/WhatsMatching")

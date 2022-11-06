@@ -29,6 +29,24 @@ app_ui <- function(request) {
       theme = shinytheme("cerulean"),
       br(),
 
+      #standardise some formatting
+      tags$head(
+        tags$style(HTML("
+        tr {
+          border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+          background-color: rgb(47, 164, 231, 0.1);
+        }
+
+        code {
+          background-color: #e4e4e4;
+        }
+
+        "))
+      ),
+
       #Settings
       bsPopover(id="butGetData",title=HTML(paste(strong("Data and Match Settings"))),
                 content="Change the data and match settings that have informed the plot",
@@ -65,11 +83,10 @@ app_ui <- function(request) {
   shiny::sidebarLayout(position="right",
 
     shiny::sidebarPanel(width = 3,
-        h4("Treatment Effect Settings"),#br(),
-        "Estimate Formula: ", code(textOutput("txt.M.o.f", inline = T), .noWS="outside"), br(),
+        h4("Treatment Effect Settings"),
+        "Estimate Formula: ", code(textOutput("txt.M.o.f", inline = T)), br(),
         "Actual Treatment Effect: ", textOutput("txt.M.TE", inline = T), br(),
         h4("Match settings"),
-        "Matching formula: ", code(textOutput("txt.M.t.f", inline = T)),br(),
         tableOutput("m.info"),
         includeMarkdown("inst/app/www/main_side.html")
     ),

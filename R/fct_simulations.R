@@ -31,7 +31,7 @@
 #' @param weight_y2 Simulation 3 and 4 - the weight of X2 on the outcome variable y
 #'
 #'
-#' @return A dataframe with a 2 covariates, X1 and X2, and a treatment and outcome variable for the purposes of matching
+#' @return A dataframe with a 2 covariates, X1 and X2, a random error variable, a treatment variable and an outcome variable for the purposes of matching
 #'
 #' @importFrom dplyr mutate %>% select case_when
 #' @importFrom stats runif rbinom rnorm
@@ -238,31 +238,15 @@ create.sim.data <- function(
              t = rbinom(n, 1, p),
              y = weight_y0 + te*t + weight_y1*X1 + weight_y2*X2,
              Allocation = ifelse(t==0,"Control","Treated"))
-    #
-    # #get weighted probabilities
-    # prX1 <- (max(d$X1)-d$X1)/(max(d$X1)-min(d$X1))*weight_t1
-    # prX2 <- (max(d$X2)-d$X2)/(max(d$X2)-min(d$X2))*weight_t2
-    #
-    # #create the data
-    # pr <- (prX1 + prX2)/2
-    # t <- rbinom(n, 1, prob=pr)
-    # y <- weight_y0 + te*t + weight_y1*d$X1 + weight_y2*d$X2
-    # Allocation <- ifelse(t==0,"Control","Treated")
 
     d <- d[c("t", "Allocation", "X1", "X2", "y")]
-    # list(t=t, Allocation=Allocation, X1=d$X1, X2=d$X2, y=y) %>%
-        # as.data.frame()
 
   }
 
-  #add jitter
+  #add random error
   #if jitter is 0 it adds 0, jitter 0 by default
-  j <- rnorm(n,0,jitter)
-  d$y <- d$y + j
-
-  jit.te <-  mean(j[d$t==1], na.rm = T)-mean(j[d$t==0], na.rm = T)
-  d$te <- te + jit.te
-  # rnorm(n,0,jitter)
+  d$error <- rnorm(n,0,jitter)
+  d$y <- d$y + d$error
 
   #rounded values
   d <- d %>% mutate(across(3:6, ~ round(.x,3)))
