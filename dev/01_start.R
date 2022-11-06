@@ -63,6 +63,7 @@ usethis::use_readme_rmd(open = FALSE)
 usethis::use_code_of_conduct(contact = "Jason Meyer")
 usethis::use_lifecycle_badge("Stable")
 usethis::use_news_md(open = FALSE)
+usethis::use_version("major")
 
 ## Use git ----
 usethis::use_git(message = "testing use_git")

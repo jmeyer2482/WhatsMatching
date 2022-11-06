@@ -16,3 +16,5 @@ $run_dev.*
 ^man\WhatsMatching-Presentation.*
 ^logo.png
 ^index.md
+^man/WhatsMatching-Presentation_files$
+^man/WhatsMatching-Presentation\.*$
