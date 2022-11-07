@@ -87,15 +87,9 @@ matching.plot <- function(match.data, xvar, yvar, multi=F, plot.n=1){
   control.col <-'#3772ff'
   treat.col <- '#df2935'
 
-  # p <- ggplot(d, aes(x=.data$x, y=.data$y, group=.data$subclass,
-  #                     frame=.data$frame, color=.data$Allocation)) +
-  #   geom_point(aes(shape=.data$Allocation, text=.data$txt),
-  #              size=3, stroke=0.8, alpha=0.8) +
-  #   geom_line(color="black") +
-  #   scale_shape_manual(values = c("Control"=2, "Treated"=6)) +
-  #   scale_color_manual(values = c("Control"=control.col, "Treated"=treat.col)) +
 
-  p <- ggplot(d, aes(x=.data$t.x, y=.data$t.y, frame=.data$frame)) +
+  p <- suppressWarnings( #used to prevent complaints about using aes(text)
+    ggplot(d, aes(x=.data$t.x, y=.data$t.y, frame=.data$frame)) +
     geom_segment(aes(x=.data$t.x, y=.data$t.y, xend=.data$c.x, yend=.data$c.y),
                  color="black") +
     geom_point(aes(x=.data$t.x, y=.data$t.y, text=.data$txt.t,
@@ -107,11 +101,11 @@ matching.plot <- function(match.data, xvar, yvar, multi=F, plot.n=1){
     scale_color_manual(name="Allocation",values=c(control.col,treat.col)) +
     scale_shape_manual(name="Allocation",values=c(2,6)) +
     theme_bw()
-  # +
-  #   theme(legend.title = element_blank(), legend.position='none')
+    )
 
 
   pltly <- ggplotly(p, tooltip = 'text')
+
 
   pltly <- pltly %>%
     add_markers(data=all.data, x=~x, y=~y,
@@ -121,6 +115,8 @@ matching.plot <- function(match.data, xvar, yvar, multi=F, plot.n=1){
                 symbol= ~t, showlegend=FALSE,
                 symbols = c("triangle-up-open","triangle-down-open"),
                 hoverinfo = "none", inherit = F)
+
+
 
   #annotation for multiplot
   x.min <- axis.ranges(all.data$x,0.1) %>% min()
@@ -226,34 +222,3 @@ axis.settings <- function(axis.text="Insert Title", axis.range=c(0,1),
     }
 }
 
-
-std.means <- function(match.data, xvar, yvar, tvar) {
-
-  data <- match.data$data
-
-  m.data <- match.data$matched.data
-
-  m.data <- m.data %>% arrange(.data$pair.dist, .data$subclass) %>%
-    mutate(ord=(row_number(.data$pair.dist) + (row_number(.data$pair.dist)%%2))/2)
-
-  m.data <- accumulate_by(m.data, ~ord)# %>% mutate(rframe=max(.data$frame)-.data$frame)
-
-  s.means <- cbind(n = 1:max(m.data$frame), target=rep(0,max(m.data$frame)),
-                   full.smd.x = rep(smd::smd(data[[xvar]], data[[tvar]])$estimate,
-                                    max(m.data$frame)),
-                   matched.smd.x = sapply(1:(max(m.data$frame)),
-                                  function(x)
-                                     smd::smd(subset(m.data, m.data$frame==x)[[xvar]],
-                                              subset(m.data, m.data$frame==x)[[tvar]])$estimate),
-                   full.smd.y = rep(smd::smd(data[[yvar]],data[[tvar]])$estimate,
-                                    max(m.data$rframe)),
-                   matched.smd.y = sapply(1:max(m.data$frame), function(x)
-                     smd::smd(subset(m.data, m.data$frame==x)[[yvar]],
-                              subset(m.data, m.data$frame==x)[[tvar]])$estimate)
-  ) %>% as.data.frame()
-
-  s.means <- cbind(distance=match.data$distance, s.means)
-
-  return(s.means)
-
-}

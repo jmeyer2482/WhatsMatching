@@ -120,6 +120,8 @@ rel.txt <- HTML(
 mod_SimData_ui <- function(id) {
   ns <- NS(id)
   tagList(fluidPage(
+    h3("Data Generation"),
+    HTML("There are 2 options for data gerneration - simulated data, or the forced expiratory volume (FEV) data set. All of the data simulations contain the same variables - <code>t</code>: a binary treatment, <code>X1</code> and <code>X2</code>: covariates, <code>y</code>: a continuous outcome, and <code>error</code>: the value of the estimation error.Each simulation has it's own particular settings to change and can be better at demonstrating different matching effects."), br(), br(),
 
     ##Popovers
     bsPopover(
@@ -199,7 +201,7 @@ mod_SimData_ui <- function(id) {
     bsPopover(
       id = ns("fev.desc"),
       title = "<strong>FEV</strong>",
-      content = paste0("This is a dataset from the <code>mplot</code> package. ",
+      content = HTML("This is a dataset from the <code>mplot</code> package. ",
                     "It has 5 observations and 614 individuals. The observations ",
                     "include <code>smoke</code>, <code>sex</code>, <code>age</code>",
                     ", <code>height</code>, and <code>fev</code>."),
@@ -218,8 +220,8 @@ mod_SimData_ui <- function(id) {
         sidebarLayout(
           sidebarPanel(
             style = "height: 700px;",
+            HTML("This simulation is based on one done by King and Neilsen in their 2019 paper on the propensity score paradox. It contains three groups; one representing a randomised experiment, one representing a random experiment, and one representing a control group. This simulation highlights the difference in matches between the mahalanobis distance and the propensity score."), br(), br(),
 
-            # create.sim1.data <- function(te=2)
             fluidRow(
               strong("Treatment Effect"),
               icon("question-sign", lib = "glyphicon", id = ns("te1"))
@@ -252,6 +254,7 @@ mod_SimData_ui <- function(id) {
         sidebarLayout(
           sidebarPanel(
             style = "height: 700px;",
+            HTML("Like Simulation 1, this simulation is also based on one done by King and Neilsen. It generates two groups, treated and control, that overlap on the uniformly distributed covarties <code>X1</code> and <code>X2</code>. You can adjust the amount of overlap and range of the data. This simulations demonstrates the effect of replacement well."), br(), br(),
 
             fluidRow(
               strong("Treatment Effect"),
@@ -334,6 +337,7 @@ mod_SimData_ui <- function(id) {
         sidebarLayout(
           sidebarPanel(
             style = "height: 700px;",
+            HTML("This idea behind this simulation is to generate data based on causal relationships. In this simulation both <code>X1</code> and <code>X2</code> are drawn from a bivariate normal distribution. This simulation is good for investigating the effect of model selection for both the outcome and the matching covariates."), br(), br(),
 
             fluidRow(
               strong("Treatment Effect"),
@@ -387,20 +391,7 @@ mod_SimData_ui <- function(id) {
         sidebarLayout(
           sidebarPanel(
             style = "height: 700px;",
-            #width=6,
-            #       n = 200, mean1 = 0, mean2 = 0, sd1 = 1, sd2 = 1,
-            #       rho = .3, #must be between -1 and 1 inclusive.
-            #
-            #       # Generating t
-            #       weight_t1 = 0.5, #effect of X1 on t
-            #       weight_t2 = 0.5,  #effect of X2 on t
-            #
-            #       # Generating y
-            #       weight_y0 = 2, #base value of y
-            #       weight_y1 = 1, #effect of X1 on y
-            #       weight_y2 = -1, #effect of X2 on y
-            #       te = 2 # True treatment effect
-            # "Enter the treatment effect:",
+            HTML("This simulation allow you to control the level of confounding on <code>X1</code> and/or <code>X2</code>. Like Simulation 3, both <code>X1</code> and <code>X2</code> are drawn from a bivariate normal distribution. This simulation is also good for investigating the effect of model selection for both the outcome and the matching covariates."), br(), br(),
 
             fluidRow(
               strong("Treatment Effect"),
@@ -514,11 +505,8 @@ mod_SimData_ui <- function(id) {
                sidebarLayout(
                  sidebarPanel(
                    style = "height: 700px;",
-                   fluidRow(
-                     strong("Forced Expiratory Volume"),
-                     icon("question-sign", lib = "glyphicon",
-                          id = ns("fev.desc"))
-                   ),
+                   HTML("This data set consists of 654 observations on youths aged 3 to 19 from East Boston recorded duing the middle to late 1970's. Forced expiratory volume (<code>fev</code>), a measure of lung capacity, is the variable of interest. <code>age</code> and <code>height</code> are two continuous predictors. <code>sex</code> and <code>smoke</code> are two categorical predictors. For the purpose of this exercise, <code>smoke</code> is being considered the treatment variable."),
+                   br(),
                    fluidRow(column(
                      12, align = "right",
                      actionButton("applyFEV", "Preview Data")

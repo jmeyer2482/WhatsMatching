@@ -69,25 +69,7 @@ knitr::opts_chunk$set(echo = FALSE, fig.align = "center")
 -   Operations aren't always clear
 -   There's also a lot of...
 
-```{=html}
-<!--
 
-:::{.columns}
-:::{.column width="25%"}
-
-![](https://media.giphy.com/media/l0MYw6Cu1TfY3gsWk/giphy.gif){fig-align="right" width="100%"}
-
-:::
-
-:::{.column width="75%" align="right"}
-
-> "Any sufficiently advanced technology is indistinguishable from magic."\
-> <p style='text-align: right;'> Arthur C. Clarke </p>
-
-:::
-:::
--->
-```
 ::: notes
 -   Matching is a pre-processing step that is used, in particular, to assist with controlling confounding
 -   As I noted earlier, matching is a bit black box
@@ -97,58 +79,49 @@ knitr::opts_chunk$set(echo = FALSE, fig.align = "center")
 
 ## Decisions, decisions, decisions {.ch}
 
-```{=html}
-<!--
-:::{.columns}
-
-:::{.column width="50%"} -->
-```
 -   Distance\
 -   Covariate selection\
 -   Replacement\
 -   Ordering\
 -   Caliper adjustment
 
-```{=html}
-<!-- 
-:::
 
-
-:::{.column width="50%"}
-### MAGIC! {style="text-align: center;"} 
-
-{.footnote style="font-size: 10px; text-align: right;"}
-source: <https://media.giphy.com/media/l0MYw6Cu1TfY3gsWk/giphy.gif>
-::: 
-:::
-
-:::
--->
-```
 ::: notes
 -   decision, decisions, decisions!
 -   This list of options constitutes the basic suite of options that an analyst could consider
+-   The theories that underpin the particular settings for each matching method are well documented
 -   generally though, many options are set automatically by coded functions that are used to implement matching\
--   this can contribute to some of its black-box operation
+-   this contributes to some of its black-box operation
 -   In the interests of time, I won't go into detail here but it's safe to say there are a few decisions to make here
 :::
 
 ## We wanted to provide an interactive environment for people to learn about matching {.ch}
 
 ::: notes
--   The theories that underpin the particular settings for each matching method are well documented
--   What seems to be lacking is the practical application of the settings and what the implications might be
+-   This project is designed around highlighting the practical application of the settings and what the implications might be
 -   We decided this was an opportunity to develop an interactive environment for people to learn about matching and to understand the possible implications of their decisions
 :::
+
+
+## Development Process {.ch}
+
+![](figures/dev_pathway.png){fig-align="center" height="550px"}
+
+::: notes
+-   developing this interactive environment has been more involved than I expected
+-   what essentially started out as a shiny app that was going to look specifically at the propensity score paradox has turned into a R Packge, Shiny App and Website that looks at and unpacks matching methodolgy
+-   I think one of the brilliant things about it, is that because it's been developed across all these platforms, it can cater to a wide audience. 
+-   Let's take a look at the app
+:::
+
 
 ## The App {.ch}
 
 ![](figures/App_Main.jpeg){fig-align="center" height="550px"}
 
 ::: notes
--   And this is what we've come up with.
--   This is a screenshot of the interactive shiny app that we have developed.
--   I'll just quickly give you some context for what you are seeing and then I'll do a demonstration
+-   This is a screenshot of the shiny app that's been developed.
+-   I'll just quickly give you some context for what you are seeing and then I'll do a demonstration of the actual app
 :::
 
 ## Plot 1 and 2 - Matches of the Actual Data {.ch}
@@ -158,10 +131,12 @@ source: <https://media.giphy.com/media/l0MYw6Cu1TfY3gsWk/giphy.gif>
 library(WhatsMatching)
 library(dplyr)
 
-d <- create.sim.data()
+d <- create.sim.data(te=2)
+
+te <- mean(d$error[d$t==1], na.rm = T)-mean(d$error[d$t==0], na.rm = T) + 2
 
 m1 <- matched.data(t~X1+X2, d, "Mahalanobis")
-m2 <- matched.data(t~X1+X2, d, "Propensity Score")
+m2 <- matched.data(t~X1+X2, d, "Propensity Score") 
 
 
 WhatsMatching::matching.plot(m1, "X1", "X2") %>% plotly::layout(showlegend=TRUE)
@@ -206,7 +181,7 @@ WhatsMatching:::std.means.plot(m1,m2,"X1","X2","t") %>%
 
 ::: center
 ```{r, warning=FALSE}
-WhatsMatching:::estimates.plot(m1,m2,y~t,NULL) %>%
+WhatsMatching:::estimates.plot(m1,m2,y~t,te) %>%
   plotly::animation_opts(transition = 0, redraw=T, frame=400) %>%
   plotly::animation_slider(currentvalue = list(prefix = "Number of pairs matched: ",
                                          xanchor = "left",
@@ -236,57 +211,62 @@ How do we use it?
 ::: notes
 -   So now we've had a brief look at some of the plots from the app it's probably worth understanding how to use it
 -   it's pretty simple actually, just select one of the simulated or real data sets available in the app
--   choose the matching approach you would like and adjust the settings
+-   choose the matching approach you would like and adjust the settings, 
 -   Then press play and watch
+-   This particular simulation is based on one by King and Neilsen which was looking at the propensity score paradox.
+-   Basically, the 3 groups represent a matched pair randomised experiment, a completely randomised experiment and control units from an imbalanced observational data set
 :::
 
-## What questions can we answer {.ch}
+## What questions can we answer? {.ch .smaller}
 
--   Is covariance balance maintained as I remove observations?
+-   Basic Questions
 
--   what is the impact of model selection on the estimate?
+    -   What happens when the order of the matches is changed?
+    
+    -   what happens if replacement is or isn't used?
+    
+    -   Is covariate balanace maintained?
+    
+    -   Is a particular matching distance consistently superior?
 
--   What does data that shouldn't be matched look like?
+-   Advanced Questions
 
--   Are the benefits of using one matching method over another?
+    -   How does propensity score matching compare to other propensity score methods?
+    
+    -   what is the impact of model selection on the estimate?
+
+    -   Which parameters have the biggest impact on the performace of matching?
+
 
 ::: notes
--   These are some simple questions we think can be given insights to by using the app
--   Having invested a significant amount of time in understanding the matching process I think I can safely say the level of intuitive understanding of matching begins and ends with the fact that units are being paired
--   This is particularly true of the propensity but also of matching on more than 2 variables, which isn't particularly explored in this application
+-   These are some questions we think can be given insights to by using the app
+-   Having invested a significant amount of time in understanding the matching process I think I can safely say that an intuitive understanding of matching begins and ends with the fact that units are being paired
 :::
 
-## Development Process {.ch}
-
-![](figures/dev_pathway.png){fig-align="center" height="550px"}
-
-::: notes
--   the process for developing this app has been more involved than I expected
--   what essentially started out as a shiny app that was going to look specifically at the propensity score paradox has turned into a R Packge, Shiny App and Website that looks at and unpacks matching methodolgy
-:::
 
 ## Summary {.ch .smaller}
 
 -   Shiny App
 
-    -   Demonstrate how the matching works
+    -   Demonstrates how matching works
 
     -   Interactive learning environment
 
 -   R Package
 
     -   Advanced functions for user exploration with the same outputs as the Shiny App
+    
+    -   Includes data generation that is not easily accessed in other matching packages
 
 -   Website
 
-    -   Provide and educational resource for users to access and gain further context
+    -   Provides and educational resources for users to access and gain further context
 
 ::: notes
--   I think the benefits of having this set up is that there is a extensive information available and scalable use for the information
--   the app itself, and the package, could be used at a tertiary level or at a more advanced level
--   the R package gives more advanced users the ability to play with these tools using any data they choose, although there are limitations
--   the app gives people without a grounding in data science a better look into the black box that is matching
--   and the website provide the underpinning framework of information and educational resources that inform the package and the app
+-   In summary, what I'll be delivering is a project that has broad capacity to provide education and insights into how matching works  
+-   we have an app that demonstrates how matching work in an interactive learning environment that can be used by anyone and gives people without a grounding in data science a better look into the black box that is matching
+-   the functions in the R package give more advanced users the ability to play with these tools using any data they choose, although it is not designed to be used for analyses
+-   and then the website provides the underpinning framework of information and educational resources that inform the package and the app
 :::
 
 ## Thanks for listening {.ch .smaller}
@@ -308,5 +288,5 @@ Website: [https://jmeyer2482.github.io/WhatsMatching](jmeyer2482.github.io/Whats
 -   thanks for listening everyone
 -   here's a list of the places you can visit to see my project first hand and install instructions if you'd like to install the package
 -   Also, a massive thank you to my supervisor Mark who's been integral to maintaining my focus
--   I'll take some questions now
+-   I'm happy to take questions now if anyone has any?
 :::

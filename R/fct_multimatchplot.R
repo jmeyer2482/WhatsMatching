@@ -55,7 +55,7 @@ combined.plot <- function(xvar, yvar, M1, M2, te=NULL,
 
 std.means.plot <- function(M1, M2, xvar, yvar, treatment){
 
-  s.means.M1 <- std.means(M1, xvar, yvar, treatment)
+  s.means.M1 <- std.means(M1, xvar, yvar, treatment) %>% suppressWarnings()
 
   s.means.M1.cum <- accumulate_by(s.means.M1, ~n) %>%
     mutate(method="Method 1",
@@ -66,7 +66,7 @@ std.means.plot <- function(M1, M2, xvar, yvar, treatment){
                         .data$method," - ", .data$distance, " : ",
                         round(.data$matched.smd.x,3)))
 
-  s.means.M2 <- std.means(M2, xvar, yvar, treatment)
+  s.means.M2 <- std.means(M2, xvar, yvar, treatment) %>% suppressWarnings()
 
   s.means.M2.cum <- accumulate_by(s.means.M2, ~n) %>%
     mutate(method="Method 2",
@@ -82,14 +82,13 @@ std.means.plot <- function(M1, M2, xvar, yvar, treatment){
   ys <- s.means.cum[c('full.smd.x', 'matched.smd.x',
                       'full.smd.y', 'matched.smd.y')]
 
-  # target <- rep(0,nrow(s.means.cum))
-
   y.range <- axis.ranges(ys,0.1)
 
   y.max <- axis.ranges(ys,0) %>% max()
   a <- subplot.title(paste0("Plot 3: Standarised Mean Differences of ", xvar, " and ", yvar), 1, y.max)
 
-  gg <- ggplot(s.means.cum, aes(x=n, frame=.data$frame, colour=.data$method)) +
+  gg <- suppressWarnings( #used to prevent complaints about using aes(text)
+    ggplot(s.means.cum, aes(x=n, frame=.data$frame, colour=.data$method)) +
     geom_line(aes(x=n, y=.data$matched.smd.x,
                   linetype=.data$method, group=.data$method, text=.data$txtx),
               size=1) +
@@ -98,6 +97,7 @@ std.means.plot <- function(M1, M2, xvar, yvar, treatment){
               size=1) +
     scale_color_manual(values = c("Method 1"='#FED148', "Method 2"='#B241B4')) +
     theme_bw()
+  )
 
   gg <- ggplotly(gg, tooltip="text") %>%
     animation_opts(transition = 0, redraw=T, frame=400) %>% suppressWarnings()
@@ -274,5 +274,40 @@ matching.ests <- function(match.data, f){
     mutate(txt=paste0("Estimate: ", round(.data$estimate,3)))
 
   return(a)
+
+}
+
+
+std.means <- function(match.data, xvar, yvar, tvar) {
+
+  data <- match.data$data
+
+  m.data <- match.data$matched.data
+
+  m.data <- m.data %>% arrange(.data$pair.dist, .data$subclass) %>%
+    mutate(ord=(row_number(.data$pair.dist) + (row_number(.data$pair.dist)%%2))/2)
+
+  m.data <- accumulate_by(m.data, ~ord)
+
+  s.means <- cbind(
+    n = 1:max(m.data$frame),
+    target=rep(0,max(m.data$frame)),
+    full.smd.x = rep(smd::smd(data[[xvar]], data[[tvar]])$estimate,
+                     max(m.data$frame)),
+    matched.smd.x = sapply(1:(max(m.data$frame)),
+                     function(x)
+                       smd::smd(subset(m.data, m.data$frame==x)[[xvar]],
+                                subset(m.data, m.data$frame==x)[[tvar]])$estimate),
+    full.smd.y = rep(smd::smd(data[[yvar]],data[[tvar]])$estimate,
+                     max(m.data$rframe)),
+    matched.smd.y = sapply(1:max(m.data$frame),
+                     function(x)
+                       smd::smd(subset(m.data, m.data$frame==x)[[yvar]],
+                                subset(m.data, m.data$frame==x)[[tvar]])$estimate)
+    ) %>% as.data.frame()
+
+  s.means <- cbind(distance=match.data$distance, s.means)
+
+  return(s.means)
 
 }

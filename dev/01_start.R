@@ -64,6 +64,7 @@ usethis::use_code_of_conduct(contact = "Jason Meyer")
 usethis::use_lifecycle_badge("Stable")
 usethis::use_news_md(open = FALSE)
 usethis::use_version("major")
+usethis::use_build_ignore("man/WhatsMatching-Presentation.*")
 
 ## Use git ----
 usethis::use_git(message = "testing use_git")

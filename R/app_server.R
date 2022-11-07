@@ -23,14 +23,15 @@
 #'
 #'
 
-library(ggplot2)
-library(dplyr)
-library(plotly)
-library(shiny)
-library(shinyBS)
-library(htmltools)
-library(DT)
-library(markdown)
+#load quietly to reduce messages on shiny server
+library(ggplot2, quietly = T, warn.conflicts = F)
+library(dplyr, quietly = T, warn.conflicts = F)
+library(plotly, quietly = T, warn.conflicts = F)
+library(shiny, quietly = T, warn.conflicts = F)
+library(shinyBS, quietly = T, warn.conflicts = F)
+library(htmltools, quietly = T, warn.conflicts = F)
+library(DT, quietly = T, warn.conflicts = F)
+library(markdown, quietly = T, warn.conflicts = F)
 
 
 #function for getting fev dataset
@@ -246,9 +247,9 @@ app_server <- function(input, output, session) {
     #make sure one is with and one without replacement
     #ensures methods will always be different
     if (dist[1] == dist[2] & ord[1] == ord[2]) {
-      rep <- sample(x = c(F, T), 2, replace = T)
-    } else {
       rep <- sample(x = c(F, T), 2, replace = F)
+    } else {
+      rep <- sample(x = c(F, T), 2, replace = T)
     }
 
     #assign matching variables to session for use in another function
@@ -330,6 +331,11 @@ app_server <- function(input, output, session) {
     #store the matched data
     values$M1 <<- M1
     values$M2 <<- M2
+
+
+    # suppress unnecessary warnings when generating plot
+    storeWarn<- getOption("warn")
+    options(warn = -1)
 
     #check the treatment variable from the formula
     #assign plots accordingly
@@ -416,6 +422,12 @@ app_server <- function(input, output, session) {
 
     #close the modal now that everything is finished
     removeModal()
+
+    #restore warnings, delayed so plot is completed
+    shinyjs::delay(expr =({
+      options(warn = storeWarn)
+    }) ,ms = 15000) #25 seconds
+
 
   }) %>%
     bindEvent(values$selected.d,
