@@ -345,7 +345,7 @@ app_server <- function(input, output, session) {
     } else {
 
       err <-  mean(d$error[d$t==1], na.rm = T)-mean(d$error[d$t==0], na.rm = T)
-      newTE <- round(TE + err,3)
+      newTE <- round(TE + err,2)
       values$trueTE <<- newTE
 
     }
