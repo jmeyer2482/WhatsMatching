@@ -33,15 +33,20 @@ knitr::opts_chunk$set(echo = FALSE, fig.align = "center")
   margin-left: auto;
 }
 
+.shadow {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
 ```
 
 ::: notes
 -   Hi everyone, My name is Jason Meyer\
 -   I've spent the last year, part-time developing this project with my supervisor Dr Mark Hanly\
--   Today I'd like to spend some time telling you about it.
+-   The title of my project is What's Matching and today I'd like to spend some time telling you about it.
 -   In this project we were interested in the methodological approach of matching.
 -   This is a very popular approach but it is a bit black box - we don't really see what's happening
--   What's been done for this project is to crack open the matching algorithm so that people can see the guts of it and how it works.
+-   What we've done for this project is to crack open the matching algorithm so that people can see the guts of it and how it works.
+-   To do this I have written functions in R to replicate the matching process in a way such that we can see what's going on.
 -   The project has been implemented in a Shiny app and today I will briefly show you the app and outline some of the lessons that can be learned from this tool.
 :::
 
@@ -51,12 +56,12 @@ knitr::opts_chunk$set(echo = FALSE, fig.align = "center")
 
 -   EHRs and other data sources are now plentiful
 
-![](https://www.rarst.net/images/Comicstripsasultimateformofdailytechhumo_13EF4/comic_dilbert.png){fig-align="center"}
+![](https://www.rarst.net/images/Comicstripsasultimateformofdailytechhumo_13EF4/comic_dilbert.png){fig-align="center" .shadow}
 
 ::: notes
 -   So, just some quick background...
 -   The gold standard for estimating treatment effects is RCTs
--   Unfortunately not all treatments are able to investigated in this way due to feasibility, ethical issues or just being plain impractical
+-   Unfortunately not all treatments are able to be investigated this way due to feasibility, ethical issues or just being plain impractical
 -   However, we now have access to an extensive array of electronic data, particularly in the health care arena\
 -   This provides us with lots of opportunity for using data to investigate things we may not be able to under normal circumstances\
 -   It is not without challenges though. Observational data is not generally built for this purpose and so the analysis and conclusions need to be considered carefully\
@@ -65,10 +70,21 @@ knitr::opts_chunk$set(echo = FALSE, fig.align = "center")
 
 ## Matching {.ch}
 
--   Commonly used
+:::{.columns}
+
+:::{.column width="65%"}
+
+-   Commonly used pre-processing step
 -   Operations aren't always clear
 -   There's also a lot of...
+:::
+:::{.column width="35%"}
 
+![](figures/KNtitle.png){.shadow}
+
+:::
+
+:::
 
 ::: notes
 -   Matching is a pre-processing step that is used, in particular, to assist with controlling confounding
@@ -88,18 +104,20 @@ knitr::opts_chunk$set(echo = FALSE, fig.align = "center")
 
 ::: notes
 -   decision, decisions, decisions!
--   This list of options constitutes the basic suite of options that an analyst could consider
+-   This list - distance, covariate selection, replacement, ordering and caliper adjustment - make up the basic suite of options that an analyst could consider
 -   The theories that underpin the particular settings for each matching method are well documented
 -   generally though, many options are set automatically by coded functions that are used to implement matching\
 -   this contributes to some of its black-box operation
--   In the interests of time, I won't go into detail here but it's safe to say there are a few decisions to make here
+-   In the interests of time, I won't go into detail here but it's safe to say there are a few decisions to make
 :::
 
 ## We wanted to provide an interactive environment for people to learn about matching {.ch}
 
 ::: notes
--   This project is designed around highlighting the practical application of the settings and what the implications might be
+
 -   We decided this was an opportunity to develop an interactive environment for people to learn about matching and to understand the possible implications of their decisions
+-   This project is designed around highlighting the practical application of the settings and what the implications might be
+
 :::
 
 
@@ -109,7 +127,8 @@ knitr::opts_chunk$set(echo = FALSE, fig.align = "center")
 
 ::: notes
 -   developing this interactive environment has been more involved than I expected
--   what essentially started out as a shiny app that was going to look specifically at the propensity score paradox has turned into a R Packge, Shiny App and Website that looks at and unpacks matching methodolgy
+-   initially the project started out investigating a paradox that occurs when using the propensity score for matching which was going to be demonstrated in a shiny app
+-   It has turned into a R Packge, Shiny App and Website that looks at and unpacks matching methodology
 -   I think one of the brilliant things about it, is that because it's been developed across all these platforms, it can cater to a wide audience. 
 -   Let's take a look at the app
 :::
@@ -117,16 +136,17 @@ knitr::opts_chunk$set(echo = FALSE, fig.align = "center")
 
 ## The App {.ch}
 
-![](figures/App_Main.jpeg){fig-align="center" height="550px"}
+![](figures/App_Main.jpeg){fig-align="center" height="550px" .shadow}
 
 ::: notes
 -   This is a screenshot of the shiny app that's been developed.
--   I'll just quickly give you some context for what you are seeing and then I'll do a demonstration of the actual app
+
+-   Before I show you the app, I'm just going to go through each of the plots individually to give some context for when I demo the app
 :::
 
 ## Plot 1 and 2 - Matches of the Actual Data {.ch}
 
-::: center
+::: {.center .shadow}
 ```{r, warning=FALSE}
 library(WhatsMatching)
 library(dplyr)
@@ -145,7 +165,8 @@ WhatsMatching::matching.plot(m1, "X1", "X2") %>% plotly::layout(showlegend=TRUE)
 :::
 
 ::: notes
--   This is plot 1. Plot 1 and 2 are essentially the same.
+-   This is a preview of plot 1. Plot 1 and 2 are essentially the same except for a key difference. 
+-   They are displaying the data from different pre-specified methods of matching. This is so the user can visualise the matching between differing methods and settings in real time. 
 -   They both contain a representation of the actual data.
 -   There is a covariate represented on each axes, in this case X1 on x and X2 on y\
 -   the color represents their treatment group - red for treated, blue for control
@@ -156,7 +177,7 @@ WhatsMatching::matching.plot(m1, "X1", "X2") %>% plotly::layout(showlegend=TRUE)
 
 ## Plot 3 - Standardised Mean Difference {.ch}
 
-::: center
+::: {.center .shadow}
 ```{r, warning=FALSE}
 WhatsMatching:::std.means.plot(m1,m2,"X1","X2","t") %>%
   plotly::animation_opts(transition = 0, redraw=T, frame=400) %>%
@@ -179,7 +200,7 @@ WhatsMatching:::std.means.plot(m1,m2,"X1","X2","t") %>%
 
 ## Plot 4 - The Estimate of the Treatment Effect {.ch}
 
-::: center
+::: {.center .shadow}
 ```{r, warning=FALSE}
 WhatsMatching:::estimates.plot(m1,m2,y~t,te) %>%
   plotly::animation_opts(transition = 0, redraw=T, frame=400) %>%
@@ -195,26 +216,25 @@ WhatsMatching:::estimates.plot(m1,m2,y~t,te) %>%
 -   there is only one line per approach
 -   we have also included other methodological estimates from the raw data, propensity score weighting and propensity score stratification
 -   for situations where we know the treatment effect from a simulation, we are able visualise it with the same green strip as in plot 3
--   unfortunately we haven't yet worked out how to show the true treatment effect with real data - haha
 :::
 
 ## Demonstration time! {.ch}
 
 How do we use it?
 
--   Simulate data
+-   Generate data from one of 4 simulations or 1 real dataset
 
--   Choose settings
+-   Choose the matching settings
 
--   Watch
+-   Watch the matching happen
 
 ::: notes
 -   So now we've had a brief look at some of the plots from the app it's probably worth understanding how to use it
--   it's pretty simple actually, just select one of the simulated or real data sets available in the app
+-   it's pretty simple actually, just select one of four the simulated or real data sets available in the app
 -   choose the matching approach you would like and adjust the settings, 
 -   Then press play and watch
--   This particular simulation is based on one by King and Neilsen which was looking at the propensity score paradox.
--   Basically, the 3 groups represent a matched pair randomised experiment, a completely randomised experiment and control units from an imbalanced observational data set
+-   This particular simulation is based on one by King and Neilsen which was looking at why the propensity score shouldn't be used for matching
+-   Basically, the 3 groups represent a matched pair randomised experiment, a completely randomised experiment and control units from an imbalanced observational  data set
 :::
 
 ## What questions can we answer? {.ch .smaller}
@@ -236,13 +256,12 @@ How do we use it?
     -   what is the impact of model selection on the estimate?
 
     -   Which parameters have the biggest impact on the performace of matching?
+    
+:::notes
+here are some examples of quesitons we can answer with the app after some exploration
 
-
-::: notes
--   These are some questions we think can be given insights to by using the app
--   Having invested a significant amount of time in understanding the matching process I think I can safely say that an intuitive understanding of matching begins and ends with the fact that units are being paired
+I'll go into some detail here about some things we've found from our explorations
 :::
-
 
 ## Summary {.ch .smaller}
 

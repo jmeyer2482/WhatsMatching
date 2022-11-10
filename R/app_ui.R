@@ -10,11 +10,6 @@
 #' @noRd
 
 
-te.txt <- HTML(paste0(strong("Mean (average)"), br(),
-                        "Select a value to set the mean value for the",
-                        "normally distributed variables X1 and X2."))
-
-
 app_ui <- function(request) {
   tagList(
     # Leave this function for adding external resources
@@ -29,7 +24,7 @@ app_ui <- function(request) {
       theme = shinytheme("cerulean"),
       br(),
 
-      #standardise some formatting
+      #standardise some formatting for tables
       tags$head(
         tags$style(HTML("
         tr {

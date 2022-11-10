@@ -337,12 +337,30 @@ app_server <- function(input, output, session) {
     storeWarn<- getOption("warn")
     options(warn = -1)
 
+    #get the treatment effect if it's in the simulated data
+    if(is.null(d$error)){
+
+      newTE <- "None"
+
+    } else {
+
+      err <-  mean(d$error[d$t==1], na.rm = T)-mean(d$error[d$t==0], na.rm = T)
+      newTE <- round(TE + err,3)
+      values$trueTE <<- newTE
+
+    }
+
+    #outputs for sidebar on main page
+    output$txt.M.TE <- renderText(newTE)
+    output$txt.M.o.f <- renderText(deparse(o.f))
+
+
     #check the treatment variable from the formula
     #assign plots accordingly
     if (all.vars(o.f)[1] == "fev") {
-      cp <- combined.plot("age", "height", M1, M2, te = TE, o.f)
+      cp <- combined.plot("age", "height", M1, M2, te = NULL, o.f)
     } else {
-      cp <- combined.plot("X1", "X2", M1, M2, te = TE, o.f)
+      cp <- combined.plot("X1", "X2", M1, M2, te = newTE, o.f)
     }
 
     fonts <- list(list(color="#495057",
@@ -352,23 +370,6 @@ app_server <- function(input, output, session) {
       paper_bgcolor="#fff",
       font=fonts, legend=list(font=fonts)
     )
-
-    #get the treatment effect if it's in the simulated data
-    if(is.null(d$error)){
-
-      newTE <- "None"
-
-      } else {
-
-        err <-  mean(d$error[d$t==1], na.rm = T)-mean(d$error[d$t==0], na.rm = T)
-        newTE <- round(TE + err,3)
-        values$trueTE <<- newTE
-
-      }
-
-    #outputs for sidebar on main page
-    output$txt.M.TE <- renderText(newTE)
-    output$txt.M.o.f <- renderText(deparse(o.f))
 
     #covers random cases
     updateSelectInput(session, "Dist1", selected = D1)

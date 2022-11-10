@@ -125,7 +125,7 @@ mod_SimData_ui <- function(id) {
 
     ##Popovers
     bsPopover(
-      id = ns("te1"),
+      id = ns("S.te1"),
       title = "<strong>Treatment Effect</strong>",
       content = paste0(
         "The treatment effect controls the effect that the ",
@@ -137,69 +137,69 @@ mod_SimData_ui <- function(id) {
       options = list(container = "body")
     ),
     bsPopover(
-      id = ns("te2"),
+      id = ns("S.te2"),
       title = "<strong>Treatment Effect</strong>",
       content = te.txt,
       "right",
       options = list(container = "body")
     ),
 
-    bsPopover(id = ns("range"),
+    bsPopover(id = ns("S.range"),
               title = "<strong>Range</strong>",
               content = range.txt,
               "right", options = list(container = "body")
     ),
     bsPopover(
-      id = ns("overlap"),
+      id = ns("S.overlap"),
       title = "<strong>Group Overlap</strong>",
       content = overlap.txt,
       "right",
       options = list(container = "body")
     ),
     bsPopover(
-      id = ns("te3"),
+      id = ns("S.te3"),
       title = "<strong>Treatment Effect</strong>",
       content = te.txt ,
       "right",
       options = list(container = "body")
     ),
     bsPopover(
-      id = ns("rel"),
+      id = ns("S.rel"),
       title = "<strong>Causal Relationship</strong>",
       content = rel.txt ,
       "right",
       options = list(container = "body")
     ),
     bsPopover(
-      id = ns("te4"),
+      id = ns("S.te4"),
       title = "<strong>Treatment Effect</strong>",
       content = te.txt ,
       "right",
       options = list(container = "body")
     ),
     bsPopover(
-      id = ns("rho"),
+      id = ns("S.rho"),
       title = "<strong>Covariate Correlation</strong>",
       content = rho.txt ,
       "right",
       options = list(container = "body")
     ),
     bsPopover(
-      id = ns("xt"),
+      id = ns("S.xt"),
       title = "<strong>Covariate Effect on Treatment</strong>",
       content = xt.txt,
       "right",
       options = list(container = "body")
     ),
     bsPopover(
-      id = ns("xy"),
+      id = ns("S.xy"),
       title = "<strong>Covariate Effect on Outcome</strong>",
       content = xy.txt,
       "right",
       options = list(container = "body")
     ),
     bsPopover(
-      id = ns("fev.desc"),
+      id = ns("S.fev.desc"),
       title = "<strong>FEV</strong>",
       content = HTML("This is a dataset from the <code>mplot</code> package. ",
                     "It has 5 observations and 614 individuals. The observations ",
@@ -224,7 +224,7 @@ mod_SimData_ui <- function(id) {
 
             fluidRow(
               strong("Treatment Effect"),
-              icon("question-sign", lib = "glyphicon", id = ns("te1"))
+              icon("question-sign", lib = "glyphicon", id = ns("S.te1"))
             ),
             fluidRow(column(
               12,
@@ -258,7 +258,7 @@ mod_SimData_ui <- function(id) {
 
             fluidRow(
               strong("Treatment Effect"),
-              icon("question-sign", lib = "glyphicon", id = ns("te2"))
+              icon("question-sign", lib = "glyphicon", id = ns("S.te2"))
             ),
             fluidRow(column(
               12,
@@ -275,7 +275,7 @@ mod_SimData_ui <- function(id) {
 
             fluidRow(
               strong("Range"),
-              icon("question-sign", lib = "glyphicon", id = ns("range"))
+              icon("question-sign", lib = "glyphicon", id = ns("S.range"))
             ),
 
             fluidRow(column(
@@ -293,7 +293,7 @@ mod_SimData_ui <- function(id) {
 
             fluidRow(
               strong("Group Overlap"),
-              icon("question-sign", lib = "glyphicon", id = ns("overlap"))
+              icon("question-sign", lib = "glyphicon", id = ns("S.overlap"))
             ),
 
             fluidRow(column(
@@ -341,7 +341,7 @@ mod_SimData_ui <- function(id) {
 
             fluidRow(
               strong("Treatment Effect"),
-              icon("question-sign", lib = "glyphicon", id = ns("te3"))
+              icon("question-sign", lib = "glyphicon", id = ns("S.te3"))
             ),
             fluidRow(column(
               12,
@@ -359,7 +359,7 @@ mod_SimData_ui <- function(id) {
             fluidRow(
               strong("Relationships"),
               icon("question-sign", lib = "glyphicon", id =
-                     ns("rel"))
+                     ns("S.rel"))
             ),
             fluidRow(column(12,
                             selectInput(
@@ -395,7 +395,7 @@ mod_SimData_ui <- function(id) {
 
             fluidRow(
               strong("Treatment Effect"),
-              icon("question-sign", lib = "glyphicon", id = ns("te4"))
+              icon("question-sign", lib = "glyphicon", id = ns("S.te4"))
             ),
             fluidRow(column(
               12,
@@ -414,7 +414,7 @@ mod_SimData_ui <- function(id) {
         #covariate correlation
             fluidRow(
               strong("Covariate Correlation"),
-              icon("question-sign", lib = "glyphicon", id = ns("rho"))
+              icon("question-sign", lib = "glyphicon", id = ns("S.rho"))
             ),
             fluidRow(column(
               12,
@@ -432,7 +432,7 @@ mod_SimData_ui <- function(id) {
         #effect on treatment
             fluidRow(
               strong("Effect on treatment"),
-              icon("question-sign", lib = "glyphicon", id = ns("xt"))
+              icon("question-sign", lib = "glyphicon", id = ns("S.xt"))
             ),
             fluidRow(column(
               6,
@@ -463,7 +463,7 @@ mod_SimData_ui <- function(id) {
       #Effect on y
           fluidRow(
               strong("Effect on outcome"),
-              icon("question-sign", lib = "glyphicon", id = ns("xy"))
+              icon("question-sign", lib = "glyphicon", id = ns("S.xy"))
             ),
             fluidRow(column(
               6,
@@ -506,7 +506,7 @@ mod_SimData_ui <- function(id) {
                  sidebarPanel(
                    style = "height: 700px;",
                    HTML("This data set consists of 654 observations on youths aged 3 to 19 from East Boston recorded duing the middle to late 1970's. Forced expiratory volume (<code>fev</code>), a measure of lung capacity, is the variable of interest. <code>age</code> and <code>height</code> are two continuous predictors. <code>sex</code> and <code>smoke</code> are two categorical predictors. For the purpose of this exercise, <code>smoke</code> is being considered the treatment variable."),
-                   br(),
+                   br(), br(),
                    fluidRow(column(
                      12, align = "right",
                      actionButton("applyFEV", "Preview Data")
