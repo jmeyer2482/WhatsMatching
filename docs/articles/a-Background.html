@@ -105,7 +105,7 @@ unfold…</p>
 <p><strong>Dissemination</strong> Built using the Golem framework..
 Installable as an R package and deployed on shinyapps.io for access via
 a web browser, documentation and vignettes on package website, all code
-is opensourse R code on GitHub..</p>
+is opensource R code on GitHub..</p>
 <hr>
 </div>
 <div class="section level2">
@@ -125,7 +125,7 @@ introducing potential selection and confounding biases. Nonetheless,
 observational data are a useful asset, being relatively cheap and easy
 to access, and for exposures that cannot ethically be manipulated, they
 offer the only possibility of investigating research questions of
-interest.</p>
+interest.<span class="citation"><sup><a href="#ref-CEinObsData" role="doc-biblioref">3</a>,<a href="#ref-rosenbaum1983central" role="doc-biblioref"><strong>rosenbaum1983central?</strong></a>,<a href="#ref-king_why_2019" role="doc-biblioref"><strong>king_why_2019?</strong></a></sup></span></p>
 </div>
 <div class="section level3">
 <h3 id="approaches-to-obtaining-valid-causal-inferences-from-observational-data">Approaches to obtaining valid causal inferences from observational
@@ -139,25 +139,29 @@ regression adjustment, matching, applications of the propensity score
 and g-computation methods. The primary aim of these methods is to reduce
 bias in the estimation of the casual effect, especially confounding, by
 balancing the distribution of confounding variables in the treated and
-control groups.</p>
+control groups.<span class="citation"><sup><a href="#ref-CEinObsData" role="doc-biblioref">3</a></sup></span></p>
 </div>
 <div class="section level3">
 <h3 id="matching-methods">Matching methods<a class="anchor" aria-label="anchor" href="#matching-methods"></a>
 </h3>
-<p>Matching is a general pre-preproccessing technique used to improve
-causal estimates from observational data by matching treated individuals
-to untreated individuals with the same or similar background
-characteristics. Matching results in a dataset where key background
-characteristics are balanced in the treated and untreated groups. In an
-RCT this balance is achieved through randomisation; the intuitive appeal
-of matching is as a simple way to find an RCT “hidden” in an
-observational dataset.</p>
-<p>When there are a small number of matching variables and the pool of
-potential matches is large it can be possible to match each treated
-individual to a control with the exact same characteristics, leading to
-a perfectly balanced dataset. However, this sort of exact matching is
-often infeasible in practice, especially if there are numerous matching
-variables and/or a small pool of potential matches.</p>
+<p>Matching is a general pre-processing technique used to improve causal
+estimates from observational data by matching treated individuals to
+untreated individuals with the same or similar background
+characteristics. The objective of matching is to balance key background
+characteristics in the treated and untreated groups. In an RCT this
+balance is achieved through randomisation; the intuitive appeal of
+matching is as a simple way to find an RCT “hidden” in an observational
+dataset.<span class="citation"><sup><a href="#ref-King2019" role="doc-biblioref">4</a></sup></span></p>
+<p>The most basic form of matching is exact matching. This is where
+treated and untreated groups have their key characteristics matched
+exactly. For example, if matching is done on age and sex, a treated 45
+year old male will be matched with an untreated 45 year old male. When
+there are a small number of matching variables and the pool of potential
+matches is large it can be possible to match each treated individual to
+a control with the exact same characteristics, leading to a perfectly
+balanced dataset. However, using exact matching is often infeasible in
+practice, especially if there are numerous matching variables and/or a
+small pool of potential matches.</p>
 <p>One alternative to exact matching is coarsened exact matching. Under
 this approach, matching variables are temporarily coarsened, for example
 age measured in years might be recoded to 10-year age bands. The
@@ -166,12 +170,12 @@ the balanced dataset is found the analysis can proceed with the original
 uncoarsened data.</p>
 <p>A second alternative to exact matching is distance-based matching.
 Distance-based matching proceeds by matching treated and untreated
-individuals based on some distance metric that quantifies the
-similiarity between each pair of individuals in the dataset.</p>
-<p>Perhaps the most widely used distance metric is the propensity score,
-defined as the probability of an individual receiving the treatment.
-Another possible distance metric is the Mahalanobis distance, which is
-analogous to a multivariate Euclidean distance.</p>
+individuals based on some distance metric that quantifies the similarity
+between each pair of individuals in the dataset. Perhaps the most widely
+used distance metric is the propensity score, defined as the probability
+of an individual receiving the treatment. Another possible distance
+metric is the Mahalanobis distance, which is analogous to a multivariate
+Euclidean distance.<span class="citation"><sup><a href="#ref-King2019" role="doc-biblioref">4</a></sup></span></p>
 <p>The advantage of both the propensity score and the Mahalanobis
 distance metrics is that the multidimensional covariate space is reduced
 to a single dimension: matching can be undertaken on the univariate
@@ -187,7 +191,7 @@ matched dataset.</p>
 estimating causal effects from observational data revolve around the
 propensity score. Rosenbaum and Rubin (1983) defined the propensity
 score as the “conditional probability of assignment to a particular
-treatment given a vector of observed covariates”<span class="citation"><sup><a href="#ref-rosenbaum1983central" role="doc-biblioref">1</a></sup></span>. Mathematically, this can be
+treatment given a vector of observed covariates”.<span class="citation"><sup><a href="#ref-Rosenbaum1983" role="doc-biblioref">10</a></sup></span> Mathematically, this can be
 expressed as <span class="math inline">\(e(x_i) = pr(Z_i=1|x)\)</span>
 where <span class="math inline">\(e(x_i)\)</span> is the propensity
 score, <span class="math inline">\(Z\)</span> is the treatment variable,
@@ -195,17 +199,19 @@ score, <span class="math inline">\(Z\)</span> is the treatment variable,
 <span class="math inline">\(i\)</span> represents an individual.</p>
 <p>In most cases, the propensity score is estimated from available data
 using a simple logistic regression on a binary treatment assignment
-indicator. The logistic regression formula looks like <span class="math inline">\(t \sim x_1 + x_2 + ... + x_n\)</span> where <span class="math inline">\(t\)</span> is a binary indicator of whether or not
-the individual received the treatment and <span class="math inline">\(x_1 \ldots x_n\)</span> represent <span class="math inline">\(n\)</span> observed covariates that help to
-predict the treatment outcome. Although logistic regression is widely
-used for this step, the estimation method is at the discretion of the
-analyst and more flexible models can perform well [ref to <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2807890/" class="external-link uri">https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2807890/</a>]</p>
+indicator. The logistic regression formula may take the form of <span class="math inline">\(t \sim x_1 + ... + x_n\)</span> where <span class="math inline">\(t\)</span> is a binary indicator of whether or not
+the individual received treatment and <span class="math inline">\(x_1
+\ldots x_n\)</span> represent <span class="math inline">\(n\)</span>
+observed covariates that help to predict the treatment outcome. Although
+logistic regression is widely used for this step, the estimation method
+is at the discretion of the analyst and more flexible models can perform
+well.<span class="citation"><sup><a href="#ref-LeeBrianK.2010Ipsw" role="doc-biblioref">6</a></sup></span></p>
 <p>Once estimated, the propensity score can be incorporated into the
-data analysis in multiple ways. This includes matching (as alluded to
-above), weighting and stratification (aka subclassification)2,4. All
-three applications are briefly described below. Matching is the the
-primary focus of the WhatsMatching app, however the app also allows
-comparisons in estiamtes based on all three appraoches.</p>
+data analysis in multiple ways. This includes matching, weighting and
+stratification (AKA subclassification). All three applications are
+briefly described below. Matching is the the primary focus of the
+WhatsMatching app, however the app also allows comparisons in estimates
+based on all three approaches.</p>
 </div>
 <div class="section level3">
 <h3 id="applications-of-propensity-scores-matching-weighting-and-stratification">Applications of propensity scores – matching, weighting and
@@ -249,7 +255,7 @@ these weights are:<br><span class="math display">\[ATE,
 w(W,x)=\frac{W}{\hat{e}(x)}+\frac{1-W}{1-\hat{e}(x)}\]</span><br><span class="math display">\[ATT,
 w(W,x)=W+(1-W)\frac{\hat{e}(x)}{1-\hat{e}(x)}\]</span><br>
 where <span class="math inline">\(\hat{e}(x)\)</span> indicates the
-estimated propensity score conditional on observed <span class="math inline">\(x\)</span> covariates1,3.</p>
+estimated propensity score conditional on observed <span class="math inline">\(x\)</span> covariates.<span class="citation"><sup><a href="#ref-Guo2020" role="doc-biblioref">1</a>,<a href="#ref-Rosenbaum1983" role="doc-biblioref">10</a></sup></span></p>
 </div>
 <div class="section level4">
 <h4 id="stratification-aka-subclassification">Stratification (aka Subclassification)<a class="anchor" aria-label="anchor" href="#stratification-aka-subclassification"></a>
@@ -258,8 +264,9 @@ estimated propensity score conditional on observed <span class="math inline">\(x
 it relies on the use of the propensity score to group units into
 quantiles. Once the number of groups has been established, the
 literature suggests this is between five and ten depending on the size
-of the dataset5, the treatment effect is estimated across the groups and
-then averaged to give a mean difference ATE1,3.</p>
+of the dataset,<span class="citation"><sup><a href="#ref-Li2013" role="doc-biblioref">7</a></sup></span> the treatment effect is
+estimated across the groups and then averaged to give a mean difference
+ATE.<span class="citation"><sup><a href="#ref-Guo2020" role="doc-biblioref">1</a>,<a href="#ref-Rosenbaum1983" role="doc-biblioref">10</a></sup></span></p>
 </div>
 </div>
 <div class="section level3">
@@ -269,61 +276,120 @@ then averaged to give a mean difference ATE1,3.</p>
 Mahalanobis in 1936 as a means of comparing skulls based on their
 measurements. It’s normal application calculates how many standard
 deviations a point is from the mean of the specified variables and can
-give a good indication of outliers in a group. In matching, the
-application is similar but not quite the same. Instead of using the mean
-as a comparator, each treated unit is compared, pairwise, with each of
-the units in the control group.</p>
-<p>The pairwise Mahalanobis Distance is calculated by <span class="math inline">\(D_{ij} = (X_i−X_j)W^{−1}(X_i−X_j)^T\)</span> (<a href="https://stats.stackexchange.com/questions/65705/pairwise-mahalanobis-distances" class="external-link uri">https://stats.stackexchange.com/questions/65705/pairwise-mahalanobis-distances</a>)
-<strong>MH Try reference an academic source and avoid
-stackexchange</strong> where <span class="math inline">\(X_i\)</span>
-and <span class="math inline">\(X_j\)</span> represent the matrix of
-covariates for the treated and control groups and <span class="math inline">\(W^{-1}\)</span> is the covariance matrix. Similar
-to the Propensity Score, the Mahalanobis Distance reduces a
-multidimensional space to a single value representing the distance
-between units. A major difference, which will soon be seen, is how the
-matches occur between the methods. The Mahalanobis Distance uses the raw
-information to calculate the distance between individual units which is
-in contrast to the Propensity Score which uses the probability of being
-treated to then determine the distance.</p>
+give a good indication of outliers in a group.<span class="citation"><sup><a href="#ref-Mahalanobis1927" role="doc-biblioref">8</a>,<a href="#ref-Mahalanobis1936" role="doc-biblioref">9</a></sup></span> In matching, the application is
+similar but not quite the same. Instead of using the mean as a
+comparator, each treated unit is compared, pair-wise, with each of the
+units in the control group.<span class="citation"><sup><a href="#ref-King2019" role="doc-biblioref">4</a></sup></span></p>
+<p>The pair-wise Mahalanobis Distance is calculated by <span class="math inline">\(D_{ij} = \sqrt{(X_i−X_j)S^{−1}(X_i−X_j)}\)</span>
+where <span class="math inline">\(D_{ij}\)</span> is the pair-wise
+Mahalanobis distance, <span class="math inline">\(X_i\)</span> and <span class="math inline">\(X_j\)</span> represent the matrix of covariates
+for the treated and control groups and <span class="math inline">\(S^{-1}\)</span> is the covariance matrix.<span class="citation"><sup><a href="#ref-King2019" role="doc-biblioref">4</a></sup></span> Similar to the Propensity Score,
+the Mahalanobis Distance reduces a multidimensional space to a single
+value representing the distance between units. A key difference in
+understanding how the matching works between these methods is
+understanding that the Mahalanobis distance is the measured distance
+between units whereas the Propensity Score distance is the difference in
+the probabilities of treated and untreated units.</p>
+<p>It should be further noted that individual units have their own
+propensity score (or probability of being treated) however, they do not
+have a Mahalanobis value assigned to them. The value from the
+Mahalanobis distance is <em>between</em> the units. This is a
+fundamental difference in the way the matching occurs because, while the
+true values of the covariates have been used to determine the
+probability of treatment, the propensity score is blind to the real
+data.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="gaps-in-understanding">Gaps in Understanding<a class="anchor" aria-label="anchor" href="#gaps-in-understanding"></a>
 </h2>
-<blockquote>
-<p>MH I think this section should be where you summarise all of the
-options that the analyst has to decide: matching algotihm, calipers,
-ratio, sorting, replacement. I have cut and copied in some snippets of
-text realted to this from above, needs to be tidied up.</p>
-</blockquote>
 <p>The process and underlying logic of the matching process belies it’s
 complexity. The propensity score matching process appears to be straight
 forward and require little effort to implement, which is reflected in
-its ubiquitous use. However, as King and Neilsen point out, there are
-many situations where the use of the propensity score for matching may
-not be suitable. Their 2019 paper gives many insights into the use of
-the propensity score and why other methods, like coarsened exact
-matching or distance-based matching with the Mahalanobis distance, may
-be better choices. While some of the explanations do make intuitive
-sense it can be difficult to decipher the practical application and
-implications of the advice.<br>
-There are different choices of matching algorithm available. Nearest
-neighbour matching matches each treated individual in turn to the
-nearest available untreated individual, i.e. the person with the small
-distance with the smallest distance, . The application of callipers can
-be used to control matching units that are considered too far apart.
-Matching can be performed with or without replacement and it should be
-noted that the order of the dataset when passed to the matching
-algorithm can play a significant role in how units are matched when
-matching without replacement2.</p>
+its ubiquitous use. However, as King and Neilsen<span class="citation"><sup><a href="#ref-King2019" role="doc-biblioref">4</a></sup></span> point out, there are many
+situations where the use of the propensity score for matching may not be
+suitable. Their 2019 paper gives many insights into the use of the
+propensity score and why other methods, like coarsened exact matching or
+distance-based matching with the Mahalanobis distance, may be better
+choices. While some of the explanations do make intuitive sense it can
+be difficult to decipher the practical application and implications of
+the advice.</p>
+<div class="section level3">
+<h3 id="matching-settings">Matching Settings<a class="anchor" aria-label="anchor" href="#matching-settings"></a>
+</h3>
+<p>While the choice in the distance used for matching can obviously make
+a difference to how units are paired, it is less clear what the
+implications of changing any of the many settings that are available in
+order to “optimise” the matches. The settings that we will discuss
+further include order, replacement, and calliper adjustment.</p>
+<div class="section level4">
+<h4 id="order">Order<a class="anchor" aria-label="anchor" href="#order"></a>
+</h4>
+<p>This is exactly what it sounds like, it is the order the matches are
+specified in. In the <code>MatchIt</code> package,<span class="citation"><sup><a href="#ref-MatchIt" role="doc-biblioref">2</a></sup></span> users are only able to specify
+an order for specific methods. In particular, propensity score methods
+can control the order of the matching as they are a vector of
+probabilities that aligns with the data. The default for the order is
+<em>data</em>, otherwise ordering can be conducted by <em>smallest</em>,
+<em>largest</em>, or <em>random</em>. The resultant ordering is as
+follows:</p>
+<ul>
+<li><p><em>data</em> - the order supplied by the dataframe</p></li>
+<li><p><em>smallest</em> - matches occur starting with the smallest
+propensity score first</p></li>
+<li><p><em>largest</em> - matches occur starting with the largest
+propensity score first</p></li>
+<li><p><em>random</em> - matches occur randomly</p></li>
+</ul>
+<p>Why does ordering make a difference? Well, when you have lots of
+treated units close to a single untreated unit, only one of the treated
+units will be able to match with it. Once that untreated unit has been
+used, the other treated units will have to look further afield.
+Generally this does not impact the matches at first but towards the end
+of the iterative process it can. See Figure 1 below to see the
+difference between the distances generated by using the
+<em>smallest</em> ordering vs the <em>largest</em> ordering.</p>
+<p><img src="a-Background_files/figure-html/ordering-1.png" width="700"></p>
+</div>
+<div class="section level4">
+<h4 id="replacement">Replacement<a class="anchor" aria-label="anchor" href="#replacement"></a>
+</h4>
+<p>Replacement is a setting that controls whether an untreated unit can
+be reused. It is applicable for both MDM and PSM and other forms of
+matching where units are paired (as opposed to grouped). Using
+replacement means that you may be able to improve your covariate balance
+because the treated unit will be matched with the closest untreated
+unit, irrespective of the order. In other words, ordering is redundant
+when replacement is used.</p>
+<p>It is important, however, that appropriate steps are taken to account
+for an untreated unit being matched multiple times. There are two main
+ways this can be dealt with - 1. include duplicates of the untreated
+data in the matched dataset; 2. apply appropriate weighting to include
+when estimating the treatment effect.</p>
+<p><img src="a-Background_files/figure-html/replacement-1.png" width="700"></p>
+</div>
+<div class="section level4">
+<h4 id="calliper-adjustment">Calliper Adjustment<a class="anchor" aria-label="anchor" href="#calliper-adjustment"></a>
+</h4>
+<p>The application of callipers can be used to control matching units
+that are considered too far apart. The implications of using this
+setting in practice is not particularly clear. If you cast your eyes
+back to Figures 1 and 2, you can see that there are units towards the
+end that are further apart than the rest of the group. The calliper
+setting seeks to remove those outliers with the intention of improving
+covariate balance. It is not necessarily clear that it what is being
+achieved.</p>
+</div>
+</div>
 <div class="section level3">
 <h3 id="the-propensity-score-paradox">The propensity score paradox<a class="anchor" aria-label="anchor" href="#the-propensity-score-paradox"></a>
 </h3>
-<p>King and Neilsen presented a paradox that arises when using the
-propensity score for matching2. They were able to demonstrate that, when
-compared to other matching distances like the Mahalanobis distance,
-matching on the propensity score only approximated a randomised
-experiment as opposed to a more efficient fully blocked experiment.</p>
+<p>King and Neilsen<span class="citation"><sup><a href="#ref-King2019" role="doc-biblioref">4</a></sup></span> presented a paradox that arises
+when using the propensity score for matching. They were able to
+demonstrate that, when compared to other matching distances like the
+Mahalanobis distance, matching on the propensity score only approximated
+a randomised experiment as opposed to a more efficient fully blocked
+experiment.</p>
 <p>As the matching algorithm proceeds, unmatched observations are pruned
 from the dataset. Initially, this reduces the imbalance between the
 treated and untreated groups with corresponding improvements to the
@@ -350,8 +416,11 @@ confounding and now selection bias needs to be managed as well.</p>
 <h2 id="statement-of-research-aim">Statement of research aim<a class="anchor" aria-label="anchor" href="#statement-of-research-aim"></a>
 </h2>
 <blockquote>
-<p>Any sufficiently advanced technology is indistinguishable from magic.
-<em>–Author C. Clarke</em></p>
+<p>Any sufficiently advanced technology is indistinguishable from
+magic.</p>
+<div style="text-align: right;">
+<p><em>–Author C. Clarke</em></p>
+</div>
 </blockquote>
 <p>The flexibility and convenience of distance-based matching approaches
 have led to numerous software implementations and widespread use across
@@ -359,16 +428,16 @@ several quantitative disciplines. This is perhaps especially true of
 propensity score matching, a modern workhorse of causal inference.
 However, as with any sufficiently advanced technology, the complexity of
 distance-based matching can be lost on the end user. The many subjective
-decisions can be absorbed into the blackbox of a software function of
-package, with nicely matched datasets appearing, as if by magic, at the
-other end.</p>
+decisions can be absorbed into the black box of a software function,
+with nicely matched datasets appearing, as if by magic, at the other
+end.</p>
 <p>The aim of this research is to explore some basic matching
 methodology and provide an interactive and educational space for people
 who want to better understand matching methods. I will crack open the
-propensity score matching algorithm, allowing uses to visualise matching
-algorithms as they dynamically unfold, and compare results under
-different combinations of user settings.</p>
-<p>The resulting space is provided as a publicly available interactive
+propensity score matching algorithm, allowing users to visualise
+matching algorithms as they dynamically unfold, and compare results
+under different combinations of user settings.</p>
+<p>The resulting space is provided as a publicly available, interactive
 Shiny App and supported by a website and R package stored on Github.
 This will allow students to experiment with different matching methods
 and more experienced users to simulate their own matching experiments in
@@ -380,32 +449,29 @@ the R environment.</p>
 <p>Learning by doing has been demonstrated to significantly improve
 learning when properly scaffolded, especially as part of Massive Open
 Online Courses (MOOCs), which are a key component of the modern
-educational tool kit in tertiary settings9. This project is aimed at the
-development of an educational tool where users can build an intuitive
-understanding of matching methods and compare different methods as
-discussed above. Using this educational tool, students will be able to
-generate data and visualise the matching process as it unfolds. Users
-will also be able to compare the performance of matching, with different
-degrees of pruning, to the weighting and stratification applications of
-the propensity score that don’t involve pruning, and to matching
-approaches using the alternative Mahalanobis distance.</p>
-<div class="section level3">
-<h3 id="a-few-examples">A few examples<a class="anchor" aria-label="anchor" href="#a-few-examples"></a>
-</h3>
+educational tool kit in tertiary settings<span class="citation"><sup><a href="#ref-Koedinger2015" role="doc-biblioref">5</a></sup></span>.</p>
 <p>RStudio supports the implementation of learnr packages that are used
 to provide self guided, tutorial style experiences for users. This
-options has had wider uptake in the tech savvy academic community.</p>
-<p>There has been a recent growth in the use of interactive learning
-websites like <a href="https://www.khanacademy.org" taget="_blank" class="external-link">Kahn
+option has had wider uptake in the tech savvy academic community. There
+has also been recent growth in the use of interactive learning websites
+like <a href="https://www.khanacademy.org" taget="_blank" class="external-link">Kahn
 Academy</a>. In this environment users are able to access scaffolded
 learning through theoretical concepts coupled with practical
 applications. As noted above, this has been found to be an effective
 method for providing education.</p>
 </div>
-</div>
 <div class="section level2">
 <h2 id="the-space-for-app-development">The space for app development<a class="anchor" aria-label="anchor" href="#the-space-for-app-development"></a>
 </h2>
+<p>This project is aimed at the development of an educational tool where
+users can build an intuitive understanding of matching methods and
+compare different methods as discussed above. Using this educational
+tool, students will be able to generate data and visualise the matching
+process as it unfolds. Users will also be able to compare the
+performance of matching, with different degrees of pruning, to the
+weighting and stratification applications of the propensity score that
+don’t involve pruning, and to matching approaches using the alternative
+Mahalanobis distance.</p>
 <p>Currently, there is no available interactive options to simulate
 matching methods. From an educational perspective, a students
 understanding of the matching process is virtually entirely theoretical.
@@ -414,11 +480,62 @@ for for users to play with and visualise how matching occurs. In
 addition, this app has been developed as a package which contains easy
 to use functions that are available to more advanced users who may want
 to investigate without the constrains of the Shiny App.</p>
+<div class="section level3 unnumbered">
+<h3 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h3>
 <div id="refs" class="references csl-bib-body hanging-indent">
-<div id="ref-rosenbaum1983central" class="csl-entry">
-1. Rosenbaum PR, Rubin DB. The central role of the propensity score in
-observational studies for causal effects. <em>Biometrika</em>.
-1983;70(1):41-55.
+<div id="ref-Guo2020" class="csl-entry">
+1. Guo S, Fraser M, Chen Q. <span class="nocase">Propensity score
+analysis: Recent debate and discussion</span>. <em>Journal of the
+Society for Social Work and Research</em>. 2020;11(3):463-482. doi:<a href="https://doi.org/10.1086/711393" class="external-link">10.1086/711393</a>
+</div>
+<div id="ref-MatchIt" class="csl-entry">
+2. Ho DE, Imai K, King G, Stuart EA. <span></span>MatchIt<span></span>:
+Nonparametric preprocessing for parametric causal inference. 2011;42.
+doi:<a href="https://doi.org/10.18637/jss.v042.i08" class="external-link">10.18637/jss.v042.i08</a>
+</div>
+<div id="ref-CEinObsData" class="csl-entry">
+3. Igelström E, Craig P, Lewsey J, Lynch J, Pearce A, Katikireddi SV.
+Causal inference and effect estimation using observational data.
+<em>Journal of epidemiology and community health (1979)</em>.
+2022;76(11):960-966.
+</div>
+<div id="ref-King2019" class="csl-entry">
+4. King G, Nielsen R. <span class="nocase">Why Propensity Scores Should
+Not Be Used for Matching</span>. <em>Political Analysis</em>.
+2019;27(4):435-454. doi:<a href="https://doi.org/10.1017/pan.2019.11" class="external-link">10.1017/pan.2019.11</a>
+</div>
+<div id="ref-Koedinger2015" class="csl-entry">
+5. Koedinger KR, McLaughlin EA, Kim J, Jia JZ, Bier NL. <span class="nocase">Learning is not a spectator sport: Doing is better than
+watching for learning from a MOOC</span>. <em>L@S 2015 - 2nd ACM
+Conference on Learning at Scale</em>. Published online 2015:111-120.
+doi:<a href="https://doi.org/10.1145/2724660.2724681" class="external-link">10.1145/2724660.2724681</a>
+</div>
+<div id="ref-LeeBrianK.2010Ipsw" class="csl-entry">
+6. Lee BK, Lessler J, Stuart EA. Improving propensity score weighting
+using machine learning. <em>Statistics in medicine</em>.
+2010;29(3):337-346.
+</div>
+<div id="ref-Li2013" class="csl-entry">
+7. Li M. <span class="nocase">Using the Propensity Score Method to
+Estimate Causal Effects</span>. <em>Organizational Research
+Methods</em>. 2013;16(2):188-226. doi:<a href="https://doi.org/10.1177/1094428112447816" class="external-link">10.1177/1094428112447816</a>
+</div>
+<div id="ref-Mahalanobis1927" class="csl-entry">
+8. Mahalanobis PC. <span class="nocase">Analysis of race mixture in
+Bengal</span>. <em>Journal and Proceedings of the Asiatic Society of
+Bengal</em>. 1927;23:301-333.
+</div>
+<div id="ref-Mahalanobis1936" class="csl-entry">
+9. Mahalanobis PC. <span class="nocase">On the generalized distance in
+statistics.</span> <em>On the generalized distance in statistics</em>.
+1936;2(1):49-55. <a href="http://library.isical.ac.in:8080/jspui/bitstream/10263/6765/1/Vol02_1936_1_Art05-pcm.pdf" class="external-link">http://library.isical.ac.in:8080/jspui/bitstream/10263/6765/1/Vol02_1936_1_Art05-pcm.pdf</a>
+</div>
+<div id="ref-Rosenbaum1983" class="csl-entry">
+10. Rosenbaum PR, Rubin DB. <span class="nocase">The central role of the
+propensity score in observational studies for causal effects</span>.
+<em>Biometrika</em>. 1983;70(1):41-55. doi:<a href="https://doi.org/10.1093/biomet/70.1.41" class="external-link">10.1093/biomet/70.1.41</a>
+</div>
 </div>
 </div>
 </div>

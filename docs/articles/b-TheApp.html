@@ -87,13 +87,15 @@
 
     
     
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" crossorigin="anonymous">
 <div class="section level2">
-<h2 id="the-nuts-and-bolts-the-server-side">The nuts and bolts (“the server side”)<a class="anchor" aria-label="anchor" href="#the-nuts-and-bolts-the-server-side"></a>
+<h2 id="the-nuts-and-bolts-aka-the-back-end">The nuts and bolts (AKA the back-end)<a class="anchor" aria-label="anchor" href="#the-nuts-and-bolts-aka-the-back-end"></a>
 </h2>
 <p>This project has been developed as a Shiny app using the Golem
-framework to support it’s production. There are a number of key
-functions that have been implemented to generate the data and matching
-processes. Let’s have a look in a bit more detail.</p>
+framework<span class="citation"><sup><a href="#ref-Fay2021" role="doc-biblioref">3</a></sup></span> to support it’s production.
+There are a number of key functions that have been implemented to
+generate the data and matching processes. Let’s have a look in a bit
+more detail.</p>
 <div class="section level3">
 <h3 id="the-golem-framework">The golem framework<a class="anchor" aria-label="anchor" href="#the-golem-framework"></a>
 </h3>
@@ -101,7 +103,7 @@ processes. Let’s have a look in a bit more detail.</p>
 framework</a> is the brain child of Colin Fay. In essence, Shiny apps
 are ideal for development as a R package. That is to say that, the
 package structure lends itself well to the development of production
-grade Shiny apps.</p>
+grade Shiny<span class="citation"><sup><a href="#ref-Shiny" role="doc-biblioref">2</a></sup></span> apps.</p>
 <p>The <code>golem</code> package itself provides functions and helpers
 to generate and create the framework that can be used for the
 development of the Shiny app and package. In addition, there are
@@ -119,7 +121,10 @@ order to make data generation and analysis as straightforward as
 possible. They are <code>create.sim.data</code>,
 <code>matched.data</code>, <code>matching.plot</code>, and
 <code>combined.plot</code>. The functions have been designed to follow
-and iterative process.</p>
+and iterative process. The full details for these functions can be found
+in the <em>Reference</em> section.</p>
+<p>A fair amount of work for these functions and within the app is done
+by functions from other packages including <code>ggplot2</code><span class="citation"><sup><a href="#ref-ggplot2" role="doc-biblioref">10</a></sup></span>, <code>plotly</code><span class="citation"><sup><a href="#ref-plotly" role="doc-biblioref">8</a></sup></span>, <code>dplyr</code><span class="citation"><sup><a href="#ref-dplyr" role="doc-biblioref">11</a></sup></span>, and others<span class="citation"><sup><a href="#ref-boot" role="doc-biblioref">1</a>,<a href="#ref-stats" role="doc-biblioref">6</a>,<a href="#ref-smd" role="doc-biblioref">7</a>,<a href="#ref-MASS" role="doc-biblioref">9</a></sup></span>.</p>
 <div class="section level4">
 <h4 id="create-sim-data">
 <code>create.sim.data()</code><a class="anchor" aria-label="anchor" href="#create-sim-data"></a>
@@ -128,9 +133,9 @@ and iterative process.</p>
 four simulations available for use within the app. Each one has a
 specific type of data generation to expore the matching process.</p>
 <p><em>Simulation 1</em> is based on King and Neilsen’s most simplistic
-illustration of finding the hidden experiment in the data.</p>
+illustration of finding the hidden experiment in the data.<span class="citation"><sup><a href="#ref-King2019" role="doc-biblioref">5</a></sup></span></p>
 <p><em>Simulation 2</em> is based on King and Neilsen’s illustration to
-show model dependence and bias.</p>
+show model dependence and bias.<span class="citation"><sup><a href="#ref-King2019" role="doc-biblioref">5</a></sup></span></p>
 <p><em>Simulation 3</em> is generated based on using 2 covariates with a
 normal distribution. The user can change the causal relationships
 between the covariates and/or the treatment and outcome variables but
@@ -143,24 +148,25 @@ the covariates and the treatment and outcome variables.</p>
 <h4 id="matched-data">
 <code>matched.data()</code><a class="anchor" aria-label="anchor" href="#matched-data"></a>
 </h4>
-<p>This is the function that conducts the matches. It primarily uses
-<code>match_on()</code> function in the <code>optmatch</code> package to
-generate a <span class="math inline">\(n x p\)</span> matrix of matches
-for the chosen method, where <span class="math inline">\(n\)</span> is
-the number of control units and <span class="math inline">\(p\)</span>
-is the number of treated units. The output is then used to generate the
-actual matches along with a number of other outputs that allow further
+<p>This is the function that conducts the matching. It primarily uses
+<code>match_on()</code> function in the <code>optmatch</code>
+package<span class="citation"><sup><a href="#ref-optmatch" role="doc-biblioref">4</a></sup></span> to generate a <span class="math inline">\(n \times p\)</span> matrix of matches for the
+chosen method, where <span class="math inline">\(n\)</span> represents
+the control units and <span class="math inline">\(p\)</span> represents
+the treated units. The output is then used to generate the actual
+matches along with a number of other outputs that allow further
 exploration of the data outside of the app if desired. However, it
 should be noted that this function is not designed for complex matching
-and may not be suitable for use with categorical data, for example.</p>
+and, for example, may not be suitable for use with categorical data.</p>
 </div>
 <div class="section level4">
 <h4 id="matching-plot">
 <code>matching.plot()</code><a class="anchor" aria-label="anchor" href="#matching-plot"></a>
 </h4>
 <p>This function takes the output from the <code>matched.data</code>
-function and turns it into a <code>plotly</code> plot which shows an
-accumulative matching of the treated and control units. Outside the app,
+function and turns it into a <code>plotly</code> plot which demonstrates
+the sequence of matches occurring in a cumulative fashion, starting with
+the nearest matched pair to the furthest matched pair. Outside the app,
 this plot can be generated on its own.</p>
 </div>
 <div class="section level4">
@@ -171,19 +177,18 @@ this plot can be generated on its own.</p>
 methods generated by the <code>matched.data</code> function and returns
 4 subplots that highlight the differences between the matching methods.
 Plots 1 and 2 contain visualisations of the way the data has been
-matched, Plot 3 shows the standardised mean differences between the
-specified covariates and methods (specified in the function, not the
-formula), and Plot 4 shows the differences in caclulated estimate of the
-treatment effect for both methods. Plots 3 and 4 show the results for
-each set of matched data as shown in Plots 1 and 2 as a progression
-through the matching process with fixed values of the unadjusted data.
-Plot 4 also includes stratified and weighted propensity score estimates
-for comparison.</p>
+matched (via the <code>matcing.plot</code> function), Plot 3 shows the
+standardised mean differences between the specified covariates and
+methods (specified in the function, not the formula), and Plot 4 shows
+the differences in the calculated estimate of the treatment effect for
+both methods. Plots 3 and 4 show the results for each set of matched
+data as shown in Plots 1 and 2 as a progression through the matching
+process with fixed values of the unadjusted data. Plot 4 also includes
+stratified and weighted propensity score estimates for comparison.</p>
 </div>
 </div>
 <div class="section level3">
-<h3 id="deployment-the-app-is-here-the-code-is-here-and-the-vignettes-are-here">Deployment (The app is here, the code is here and the vignettes are
-here)<a class="anchor" aria-label="anchor" href="#deployment-the-app-is-here-the-code-is-here-and-the-vignettes-are-here"></a>
+<h3 id="deployment">Deployment<a class="anchor" aria-label="anchor" href="#deployment"></a>
 </h3>
 <p>The development process for this app has meant that it has been most
 practical to manage on GitHub. All the associated files and
@@ -191,8 +196,8 @@ documentation are hosted on a public GitHub repository -
 <a href="https://github.com/jmeyer2482/WhatsMatching" target="_blank" class="external-link">https://github.com/jmeyer2482/WhatsMatching</a>.
 In terms of the process undertaken, the <code>WhatsMatching</code>
 package is the vehicle for the Shiny App as suggested in Golem
-framework. From there, the <code>pkgdown</code> package has been used to
-create a package based
+framework. From there, <code>pkgdown</code><span class="citation"><sup><a href="#ref-pkgdown" role="doc-biblioref">12</a></sup></span> has been used to create a
+package based
 <a href="https://jmeyer2482.github.io/WhatsMatching/" target="_blank" class="external-link">website</a>
 which can also be deployed from GitHub.</p>
 <p>The end result result of this developmental process means that there
@@ -203,13 +208,27 @@ running
 <code>R</code> environment making the functions available to more
 advanced users.</p>
 <div class="figure">
-<img src="../reference/figures/dev_relationships.png" style="width:50.0%" alt=""><p class="caption">Figure 1. Developmental Relationships</p>
+<img src="../../../../Health%20Data%20Science%20Masters/Dissertation/WhatsMatching/articles/images/dev_pathway.png" style="border: 0px; margin-left: auto; margin-right: auto;;width:95.0%" alt=""><p class="caption">Figure 1. Developmental Relationships</p>
 </div>
 </div>
 </div>
 <div class="section level2">
-<h2 id="simulations-the-ui-side">Simulations (“the UI side”)<a class="anchor" aria-label="anchor" href="#simulations-the-ui-side"></a>
+<h2 id="the-interface-aka-the-front-end">The Interface (AKA the front end)<a class="anchor" aria-label="anchor" href="#the-interface-aka-the-front-end"></a>
 </h2>
+<p>The front end of the app has been design to be minimalist but with
+enough information available to the user to work out what’s going on.
+Upon loading, the first simulation is run meaning that as soon as a user
+opens the app they are presented with a standard presentation of matched
+data to investigate. The real app, in addition to below, contains a
+sidebar panel on the right with some additional information for
+users.</p>
+<div class="figure">
+<img src="../../../../Health%20Data%20Science%20Masters/Dissertation/WhatsMatching/articles/images/App_Main.jpeg" style="width:100.0%" alt=""><p class="caption">Figure 2. The App</p>
+</div>
+The four buttons under the main title each serve a different function. The <i class="fas fa-cog"></i> button is used to simulate the data and then choose the settings for the matches that will occur. The <i class="fas fa-table"></i>
+<i class="fas fa-shuffle"></i>
+<i class="fas fa-info"></i>
+<p><img src="../../../../Health%20Data%20Science%20Masters/Dissertation/WhatsMatching/articles/images/App_match.jpeg" style="width:100.0%"></p>
 <p>Here, we provide some examples that highlight the difficulties in
 making decisions about how the matching process should occur.</p>
 <div class="section level3">
@@ -217,11 +236,12 @@ making decisions about how the matching process should occur.</p>
 </h3>
 <p>This example uses one of the simulations from King and Neilsen’s 2019
 paper. It takes three groups representing a fully blocked experiment, a
-random experiment and a group of all controls. Covariates X1 and X2 are
-generated with the fully blocked experiment being almost identically
-paired between treated and control units and the random experiment group
-has, as you would guess, randomly placed treated and control units. The
-control group consists of only control units and no treated units.</p>
+random experiment and an imbalanced control group representative of
+observational data. Covariates X1 and X2 are generated with the fully
+blocked experiment being almost identically paired between treated and
+control units and the random experiment group has, as you would guess,
+randomly placed treated and control units. The control group consists of
+only control units and no treated units.</p>
 <p>The methods being compared in this example are the use of the
 Mahalanobis distance, which is calculated using the distance between a
 treated and control unit in the context of the covariance matrix, and
@@ -239,8 +259,8 @@ Propensity score ordered by data without replacement Matched on
 <div class="figure">
 <img src="../reference/figures/Ex-fullyblocked.PNG" style="width:100.0%" alt=""><p class="caption">Figure 2. Fully Block Experiment</p>
 </div>
-<p>Take home message:<br>
-The propensity score may not be the best choice for achieving covariate
+<p>Take home <a href="message:%5C" class="uri">message:\</a> The
+propensity score may not be the best choice for achieving covariate
 balance, which is a primary aim of matching.</p>
 </div>
 <div class="section level3">
@@ -267,10 +287,10 @@ Treatment effect calculated using <code>y ~ t</code></p>
 <div class="figure">
 <img src="../reference/figures/Ex-replacement.PNG" style="width:100.0%" alt=""><p class="caption">Figure 3. Replacement</p>
 </div>
-<p>Take home message:<br>
-Datasets where the treated and control groups are approximately equal
-may require the consideration of different settings to achieve covariate
-balance and thus a more accurate estimate of the treatment effect.</p>
+<p>Take home <a href="message:%5C" class="uri">message:\</a> Datasets
+where the treated and control groups are approximately equal may require
+the consideration of different settings to achieve covariate balance and
+thus a more accurate estimate of the treatment effect.</p>
 </div>
 <div class="section level3">
 <h3 id="example-c-data-user-options-screenshot">Example C (data | user options | screenshot)<a class="anchor" aria-label="anchor" href="#example-c-data-user-options-screenshot"></a>
@@ -301,9 +321,9 @@ Treatment effect calculated using <code>y ~ t</code></p>
 <div class="figure">
 <img src="../reference/figures/Ex-ordering.PNG" style="width:100.0%" alt=""><p class="caption">Figure 4. Ordering</p>
 </div>
-<p>Take home message:<br>
-The ordering or optimisation method of how the matches are selected can
-impact what data is selected for analysis.</p>
+<p>Take home <a href="message:%5C" class="uri">message:\</a> The ordering
+or optimisation method of how the matches are selected can impact what
+data is selected for analysis.</p>
 </div>
 <div class="section level3">
 <h3 id="example-d-data-user-options-screenshot">Example D (data | user options | screenshot)<a class="anchor" aria-label="anchor" href="#example-d-data-user-options-screenshot"></a>
@@ -336,6 +356,62 @@ Treatment effect calculated using <code>y ~ t + X1</code> Both
 treatment to 1</p>
 <div class="figure">
 <img src="../reference/figures/Ex-Forgotten-confounder.PNG" style="width:100.0%" alt=""><p class="caption">Figure 5. Specification</p>
+</div>
+</div>
+<div class="section level3 unnumbered">
+<h3 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h3>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-boot" class="csl-entry">
+1. Canty A, Ripley BD. Boot: Bootstrap r (s-plus) functions. Published
+online 2021.
+</div>
+<div id="ref-Shiny" class="csl-entry">
+2. Chang W, Cheng J, Allaire J, et al. <em>Shiny: Web Application
+Framework for r</em>.; 2022. <a href="https://shiny.rstudio.com/" class="external-link">https://shiny.rstudio.com/</a>
+</div>
+<div id="ref-Fay2021" class="csl-entry">
+3. Fay C, Rochette S, Guyader V, Girard C. <em><span>Engineering
+Production-Grade Shiny Apps</span></em>. 1st ed. Chapman; Hall/CRC;
+2021:398. <a href="https://engineering-shiny.org/" class="external-link">https://engineering-shiny.org/</a>
+</div>
+<div id="ref-optmatch" class="csl-entry">
+4. Hansen BB, Klopfer SO. Optimal full matching and related designs via
+network flows. 2006;15.
+</div>
+<div id="ref-King2019" class="csl-entry">
+5. King G, Nielsen R. <span class="nocase">Why Propensity Scores Should
+Not Be Used for Matching</span>. <em>Political Analysis</em>.
+2019;27(4):435-454. doi:<a href="https://doi.org/10.1017/pan.2019.11" class="external-link">10.1017/pan.2019.11</a>
+</div>
+<div id="ref-stats" class="csl-entry">
+6. R Core Team. R: A language and environment for statistical computing.
+Published online 2022. <a href="https://www.R-project.org/" class="external-link">https://www.R-project.org/</a>
+</div>
+<div id="ref-smd" class="csl-entry">
+7. Saul B. Smd: Compute standardized mean differences. Published online
+2020. <a href="https://CRAN.R-project.org/package=smd" class="external-link">https://CRAN.R-project.org/package=smd</a>
+</div>
+<div id="ref-plotly" class="csl-entry">
+8. Sievert C. Interactive web-based data visualization with r, plotly,
+and shiny. Published online 2020. <a href="https://plotly-r.com" class="external-link">https://plotly-r.com</a>
+</div>
+<div id="ref-MASS" class="csl-entry">
+9. Venables WN, Ripley BD. Modern applied statistics with s. Published
+online 2002. <a href="https://www.stats.ox.ac.uk/pub/MASS4/" class="external-link">https://www.stats.ox.ac.uk/pub/MASS4/</a>
+</div>
+<div id="ref-ggplot2" class="csl-entry">
+10. Wickham H. ggplot2: Elegant graphics for data analysis. Published
+online 2016. <a href="https://ggplot2.tidyverse.org" class="external-link">https://ggplot2.tidyverse.org</a>
+</div>
+<div id="ref-dplyr" class="csl-entry">
+11. Wickham H, François R, Henry L, Müller K. Dplyr: A grammar of data
+manipulation. Published online 2022. <a href="https://CRAN.R-project.org/package=dplyr" class="external-link">https://CRAN.R-project.org/package=dplyr</a>
+</div>
+<div id="ref-pkgdown" class="csl-entry">
+12. Wickham H, Hesselberth J, Salmon M. Pkgdown: Make static HTML
+documentation for a package. Published online 2022. <a href="https://CRAN.R-project.org/package=pkgdown" class="external-link">https://CRAN.R-project.org/package=pkgdown</a>
+</div>
 </div>
 </div>
 </div>

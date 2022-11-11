@@ -15,7 +15,6 @@ License: MIT + file LICENSE
 URL: https://github.com/jmeyer2482/WhatsMatching
 BugReports: https://github.com/jmeyer2482/WhatsMatching/issues
 Imports: 
-    arm,
     boot,
     config (>= 0.3.1),
     dplyr,
