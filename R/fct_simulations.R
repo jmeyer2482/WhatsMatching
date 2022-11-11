@@ -36,7 +36,6 @@
 #' @importFrom dplyr mutate %>% select case_when
 #' @importFrom stats runif rbinom rnorm
 #' @importFrom MASS mvrnorm
-#' @importFrom arm invlogit
 #' @importFrom tidyr expand_grid
 #' @importFrom boot inv.logit
 #'

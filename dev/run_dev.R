@@ -1,5 +1,5 @@
-# setwd_golem(here::here())
-
+# golem::setwd_golem(here::here())
+# golem::set_golem_wd()
 # Set options here
 options(golem.app.prod = F) # TRUE = production mode, FALSE = development mode
 

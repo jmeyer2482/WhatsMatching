@@ -186,6 +186,7 @@ dist.matches <- function(d.m, order=NULL, replace=FALSE){
               dist=numeric()
   ) %>% as.data.frame()
 
+  o <- 0
   #loop over the distance matrix rows using the order specified
   for (i in t.names[order]) {
     #select the row
@@ -199,9 +200,12 @@ dist.matches <- function(d.m, order=NULL, replace=FALSE){
     c.val <- names(which.min(d))
     if (length(d)==1) c.val <- c.names[!c.names %in% ids$control]
 
+    o <- o+1
+
     a <- list(treatment = i,
               control = c.val,
-              dist = min(d))
+              dist = min(d),
+              seq.order = o)
 
     #add the matched pair to the dataframe
     ids <- rbind(ids,a)

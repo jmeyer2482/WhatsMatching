@@ -12,7 +12,7 @@
 #' @importFrom htmltools HTML
 #' @importFrom DT JS renderDT
 #' @importFrom utils data
-#' @importFrom stringi stri_locate_first_fixed stri_split_fixed
+#' @importFrom stringr str_split
 #' @importFrom shinyjs enable disable useShinyjs
 #' @importFrom rlang is_empty
 #' @import mplot
@@ -680,7 +680,7 @@ app_server <- function(input, output, session) {
     if(is.null(values$outcome.f)){
       sel.y <- NULL
     } else {
-      sel.y <- stringi::stri_split_fixed(values$outcome.f," ")[[1]][-c(1:4)]
+      sel.y <- stringr::str_split(values$outcome.f," ")[[1]][-c(1:4)]
       sel.y <- sel.y[sel.y!="+"]
       if(rlang::is_empty(sel.y)) sel.y <- NULL
     }
