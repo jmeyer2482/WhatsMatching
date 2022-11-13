@@ -4,40 +4,25 @@
     <loc>/404.html</loc>
   </url>
   <url>
-    <loc>/articles/a-Background.html</loc>
+    <loc>/articles/a1-Background.html</loc>
   </url>
   <url>
-    <loc>/articles/Applications.html</loc>
+    <loc>/articles/a2-Development.html</loc>
   </url>
   <url>
-    <loc>/articles/b-Applications.html</loc>
+    <loc>/articles/b1-TheApp.html</loc>
   </url>
   <url>
-    <loc>/articles/b-TheApp.html</loc>
+    <loc>/articles/b2-DataGen.html</loc>
   </url>
   <url>
-    <loc>/articles/Background.html</loc>
+    <loc>/articles/b3-Matching.html</loc>
   </url>
   <url>
-    <loc>/articles/c-Applications.html</loc>
-  </url>
-  <url>
-    <loc>/articles/c-TheApp.html</loc>
-  </url>
-  <url>
-    <loc>/articles/d-References.html</loc>
+    <loc>/articles/c-Examples.html</loc>
   </url>
   <url>
     <loc>/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>/articles/TheApp.html</loc>
-  </url>
-  <url>
-    <loc>/articles/WhatsMatching-HowTo.html</loc>
-  </url>
-  <url>
-    <loc>/articles/WhatsMatching-Theory.html</loc>
   </url>
   <url>
     <loc>/authors.html</loc>

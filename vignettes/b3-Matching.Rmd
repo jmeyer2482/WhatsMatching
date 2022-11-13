@@ -1,0 +1,66 @@
+---
+title: "Vignette 2c - Matching"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette 2c - Matching}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: App_References.bib
+csl: ama.csl
+link-citations: yes
+linkcolor: blue
+always_allow_html: true
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  echo = FALSE
+)
+```
+
+```{=html}
+<script src="https://kit.fontawesome.com/e10eea7053.js" crossorigin="anonymous"></script>
+```
+## Matching
+
+Once the user has generated some data. The next step is to select how the matching should take place. The screenshot in Figure 1 shows what the user will see once they have selected the data (or chosen to continue without changing).
+
+```{=html}
+<table style="border: none;">
+  <caption style="text-align:left; caption-side:top;"> Figure 1. Matching Settings</caption>
+  <tr>
+  	  <td style="text-align:center"><img src="../man/figures/App_match.png" border=0 width="100%"> </img></td>
+  </tr>
+</table>
+```
+### Settings
+
+As can be seen above, there are 5 settings that can be changed - *Matching Covariates*; *Matching Distance*; *Matching Order*; *Use Replacement*; and *Outcome Formula.* The settings and their purpose are outlined below.
+
+#### Matching Covariates
+
+The user has the option to select the available covariates that they would like to match the treated and untreated units on. This will include `X1` and `X2` for the simulated data and `age`, `height` and `sex` for the `fev` data. There is also an `error` variable available in the simulated data but it is not recommended for matching on.
+
+#### Matching Distance
+
+The *Matching Distance* options include the Mahalanobis Distance and the Propensity Score. Both methods are implemented using the `optmatch` package however, the propensity score is calculated apriori using logistic regression between the treatment and selected covariates.
+
+#### Matching Order
+
+This settings determines what order the matches are conducted in. *data* is the order that the data is in and *random* is a randomly generated order. When using *smallest* and *largest* the data is ordered according to each unit's propensity score, this is irrespective of the method of matching used. To compare to the `MatchIt` package, Mahalanobis Distance matching is always conducted using *data*.
+
+#### Use Replacement
+
+The *Use Replacement* option tells the algorithm whether an untreated unit can be matched to more than one treated unit.
+
+#### Outcome Formula
+
+This is the formula that is used to calculate the treatment effect on the outcome. It will always be at least `outcome ~ treatment`. This setting gives you the option of including the other covariates in the estimate.
+
+After the user has selected the settings that they would like to compare, they can simply press the "Use these matching settings" button at the button and the app will begin its calculations.
+
+The output from the decision can take some 10s of seconds to be realised due to a combination of the extra data that needs to be generated for the cumulative plots and the processing to render the `plotly` object. Once rendered it will display four plots with a legend on the right and a slide bar down the bottom.
+
+## References

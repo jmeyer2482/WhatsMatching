@@ -6,7 +6,7 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
     
 
-    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-primary"><div class="container">
+    <nav class="navbar fixed-top navbar-dark navbar-expand-lg bg-dark"><div class="container">
     
     <a class="navbar-brand me-2" href="../index.html">WhatsMatching</a>
 
@@ -24,10 +24,12 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/a-Background.html">Vignette 1 - Background</a>
-    <a class="dropdown-item" href="../articles/b-TheApp.html">Vignette 2 - The App</a>
-    <a class="dropdown-item" href="../articles/c-Applications.html">Vignette 3 - Applications</a>
-    <a class="dropdown-item" href="../articles/d-References.html">References</a>
+    <a class="dropdown-item" href="../articles/a1-Background.html">Vignette 1a - Background</a>
+    <a class="dropdown-item" href="../articles/a2-Development.html">Vignette 1b - Development</a>
+    <a class="dropdown-item" href="../articles/b1-TheApp.html">Vignette 2a - The App</a>
+    <a class="dropdown-item" href="../articles/b2-DataGen.html">Vignette 2b - Data Generation</a>
+    <a class="dropdown-item" href="../articles/b3-Matching.html">Vignette 2c - Matching</a>
+    <a class="dropdown-item" href="../articles/c-Examples.html">Vignette 3 - Examples</a>
   </div>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
@@ -61,10 +63,10 @@
 <span>  sim <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  te <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  jitter <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  g1_min <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  g1_max <span class="op">=</span> <span class="fl">5</span>,</span>
-<span>  g2_shift_X1 <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  g2_shift_X2 <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  cov_min <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  cov_max <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>  wt_X1 <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  wt_X2 <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  n <span class="op">=</span> <span class="fl">200</span>,</span>
 <span>  mean1 <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  mean2 <span class="op">=</span> <span class="fl">0</span>,</span>
@@ -95,20 +97,20 @@
 <dd><p>controls the SD of the rnorm function that is used to add jitter to the outcome variable</p></dd>
 
 
-<dt>g1_min</dt>
-<dd><p>Simulation 2 - minimum value of for uniform distribution</p></dd>
+<dt>cov_min</dt>
+<dd><p>Simulation 2 - minimum value for uniform distribution</p></dd>
 
 
-<dt>g1_max</dt>
-<dd><p>Simulation 2 - maximum value of for uniform distribution</p></dd>
+<dt>cov_max</dt>
+<dd><p>Simulation 2 - maximum value for uniform distribution</p></dd>
 
 
-<dt>g2_shift_X1</dt>
-<dd><p>Simulation 2 - how far to shift the X1 value for a control group</p></dd>
+<dt>wt_X1</dt>
+<dd><p>Simulation 2 - the effect of the treatment on X1</p></dd>
 
 
-<dt>g2_shift_X2</dt>
-<dd><p>Simulation 2 - how far to shift the X2 value for a control group</p></dd>
+<dt>wt_X2</dt>
+<dd><p>Simulation 2 - the effect of the treatment on X2</p></dd>
 
 
 <dt>n</dt>
@@ -175,13 +177,13 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># generate a simulated dataframe</span></span></span>
 <span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu">create.sim.data</span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   t Allocation     X1     X2     y  error</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0    Control  1.605  1.201 4.375  1.569</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 0    Control  0.565  1.191 2.543  0.788</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 0    Control  1.756  1.523 2.891 -0.387</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 0    Control  0.401  1.173 1.408 -0.166</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 0    Control -0.834  0.605 0.066  0.295</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 0    Control  1.532 -0.352 1.470  0.290</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   t Allocation     X1     X2      y  error</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0    Control  1.361  0.626  1.211 -0.777</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 0    Control -1.205 -0.249 -1.427  0.026</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 0    Control  0.199 -0.560  0.280  0.642</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 0    Control  0.582  0.962  2.074  0.530</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 0    Control -0.747 -0.413  1.287  2.447</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 0    Control  0.716  1.570  2.049 -0.237</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

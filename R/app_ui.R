@@ -21,7 +21,7 @@ app_ui <- function(request) {
     fluidPage(
       shinyjs::useShinyjs(),  # Set up shinyjs
       # shinythemes::themeSelector(),
-      theme = shinytheme("cerulean"),
+      theme = shinytheme("yeti"),
       br(),
 
       #standardise some formatting for tables
@@ -56,10 +56,10 @@ app_ui <- function(request) {
       ),
 
       #View data
-      bsPopover(id="butViewData",title=HTML(paste(strong("View Data"))),
-                content="View the data and match settings that have informed the plot",
+      bsPopover(id="butViewData",title=HTML(paste(strong("Data and Insights"))),
+                content="View the data, match settings, and other insights about the matched data.",
                 "right",options = list(container = "body")),
-      bsModal(id="modViewData", title="View Data", trigger = "butViewData",
+      bsModal(id="modViewData", title="Data and Insights", trigger = "butViewData",
               size = "large", mod_ViewData_ui("ViewData_1"),
               tags$head(tags$style("#modViewData .modal-footer{ display:none}"))
       ),
@@ -79,10 +79,10 @@ app_ui <- function(request) {
 
     shiny::sidebarPanel(width = 3,
         h4("Treatment Effect Settings"),
-        "Estimate Formula: ", code(textOutput("txt.M.o.f", inline = T)), br(),
+        "Estimate Formula: ", htmlOutput("txt.M.o.f", inline = T), br(),
         "Actual Treatment Effect: ", textOutput("txt.M.TE", inline = T), br(),
         h4("Match settings"),
-        tableOutput("m.info"),
+        htmlOutput("m.info"),
         includeMarkdown("inst/app/www/main_side.html")
     ),
   #matching plot panel

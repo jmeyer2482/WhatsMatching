@@ -120,45 +120,39 @@ rel.txt <- HTML(
 mod_SimData_ui <- function(id) {
   ns <- NS(id)
   tagList(fluidPage(
-    h3("Data Generation"),
+    h3("Data Generation", style="margin-top: 0.2em;"),
     HTML("There are 2 options for data gerneration - simulated data, or the forced expiratory volume (FEV) data set. All of the data simulations contain the same variables - <code>t</code>: a binary treatment, <code>X1</code> and <code>X2</code>: covariates, <code>y</code>: a continuous outcome, and <code>error</code>: the value of the estimation error.Each simulation has it's own particular settings to change and can be better at demonstrating different matching effects."), br(), br(),
 
     ##Popovers
     bsPopover(
       id = ns("S.te1"),
-      title = "<strong>Treatment Effect</strong>",
-      content = paste0(
-        "The treatment effect controls the effect that the ",
-        "treatment will have on the outcome (",
-        y.t,
-        ")."
-      ) ,
+      title = "<strong>Treatment Effect on Outcome</strong>",
+      content = te.txt,
       "right",
       options = list(container = "body")
     ),
     bsPopover(
       id = ns("S.te2"),
-      title = "<strong>Treatment Effect</strong>",
+      title = "<strong>Treatment Effect on Outcome</strong>",
       content = te.txt,
       "right",
       options = list(container = "body")
     ),
-
     bsPopover(id = ns("S.range"),
-              title = "<strong>Range</strong>",
+              title = "<strong>Range of Uniform Distribution</strong>",
               content = range.txt,
               "right", options = list(container = "body")
     ),
     bsPopover(
       id = ns("S.overlap"),
-      title = "<strong>Group Overlap</strong>",
+      title = "<strong>Treatment effect on Covariates</strong>",
       content = overlap.txt,
       "right",
       options = list(container = "body")
     ),
     bsPopover(
       id = ns("S.te3"),
-      title = "<strong>Treatment Effect</strong>",
+      title = "<strong>Treatment Effect on Outcome</strong>",
       content = te.txt ,
       "right",
       options = list(container = "body")
@@ -256,25 +250,8 @@ mod_SimData_ui <- function(id) {
             style = "height: 700px;",
             HTML("Like Simulation 1, this simulation is also based on one done by King and Neilsen. It generates two groups, treated and control, that overlap on the uniformly distributed covarties <code>X1</code> and <code>X2</code>. You can adjust the amount of overlap and range of the data. This simulations demonstrates the effect of replacement well."), br(), br(),
 
-            fluidRow(
-              strong("Treatment Effect"),
-              icon("question-sign", lib = "glyphicon", id = ns("S.te2"))
-            ),
-            fluidRow(column(
-              12,
-              sliderInput(
-                "sim2.TE",
-                NULL,
-                min = -25,
-                max = 25,
-                value = 2,
-                step = .1,
-                ticks = F
-              )
-            )),
-
-            fluidRow(
-              strong("Range"),
+                       fluidRow(
+              strong("Range of Uniform Distribution"),
               icon("question-sign", lib = "glyphicon", id = ns("S.range"))
             ),
 
@@ -292,7 +269,7 @@ mod_SimData_ui <- function(id) {
             )),
 
             fluidRow(
-              strong("Group Overlap"),
+              strong("Treatment effect on Covariates"),
               icon("question-sign", lib = "glyphicon", id = ns("S.overlap"))
             ),
 
@@ -317,6 +294,23 @@ mod_SimData_ui <- function(id) {
                 max = 25,
                 value = 4,
                 step = 1,
+                ticks = F
+              )
+            )),
+
+            fluidRow(
+              strong("Treatment Effect on Outcome"),
+              icon("question-sign", lib = "glyphicon", id = ns("S.te2"))
+            ),
+            fluidRow(column(
+              12,
+              sliderInput(
+                "sim2.TE",
+                NULL,
+                min = -25,
+                max = 25,
+                value = 2,
+                step = .1,
                 ticks = F
               )
             )),

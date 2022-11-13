@@ -1,0 +1,108 @@
+---
+title: "Vignette 2b - Data Generation"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette 2b - Data Generation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: App_References.bib
+csl: ama.csl
+link-citations: yes
+linkcolor: blue
+always_allow_html: true
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  echo = FALSE
+)
+```
+
+```{=html}
+<script src="https://kit.fontawesome.com/e10eea7053.js" crossorigin="anonymous"></script>
+```
+
+## Data Generation
+
+Click on the <i class="fas fa-cog"></i> to open up a modal that is displayed in the following figures. It gives the user access data from four different simulations and a real dataset. I will briefly outline each of the simulations below.
+
+#### Simulation 1
+
+As noted above, this simulation is based on the data generation process by King and Neilsen[@King2019]. Essentially, it contains 3 hidden experiments - a fully matched randomised experiment, a random randomised experiment, and an imbalanced observational dataset. If you look at Figure 3, the first plot (top left) makes this clearer. The fully matched randomised experiment is in the top right corner of the plot which is demonstrated by the treated (red) and untreated (blue) units being virtually right on top of one another. The random randomised experiment is just below it in the bottom right corner of the plot and you can clearly see that the treated and control units are all over the place, completely random. The imbalanced observational data is represented by the placement of the untreated unit on the left of the plot.
+
+```{=html}
+<table style="border: none;">
+  <caption style="text-align:left; caption-side:top;"> Figure 1. Simulation 1 Preview</caption>
+  <tr>
+  	  <td style="text-align:center"><img src="../man/figures/App_Sim1.png" border=0 width="100%"> </img></td>
+  </tr>
+</table>
+```
+The purpose of this simulation in the paper was to demonstrate the ability of different matching methods to select the units in a logical order. Ideally, the data from the fully matched randomised experiment should be selected first, then the data from the random randomised experiment. It has been included in the app as it provides a clear demonstration of the performance of different types of matching.
+
+In the app, you are able to change the treatment effect but that should not change the outcome of the matching process in any way, only the calculation of the treatment estimate.
+
+#### Simulation 2
+
+Simulation 2 is also taken from King and Neilsen[@King2019] however the data is very different. This simulation uses two uniform distributions that are both effected by the treatment variable. When visualising the the two covariates, `X1` and `X2`, on a two dimensional field, the data has the appearance of a square of treated units overlapped by a square of untreated units. This can be clearly seen in the top left plot in Figure 4 below.
+
+```{=html}
+<table style="border: none;">
+  <caption style="text-align:left; caption-side:top;"> Figure 2. Simulation 2 Preview</caption>
+  <tr>
+  	  <td style="text-align:center"><img src="../man/figures/App_Sim2.png" border=0 width="100%"> </img></td>
+  </tr>
+</table>
+```
+Users have the ability to change the range of the uniform distribution, the weight of the treatment variable (`t`) on `X1` and `X2`, and the treatment effect on the outcome (`y`). Probably the most useful illustration of this data is to compare the same method of matching but change whether replacement is used or not. It can be particularly striking if there is a strong effect of `t` on the covariates.
+
+#### Simulation 3
+
+This simulation uses causal relationships to define the effects between the treatment, covariates, and outcome. There are five options available to the user that can change the how `X1` and `X2` effect or are effect by the treatment (`t)` and the outcome (`y`). Figure 5 demonstrates how each of the options fit into a causal diagram with an arrow pointing in the direction. of the effect.
+
+```{=html}
+<table style="border: none;">
+  <caption style="text-align:left; caption-side:top;">Figure 3. Simulation 3 Casual Relationships</caption>
+  <tr>
+  	  <td style="text-align:center"><img src="../man/figures/Sim3_causal.jpeg" border=0 width="100%"> </img></td>
+  </tr>
+</table>
+```
+To generate the data, first we create the covariates, `X1` and `X2`, as a bivariate normal distribution with a covariate correlation of 0.2. The treatment variable is then generated based on the selection after which the function then iteratively works through the selected options and applies changes to the data as appropriate. It should be noted that the user can not change the strength of the effects in this simulation. Nor can the relationship between `t` and `y` be changed, although they can both be altered via `X1` and `X2`. Other than the causal relationship, only the treatment effect can be modified. This has been done to allow for simple data generation. Figure 6 below gives an overview of what the generated data may look like.
+
+```{=html}
+<table style="border: none;">
+  <caption style="text-align:left; caption-side:top;">Figure 4. Simulation 3 Preview</caption>
+  <tr>
+  	  <td style="text-align:center"><img src="../man/figures/App_Sim3.png" border=0 width="100%"> </img></td>
+  </tr>
+</table>
+```
+#### Simulation 4
+
+This is the last simulation. Like simulation 3, `X1` and `X2` are taken from a bivariate normal distribution. However, in this simulation, `X1` and `X2` can effectively act as confounder, an ancestor of `t`, or an ancestor of `y`. This is achieved by altering the weights of the effect on the treatment or the effect on the outcome. In addition, you can change the covariance correlation which will increase the correlation of `X1` and `X2`. See Figure 7 below for a preview of what the data from Simulation 4 may look like.
+
+```{=html}
+<table style="border: none;">
+  <caption style="text-align:left; caption-side:top;">Figure 5. Simulation 4 Preview</caption>
+  <tr>
+  	  <td style="text-align:center"><img src="../man/figures/App_Sim4.png" border=0 width="100%"> </img></td>
+  </tr>
+</table>
+```
+#### Real Data - FEV
+
+The *Forced Expiratory Volume* dataset is available from the `mplot`[@mplot] package. For the purposes of the app, it has been utilised to demonstrate how matching works on real data using `smoke` as the treatment variable and `fev` as the outcome. This dataset was ideal for this project because it was relatively small, contains only a few variables, and contains a treatment and outcome variable. A preview of the data is below in Figure 8.
+
+```{=html}
+<table style="border: none;">
+  <caption style="text-align:left; caption-side:top;">Figure 6. Forced Expiratory Volume Preview</caption>
+  <tr>
+  	  <td style="text-align:center"><img src="../man/figures/App_fev.png" border=0 width="100%"> </img></td>
+  </tr>
+</table>
+```
+
+## References

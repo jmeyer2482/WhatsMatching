@@ -1,0 +1,197 @@
+---
+title: "Vignette 3 - Examples"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette 3 - Examples}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Matching finds the experiment hidden in observational data
+
+This example uses one of the simulations from King and Neilsen's 2019 paper. It takes three groups representing a fully blocked experiment, a random experiment and a group of all controls. Covariates `X1` and `X2` are generated with the fully blocked experiment being almost identically paired between treated and control units; the random experiment group has randomly placed treated and control units; and imbalanced control group consists of only control units and no treated units.
+
+The methods being compared in this example are the use of the Mahalanobis Distance Matching (MDM) and Propensity Score Matching (PSM). The outcome demonstrated is that, under these conditions, MDM is superior to PSM in selecting the fully blocked experiment first. This occurs because the Propensity score, once calculated, is blind to the real data that informs the probability of treatment whereas the Mahalanobis Distance is the actual distance *between* units.
+
+```{=html}
+<table style="border: none; text-align: center;">
+  <caption style="text-align:left; caption-side:top;"> Figure 1. Fully Blocked Experiment</caption>
+  <tr>
+    <th style="text-align: left;">Setting</th>
+    <th>Method 1</th>
+    <th>Method 2</th>
+  </tr>
+  <tr>
+    <td style="text-align: left;">Matching Distance</td>
+    <td>Mahalanobis Distance</td>
+    <td>Propensity Score</td>
+  </tr>
+  <tr>
+    <td style="text-align: left;">Matching Covariates</td>
+    <td><code>X1</code>, <code>X2</code></td>
+    <td><code>X1</code>, <code>X2</code></td>
+  </tr>
+  <tr>
+    <td style="text-align: left;">Matching Order</td>
+    <td>data</td>
+    <td>data</td>
+  </tr>
+  <tr>
+    <td style="text-align: left;">Matching Replacement</td>
+    <td>No</td>
+    <td>No</td>
+  </tr>
+  <tr>
+    <td style="text-align: left;">Treatment Effect on the Outcome</td>
+    <td colspan="2"><code>y ~ t</code></td>
+  </tr>
+  <tr>
+  	  <td colspan="3"><img src="../man/figures/Ex-fullyblocked.PNG" border=0 width="100%"> </img></td>
+  </tr>
+</table>
+```
+**Take home message:** The propensity score may not be the best choice for achieving covariate balance, which is a primary aim of matching.
+
+## To Replace or Not to Replace
+
+We demonstrate in Fig. 3. that the intuitiveness behind using replacement may not be clear. This simulation is also from the King ans Neilsen paper. `X1` and `X2` constitute 2 overlapping uniform distributions for the treated and control groups. There are 200 units in the dataset with 100 units in each group. For this simulation we have only changed whether the matches are conducted with replacement.
+
+You can clearly see that there are a number of the control units that are unmatched. This has occurred because there are other "closer" controls who can be matched to the treated units. If we look at *Plot 3* in the panel we can see that the covariate balance has been maintained and, as we expect, the estimate treatment effect approaches the true effect.
+
+```{=html}
+<table style="border: none; text-align: center;">
+  <caption style="text-align:left; caption-side:top;"> Figure 2. Replacement</caption>
+  <tr>
+    <th style="text-align: left;">Setting</th>
+    <th>Method 1</th>
+    <th>Method 2</th>
+  </tr>
+  <tr>
+    <td style="text-align: left;">Matching Distance</td>
+    <td>Propensity Score</td>
+    <td>Propensity Score</td>
+  </tr>
+  <tr>
+    <td style="text-align: left;">Matching Covariates</td>
+    <td><code>X1</code>, <code>X2</code></td>
+    <td><code>X1</code>, <code>X2</code></td>
+  </tr>
+  <tr>
+    <td style="text-align: left;">Matching Order</td>
+    <td>data</td>
+    <td>data</td>
+  </tr>
+  <tr>
+    <td style="text-align: left;">Matching Replacement</td>
+    <td>Yes</td>
+    <td>No</td>
+  </tr>
+  <tr>
+    <td style="text-align: left;">Treatment Effect on the Outcome</td>
+    <td colspan="2"><code>y ~ t</code></td>
+  </tr>
+  <tr>
+  	  <td colspan="3""><img src="../man/figures/Ex-replacement.PNG" border=0 width="100%"> </img></td>
+  </tr>
+</table>
+```
+**Take home message:** Datasets where the treated and control groups are approximately equal may require the consideration of different settings to achieve covariate balance and thus a more accurate estimate of the treatment effect.
+
+## Ordering changes unit selection
+
+For this example we are using the same simulation as in Fig. 2. This time we are comparing the ordering of the matches. In this case comparison is starting with the smallest propensity score versus starting with the largest. This essentially boils down to matching the treated units with the lowest probability of being treated first or starting with those with the highest probability of being treated.
+
+We can see below in Fig. 4. that *Plot 1* has made some unusual pairings. This makes some sense as when you pair units that have the highest probability of being treated first then you quickly increase the distances between the remaining units that need to be paired. This means that the "good matches" are getting further and further away.
+
+This is a problem that can occur for any matching method as most matching methods use nearest neighbour methodology. If the best nearest neighbour is already paired then the process just moves to the next available one no matter the distance. This further highlights the advantage of using replacement which conveniently ignores ordering and selects the nearest partner irrespective of if it is matched.
+
+```{=html}
+<table style="border: none; text-align: center;">
+  <caption style="text-align:left; caption-side:top;"> Figure 3. Ordering</caption>
+  <tr>
+    <th style="text-align: left;">Setting</th>
+    <th>Method 1</th>
+    <th>Method 2</th>
+  </tr>
+  <tr>
+    <td style="text-align: left;">Matching Distance</td>
+    <td>Propensity Score</td>
+    <td>Propensity Score</td>
+  </tr>
+  <tr>
+    <td style="text-align: left;">Matching Covariates</td>
+    <td><code>X1</code>, <code>X2</code></td>
+    <td><code>X1</code>, <code>X2</code></td>
+  </tr>
+  <tr>
+    <td style="text-align: left;">Matching Order</td>
+    <td>largest</td>
+    <td>smallest</td>
+  </tr>
+  <tr>
+    <td style="text-align: left;">Matching Replacement</td>
+    <td>No</td>
+    <td>No</td>
+  </tr>
+  <tr>
+    <td style="text-align: left;">Treatment Effect on the Outcome</td>
+    <td colspan="2"><code>y ~ t</code></td>
+  </tr>
+  <tr>
+  	  <td colspan="3"><img src="../man/figures/Ex-ordering.PNG" border=0 width="100%"> </img></td>
+  </tr>
+</table>
+```
+**Take home message:** The ordering or optimisation method of how the matches are selected can impact what data is selected for analysis.
+
+## Covariate and Model Selection Matter 
+
+Covariate specification and model selection are important when undertaking matching. Ideally, the matching occurs in such a way that the model specification is less important (another problem for causal inference in observational data!) which will remove some of the bias. Simulation 4 has been used for this example with both `X1` and `X2` set to be strong confounders.
+
+Matching has been complete using either `X1` or `X2` as though we don't know which one is a confounder. `X1` has also been added to the formula to calculate the estimate. These setting have been selected to demonstrate the important of model and covariate selection when performing matching. As we can see below, the matching that was done with `X1` only performed as well as the raw estimate. Whereas, the model with `X2` performed much better.
+
+```{=html}
+<table style="border: none; text-align: center;">
+  <caption style="text-align:left; caption-side:top;"> Figure 4. Ex-Forgotten-confounder.PNG</caption>
+  <tr>
+    <th style="text-align: left;">Setting</th>
+    <th>Method 1</th>
+    <th>Method 2</th>
+  </tr>
+  <tr>
+    <td style="text-align: left;">Matching Distance</td>
+    <td>Mahalanobis Distance</td>
+    <td>Propensity Score</td>
+  </tr>
+  <tr>
+    <td style="text-align: left;">Matching Covariates</td>
+    <td><code>X1</code></td>
+    <td><code>X1</code></td>
+  </tr>
+  <tr>
+    <td style="text-align: left;">Matching Order</td>
+    <td>data</td>
+    <td>data</td>
+  </tr>
+  <tr>
+    <td style="text-align: left;">Matching Replacement</td>
+    <td>No</td>
+    <td>No</td>
+  </tr>
+  <tr>
+    <td style="text-align: left;">Treatment Effect on the Outcome</td>
+    <td colspan="2"><code>y ~ t + X1</code></td>
+  </tr>
+  <tr>
+  	  <td colspan="3"><img src="../man/figures/Ex-specification.PNG" border=0 width="100%"> </img></td>
+  </tr>
+</table>
+```
+**Take home message:** Matching on a variable and then using it in the estimate of the treatment effect may not yield useful results.

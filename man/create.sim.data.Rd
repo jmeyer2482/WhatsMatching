@@ -8,10 +8,10 @@ create.sim.data(
   sim = 1,
   te = 2,
   jitter = 1,
-  g1_min = 0,
-  g1_max = 5,
-  g2_shift_X1 = 1,
-  g2_shift_X2 = 1,
+  cov_min = 0,
+  cov_max = 5,
+  wt_X1 = 1,
+  wt_X2 = 1,
   n = 200,
   mean1 = 0,
   mean2 = 0,
@@ -34,13 +34,13 @@ create.sim.data(
 
 \item{jitter}{controls the SD of the rnorm function that is used to add jitter to the outcome variable}
 
-\item{g1_min}{Simulation 2 - minimum value of for uniform distribution}
+\item{cov_min}{Simulation 2 - minimum value for uniform distribution}
 
-\item{g1_max}{Simulation 2 - maximum value of for uniform distribution}
+\item{cov_max}{Simulation 2 - maximum value for uniform distribution}
 
-\item{g2_shift_X1}{Simulation 2 - how far to shift the X1 value for a control group}
+\item{wt_X1}{Simulation 2 - the effect of the treatment on X1}
 
-\item{g2_shift_X2}{Simulation 2 - how far to shift the X2 value for a control group}
+\item{wt_X2}{Simulation 2 - the effect of the treatment on X2}
 
 \item{n}{the number of observations to populate for simulation 2, 3, and 4}
 

@@ -12,7 +12,6 @@
 #' @importFrom htmltools HTML
 #' @importFrom DT JS renderDT
 #' @importFrom utils data
-#' @importFrom stringr str_split
 #' @importFrom shinyjs enable disable useShinyjs
 #' @importFrom rlang is_empty
 #' @import mplot
@@ -101,31 +100,6 @@ plot.data <- function(d) {
       margin = 0.05
     ) %>% layout(showlegend=FALSE) %>% config(displayModeBar = F)
   )
-}
-
-
-random.data <- function(TE = round(runif(1,-10, 10), 1)) {
-  rand.data <- sample(1:3, 1)
-
-  d <- create.sim.data(sim = rand.data, te = TE)
-
-  return(d)
-
-}
-
-
-match.detail <- function(M, M.num, outcome.f, treat.f) {
-
-  list(
-    paste("Method", M.num),
-    M$distance,
-    M$order,
-    M$replace,
-    deparse1(outcome.f),
-    deparse1(treat.f)
-  )
-
-
 }
 
 
@@ -253,10 +227,10 @@ app_server <- function(input, output, session) {
     }
 
     #assign matching variables to session for use in another function
-    values$outcome.f <<-
-      sample(c("y ~ t", "y ~ t + X1", "y ~ t + X2", "y ~ t + X1 + X2"), 1)[[1]]
-    # values$treat.f1 <<- "t ~ X1 + X2"
-    # values$treat.f2 <<- "t ~ X1 + X2"
+    values$outcome.f <<- sample(c("y ~ t",
+                                  "y ~ t + X1",
+                                  "y ~ t + X2",
+                                  "y ~ t + X1 + X2"), 1)[[1]]
     values$treat.cov1 <- c("X1","X2")
     values$treat.cov2 <- c("X1","X2")
 
@@ -272,7 +246,7 @@ app_server <- function(input, output, session) {
     values$TE <<- round(runif(1,-2, 2), 1)
 
     #random data based on treatment effect
-    d <- random.data(values$TE)
+    d <- create.sim.data(sim=sample(1:4, 1),te=values$TE)
 
     values$d <<- d
     values$selected.p <<- plot.data(d)
@@ -281,6 +255,81 @@ app_server <- function(input, output, session) {
 
   }) %>%
     bindEvent(input$butRandom)
+
+  dist.plots <- reactive({
+
+    m1 <- values$M1
+    m2 <- values$M2
+
+    ords <- cbind(m1$paired.data[c("d.order","dist", "distance")], Method="1") %>%
+      rbind(cbind(m2$paired.data[c("d.order","dist", "distance")], Method="2")) %>%
+      group_by(Method) %>%
+      mutate(st =dist/sd(dist),
+             tt = paste0("Method ",Method,": ",distance,"<br>",
+                         "Pair Number: ", d.order,"<br>",
+                         "Distance: ", round(dist,3))) %>% ungroup()
+
+
+    ord.plot.raw <- ggplot(ords, aes(d.order, dist, color=Method, text=tt,
+                                     size=Method, shape=Method)) +
+      geom_point() +
+      labs(x = "Pairs Ordered by Distance", y = "Distance") +
+      scale_color_manual(values=c("1"='#FED148', "2"='#B241B4'), name="Method") +
+      scale_shape_manual(values=c("1"=21, "2"=20), name="Method") +
+      scale_size_manual(values=c(3,1.5)) +
+      theme_bw()
+
+    ord.plot.raw <- ord.plot.raw %>% ggplotly(tooltip = "text")
+
+    ord.plot.std <- ggplot(ords, aes(d.order, st, color=Method, text=tt,
+                                     size=Method, shape=Method)) +
+      geom_point() +
+      labs(x = "Pairs Ordered by Distance", y = "Stardard Deviations") +
+      scale_color_manual(values=c("1"='#FED148', "2"='#B241B4'), name="Method") +
+      scale_shape_manual(values=c("1"=21, "2"=20), name="Method") +
+      scale_size_manual(values=c(3,1.5)) +
+      theme_bw()
+
+    ord.plot.std <- ord.plot.std %>% ggplotly(tooltip = "text")
+
+    seqs <- cbind(m1$paired.data[c("seq.order","dist", "distance")], Method="1") %>%
+      rbind(cbind(m2$paired.data[c("seq.order","dist", "distance")], Method="2")) %>%
+      group_by(Method) %>%
+      mutate(st =dist/sd(dist),
+             tt = paste0("Method ",Method,": ",distance,"<br>",
+                         "Pair Number: ", seq.order,"<br>",
+                         "Standard Deviations: ", round(st,3))) %>% ungroup()
+
+
+    seq.plot.raw <- ggplot(seqs, aes(seq.order, dist, color=Method, text=tt,
+                                     size=Method, shape=Method)) +
+      geom_point() +
+      labs(x = "Pairs Ordered by Sequence", y = "Distance") +
+      scale_color_manual(values=c("1"='#FED148', "2"='#B241B4'), name="Method") +
+      scale_shape_manual(values=c("1"=21, "2"=20), name="Method") +
+      scale_size_manual(values=c(3,1.5)) +
+      theme_bw()
+
+    seq.plot.raw <- seq.plot.raw %>% ggplotly(tooltip = "text")
+
+    seq.plot.std <- ggplot(seqs, aes(seq.order, st, color=Method, text=tt,
+                                     size=Method, shape=Method)) +
+      geom_point() +
+      labs(x = "Pairs Ordered by Sequence", y = "Stardard Deviations") +
+      scale_color_manual(values=c("1"='#FED148', "2"='#B241B4'), name="Method") +
+      scale_shape_manual(values=c("1"=21, "2"=20), name="Method") +
+      scale_size_manual(values=c(3,1.5)) +
+      theme_bw()
+
+    seq.plot.std <- seq.plot.std %>% ggplotly(tooltip = "text")
+
+    plotly::subplot(seq.plot.raw, ord.plot.raw, seq.plot.std, ord.plot.std,
+                    nrows = 2, shareX = T, shareY = T) %>%
+      layout(showlegend=FALSE)
+
+  })
+
+  output$distsPlot <- plotly::renderPlotly({dist.plots()})
 
   #load matching plots
   #triggered by a change to the stored data
@@ -313,7 +362,8 @@ app_server <- function(input, output, session) {
     t.f2 <- as.formula(paste(t.y[1], "~",paste(sel.t2, collapse = " + ")))
 
     #assign from reactivevalues to ensure values are static
-    o.f <- stats::as.formula(values$outcome.f)
+    txt.o.f <- values$outcome.f
+    o.f <- stats::as.formula(txt.o.f)
     TE <- values$TE
     D1 <- values$M1.dist
     O1 <- values$M1.ord
@@ -352,7 +402,7 @@ app_server <- function(input, output, session) {
 
     #outputs for sidebar on main page
     output$txt.M.TE <- renderText(newTE)
-    output$txt.M.o.f <- renderText(deparse(o.f))
+    output$txt.M.o.f <- renderUI(code(txt.o.f))
 
 
     #check the treatment variable from the formula
@@ -363,6 +413,7 @@ app_server <- function(input, output, session) {
       cp <- combined.plot("X1", "X2", M1, M2, te = newTE, o.f)
     }
 
+    #update formatting for plot
     fonts <- list(list(color="#495057",
                        family='system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";'))
 
@@ -371,6 +422,7 @@ app_server <- function(input, output, session) {
       font=fonts, legend=list(font=fonts)
     )
 
+
     #covers random cases
     updateSelectInput(session, "Dist1", selected = D1)
     updateSelectInput(session, "Dist2", selected = D2)
@@ -378,45 +430,6 @@ app_server <- function(input, output, session) {
     updateSelectInput(session, "Ord2", selected = O2)
     updateCheckboxInput(session, "Rep1", value = R1)
     updateCheckboxInput(session, "Rep2", value = R2)
-
-    #mark up as code
-    t.cov1 <- HTML(paste(paste("<code>",sel.t1,"</code>", sep=""), collapse=", "))
-    t.cov2 <- HTML(paste(paste("<code>",sel.t2,"</code>", sep=""), collapse=", "))
-
-
-    #table of selections
-    output$m.info <- renderUI({
-
-      tags$table(
-        style = "width:100%",
-        tags$tr(
-          tags$th(""),
-          tags$th("Method 1"),
-          tags$th("Method 2")
-        ),
-        tags$tr(
-          tags$th("Covariates"),
-          tags$td(t.cov1),
-          tags$td(t.cov2)
-        ),
-        tags$tr(
-          tags$th("Distance"),
-          tags$td(D1),
-          tags$td(D2)
-        ),
-        tags$tr(
-          tags$th("Order"),
-          tags$td(O1),
-          tags$td(O2)
-        ),
-        tags$tr(
-          tags$th("Replace"),
-          tags$td(ifelse(R1, "Yes", "No")),
-          tags$td(ifelse(R2, "Yes", "No"))
-        )
-      )
-
-    })
 
     #output the combined plots
     output$distPlot <- plotly::renderPlotly(cp)
@@ -435,6 +448,59 @@ app_server <- function(input, output, session) {
               ignoreInit = F,
               ignoreNULL = T)
 
+
+  #Reactive table with matching data to display
+  #wasn't able to get the data I wanted in the format I want easily
+  table.data <- reactive({
+
+    #get the matched data that's in use
+    m1 <- values$M1
+    m2 <- values$M2
+
+    #get the covariates used for matching
+    cov1 <- all.vars(m1$formula)[-1]
+    cov2 <- all.vars(m2$formula)[-1]
+
+    #recode the selected variables and turn into a single string
+    #essentially "<code>var1</code>, <code>var2</code>"
+    #for as many variables as specified
+    t.cov1 <- HTML(paste(
+                      paste("<code>",cov1,"</code>", sep="")
+                      , collapse=", "))
+    t.cov2 <- HTML(paste(
+                      paste("<code>",cov2,"</code>", sep="")
+                      , collapse=", "))
+
+    tags$table(
+      style = "width:100%",
+      tags$tr(
+        tags$th(""),
+        tags$th("Method 1"),
+        tags$th("Method 2")
+      ),
+      tags$tr(
+        tags$th("Covariates"),
+        tags$td(t.cov1),
+        tags$td(t.cov2)
+      ),
+      tags$tr(
+        tags$th("Distance"),
+        tags$td(m1$distance),
+        tags$td(m2$distance)
+      ),
+      tags$tr(
+        tags$th("Order"),
+        tags$td(m1$order),
+        tags$td(m2$order)
+      ),
+      tags$tr(
+        tags$th("Replace"),
+        tags$td(ifelse(m1$replacement, "Yes", "No")),
+        tags$td(ifelse(m2$replacement, "Yes", "No"))
+      )
+    )
+
+  })
 
   #create plot for simulation 1
   #also store data in values
@@ -479,16 +545,16 @@ app_server <- function(input, output, session) {
     val.min <- min(input$sim2.X1.val)
     val.max <- max(input$sim2.X1.val)
     diff <- val.max - val.min
-    overlap.X1 <- diff - input$sim2.x.overlap
-    overlap.X2 <- diff - input$sim2.y.overlap
+    wt.X1 <- diff - input$sim2.x.overlap
+    wt.X2 <- diff - input$sim2.y.overlap
 
     d <- create.sim.data(
       sim = 2,
       te = TE,
-      g1_min = val.min,
-      g1_max = val.max,
-      g2_shift_X1 = overlap.X1,
-      g2_shift_X2 = overlap.X2,
+      cov_min = val.min,
+      cov_max = val.max,
+      wt_X1 = wt.X1,
+      wt_X2 = wt.X2,
       jitter=values$jitter
     )
 
@@ -652,7 +718,6 @@ app_server <- function(input, output, session) {
 
   observe({
 
-
     values$M1.dist <<- input$Dist1
     values$M1.ord <<- input$Ord1
     values$M1.rep <<- input$Rep1
@@ -680,7 +745,7 @@ app_server <- function(input, output, session) {
     if(is.null(values$outcome.f)){
       sel.y <- NULL
     } else {
-      sel.y <- stringr::str_split(values$outcome.f," ")[[1]][-c(1:4)]
+      sel.y <- strsplit(values$outcome.f," ")[[1]][-c(1:4)]
       sel.y <- sel.y[sel.y!="+"]
       if(rlang::is_empty(sel.y)) sel.y <- NULL
     }
@@ -818,55 +883,18 @@ app_server <- function(input, output, session) {
   )
 
 
-    #render information table
-    output$matchtable <- renderUI({
-
-      t.cov1 <- HTML(paste(paste("<code>",values$treat.cov1,"</code>", sep=""), collapse=", "))
-      t.cov2 <- HTML(paste(paste("<code>",values$treat.cov2,"</code>", sep=""), collapse=", "))
-
-
-      tags$table(
-        style = "width:100%",
-        tags$tr(
-          tags$th(""),
-          tags$th("Method 1"),
-          tags$th("Method 2")
-        ),
-        tags$tr(
-          tags$th("Covariates"),
-          tags$td(t.cov1),
-          tags$td(t.cov2)
-        ),
-        tags$tr(
-          tags$th("Distance"),
-          tags$td(values$M1.dist),
-          tags$td(values$M2.dist)
-        ),
-        tags$tr(
-          tags$th("Order"),
-          tags$td(values$M1.ord),
-          tags$td(values$M2.ord)
-        ),
-        tags$tr(
-          tags$th("Replace"),
-          tags$td(ifelse(values$M1.rep, "Yes", "No")),
-          tags$td(ifelse(values$M2.rep, "Yes", "No"))
-        )
-      )
-
-    })
+  #render information tables
+  output$matchtable <- renderUI(table.data())
+  output$m.info <- renderUI(table.data())
 
   #render outcome formula
-  output$f.outcome <-
-    renderText(paste(code(noquote(values$outcome.f))))
+  output$f.outcome <- renderText(paste(code(noquote(values$outcome.f))))
 
   #render treatment formula
-  output$f1.treat <-
-    renderText(paste(code(noquote(values$treat.f1))))
+  output$f1.treat <- renderText(paste(code(noquote(values$treat.f1))))
 
   #render treatment formula
-  output$f2.treat <-
-    renderText(paste(code(noquote(values$treat.f2))))
+  output$f2.treat <- renderText(paste(code(noquote(values$treat.f2))))
 
   #render treatment effect
   output$TE <- renderText(values$trueTE)

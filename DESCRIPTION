@@ -36,8 +36,6 @@ Imports:
     shinythemes,
     smd,
     stats,
-    stringr,
-    tidyr,
     utils
 Suggests: 
     knitr,

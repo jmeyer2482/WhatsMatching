@@ -1,10 +1,12 @@
-pandoc: 2.19.2
+pandoc: '2.18'
 pkgdown: 2.0.6
 pkgdown_sha: ~
 articles:
-  a-Background: a-Background.html
-  b-TheApp: b-TheApp.html
-  c-Applications: c-Applications.html
-  d-References: d-References.html
-last_built: 2022-11-11T11:53Z
+  a1-Background: a1-Background.html
+  a2-Development: a2-Development.html
+  b1-TheApp: b1-TheApp.html
+  b2-DataGen: b2-DataGen.html
+  b3-Matching: b3-Matching.html
+  c-Examples: c-Examples.html
+last_built: 2022-11-13T12:01Z
 

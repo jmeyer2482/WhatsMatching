@@ -11,10 +11,10 @@
 #' @param n the number of observations to populate for simulation 2, 3, and 4
 #' @param jitter controls the SD of the rnorm function that is used to add jitter to the outcome variable
 #'
-#' @param g1_min Simulation 2 - minimum value of for uniform distribution
-#' @param g1_max Simulation 2 - maximum value of for uniform distribution
-#' @param g2_shift_X1 Simulation 2 - how far to shift the X1 value for a control group
-#' @param g2_shift_X2 Simulation 2 - how far to shift the X2 value for a control group
+#' @param cov_min Simulation 2 - minimum value for uniform distribution
+#' @param cov_max Simulation 2 - maximum value for uniform distribution
+#' @param wt_X1 Simulation 2 - the effect of the treatment on X1
+#' @param wt_X2 Simulation 2 - the effect of the treatment on X2
 #'
 #' @param relX1 Simulation 3 - the causal relationship of X1 in the data. Can be 'mediator', 'confounder', 'collider', 'ancestor to y', 'ancestor to t'
 #' @param relX2 Simulation 3 - the causal relationship of X2 in the data. Can be 'mediator', 'confounder', 'collider', 'ancestor to y', 'ancestor to t'
@@ -36,7 +36,6 @@
 #' @importFrom dplyr mutate %>% select case_when
 #' @importFrom stats runif rbinom rnorm
 #' @importFrom MASS mvrnorm
-#' @importFrom tidyr expand_grid
 #' @importFrom boot inv.logit
 #'
 #'
@@ -52,7 +51,7 @@ create.sim.data <- function(
 
     te=2, jitter = 1,
 
-    g1_min=0, g1_max=5, g2_shift_X1=1, g2_shift_X2=1,
+    cov_min=0, cov_max=5, wt_X1=1, wt_X2=1,
 
     # Generating X1 and X2
     n = 200, mean1 = 0, mean2 = 0, sd1 = 1, sd2 = 1, rho = 0.2,
@@ -97,15 +96,20 @@ create.sim.data <- function(
 
   #Simulation 2
   if (sim==2) {
+    #ensures even number
     n.2 <- round(n/2,0)
 
-    X1 <- c(runif(n.2, g1_min,g1_max),
-            runif(n.2, g1_min+g2_shift_X1,g1_max+g2_shift_X1))
+    #covariates uniform distribution from same range
+    X1 <- runif(n.2*2, cov_min,cov_max)
+    X2 <- runif(n.2*2, cov_min,cov_max)
 
-    X2 <- c(runif(n.2, g1_min,g1_max),
-            runif(n.2, g1_min+g2_shift_X2,g1_max+g2_shift_X2))
-
+    #treatment variable
     t <- c(rep(0,n.2),rep(1,n.2))
+
+    #add weights
+    X1 <- X1 + t*wt_X1
+    X2 <- X2 + t*wt_X2
+
     t.char <- ifelse(t==0,"Control","Treated")
     y <- te*t + X1 + X2
 
@@ -119,7 +123,7 @@ create.sim.data <- function(
 
     # Collider, Mediator, Confounder
     txt <- c("Mediator", "Collider", "Confounder", "Ancestor of t", "Ancestor of y")
-    rel <- tidyr::expand_grid(txt,txt)
+    rel <- expand.grid(txt,txt, stringsAsFactors = F)
     colnames(rel) <- c("X1.rel","X2.rel")
 
     #simplify directions for easy assignment
@@ -243,7 +247,7 @@ create.sim.data <- function(
   }
 
   #add random error
-  #if jitter is 0 it adds 0, jitter 0 by default
+  #if jitter is 0 it adds 0, jitter 1 by default
   d$error <- rnorm(n,0,jitter)
   d$y <- d$y + d$error
 
