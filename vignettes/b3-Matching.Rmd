@@ -37,7 +37,7 @@ Once the user has generated some data. The next step is to select how the matchi
 ```
 ### Settings
 
-As can be seen above, there are 5 settings that can be changed - *Matching Covariates*; *Matching Distance*; *Matching Order*; *Use Replacement*; and *Outcome Formula.* The settings and their purpose are outlined below.
+As can be seen above, there are five settings that can be changed - *Matching Covariates*; *Matching Distance*; *Matching Order*; *Use Replacement*; and *Outcome Formula.* The settings and their purpose are outlined below.
 
 #### Matching Covariates
 

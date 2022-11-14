@@ -71,7 +71,7 @@ A common application of the propensity score is as a distance metric in distance
 
 Many packages in `R` that perform matching analysis also automate the process of estimating the propensity score. Once the probabilities have been calculated then treated units are paired with control units that have the same or similar probability of treatment.
 
-It is important to note that estimates should generally be based on the average treatment effect on the treated (ATT) when using matching methods. This makes sense intuitively as matching effectively removes individuals from the data that could not be considered both treated and untreated. This is referred to as strongly ignorable treatment assignment and is a key assumption for providing unbiased estimates with the propensity score.
+It is important to note that estimated effects generally correspond to the average treatment effect on the treated (ATT) when using matching methods. This makes sense intuitively as matching effectively removes individuals from the data that could not be considered both treated and untreated. This is referred to as strongly ignorable treatment assignment and is a key assumption for providing unbiased estimates with the propensity score.
 
 #### Weighting
 
@@ -96,7 +96,7 @@ It should be further noted that individual units have their own propensity score
 
 ## Gaps in Understanding
 
-The process and underlying logic of the matching process belies it's complexity. The propensity score matching process appears to be straight forward and require little effort to implement, which is reflected in its ubiquitous use. However, as King and Neilsen[@King2019] point out, there are many situations where the use of the propensity score for matching may not be suitable. Their 2019 paper gives many insights into the use of the propensity score and why other methods, like coarsened exact matching or distance-based matching with the Mahalanobis distance, may be better choices. While some of the explanations do make intuitive sense it can be difficult to decipher the practical application and implications of the advice.
+The propensity score matching process appears to be straight forward and require little effort to implement, which is reflected in its ubiquitous use. However, as King and Neilsen[@King2019] point out, there are many situations where the use of the propensity score for matching may not be suitable. Their 2019 paper gives many insights into the use of the propensity score and why other methods, like coarsened exact matching or distance-based matching with the Mahalanobis distance, may be better choices. While some of the explanations do make intuitive sense it can be difficult to decipher the practical application and implications of the advice.
 
 ### Matching Settings
 
@@ -104,7 +104,7 @@ While the choice in the distance used for matching can obviously make a differen
 
 #### Order
 
-This is exactly what it sounds like, it is the order the matches are specified in. In the `MatchIt` package,[@MatchIt] users are only able to specify an order for specific methods. In particular, propensity score methods can control the order of the matching as they are a vector of probabilities that aligns with the data. The default for the order is *data*, otherwise ordering can be conducted by *smallest*, *largest*, or *random*. The resultant ordering is as follows:
+Order refers to the order the matches are specified in the matching algorithm. In the `MatchIt` package,[@MatchIt] users are only able to specify an order for specific methods. In particular, propensity score methods can control the order of the matching as they are a vector of probabilities that aligns with the data. The default for the order is *data*, otherwise ordering can be conducted by *smallest*, *largest*, or *random*. The resultant ordering is as follows:
 
 -   *data* - the order supplied by the dataframe
 
@@ -148,7 +148,7 @@ plot.o
 
 Replacement is a setting that controls whether an untreated unit can be reused. It is applicable for both MDM and PSM and other forms of matching where units are paired (as opposed to grouped). Using replacement means that you may be able to improve your covariate balance because the treated unit will be matched with the closest untreated unit, irrespective of the order. In other words, ordering is redundant when replacement is used.
 
-It is important, however, that appropriate steps are taken to account for an untreated unit being matched multiple times. There are two main ways this can be dealt with - 1. include duplicates of the untreated data in the matched dataset; 2. apply appropriate weighting to include when estimating the treatment effect.
+It is important, however, that appropriate steps are taken to account for an untreated unit being matched multiple times. There are two main ways this can be dealt with: 1. include duplicates of the untreated data in the matched dataset; 2. apply appropriate weighting to include when estimating the treatment effect.
 
 ```{r replacement, echo=FALSE}
 D <- "Mahalanobis"
@@ -171,7 +171,7 @@ plot.r
 
 #### Calliper Adjustment
 
-The application of callipers can be used to control matching units that are considered too far apart. The implications of using this setting in practice is not particularly clear. If you cast your eyes back to Figures 1 and 2, you can see that there are units towards the end that are further apart than the rest of the group. The calliper setting seeks to remove those outliers with the intention of improving covariate balance. It is not necessarily clear that it what is being achieved.
+The callipers setting can be used to avoid matching units that are considered too far apart, based on some distance threshold. The implications of using this setting in practice is not particularly clear. If you cast your eyes back to Figures 1 and 2, you can see that there are units towards the end that are further apart than the rest of the group. The calliper setting seeks to remove those outliers with the intention of improving covariate balance.
 
 ### The propensity score paradox
 
@@ -184,6 +184,10 @@ The authors postulated that this made matching on the propensity score inferior 
 ### Model Dependence
 
 Another issue that can arise generally with causal inference, but then also specifically with matching, is model dependence. This is essentially where the model selection still plays a large role in predicting the estimate of the treatment effect. This is a problem because that probably means that matching has not fixed the issue of confounding and now selection bias needs to be managed as well.
+
+***
+
+<br>
 
 ## Statement of research aim
 
@@ -209,6 +213,6 @@ RStudio supports the implementation of learnr packages that are used to provide 
 
 This project is aimed at the development of an educational tool where users can build an intuitive understanding of matching methods and compare different methods as discussed above. Using this educational tool, students will be able to generate data and visualise the matching process as it unfolds. Users will also be able to compare the performance of matching, with different degrees of pruning, to the weighting and stratification applications of the propensity score that don't involve pruning, and to matching approaches using the alternative Mahalanobis distance.
 
-Currently, there is no available interactive options to simulate matching methods. From an educational perspective, a students understanding of the matching process is virtually entirely theoretical. The purpose of the app is to provide educational support and the ability for for users to play with and visualise how matching occurs. In addition, this app has been developed as a package which contains easy to use functions that are available to more advanced users who may want to investigate without the constrains of the Shiny App.
+Currently, there is no available platforms to compare matching methods interactively. The purpose of the app is to provide educational support and the ability for users to play with and visualise how matching occurs. In addition, this app has been developed as a package which contains easy to use functions that are available to more advanced users who may want to investigate beyond the constrains of the Shiny App.
 
 ### References

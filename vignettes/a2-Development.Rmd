@@ -35,9 +35,8 @@ The `golem` package itself provides functions and helpers to generate and create
 
 ### Key functions and functionality
 
-There are <a href="https://jmeyer2482.github.io/WhatsMatching/reference/index.html" target="_blank">four key functions</a> that have been developed as part of the package in order to make data generation and analysis as straightforward as possible. They are `create.sim.data`, `matched.data`, `matching.plot`, and `combined.plot`. The functions have been designed to follow and iterative process. The full details for these functions can be found in the *Reference* section.
-
-A fair amount of work for these functions and within the app is done by functions from other packages including `ggplot2`[@ggplot2], `plotly`[@plotly], `dplyr`[@dplyr], and others[@MASS; @boot; @smd; @stats].
+There are <a href="https://jmeyer2482.github.io/WhatsMatching/reference/index.html" target="_blank">four key functions</a> that have been developed as part of the package in order to make data generation and analysis as straightforward as possible. They are `create.sim.data`, `matched.data`, `matching.plot`, and `combined.plot`. The functions have been designed to follow and iterative process. These functions draw upon existing functionality from other packages including `ggplot2`[@ggplot2], `plotly`[@plotly], `dplyr`[@dplyr], and others[@MASS; @boot; @smd; @stats].Full details can be found in the *Reference* section.
+ 
 
 #### `create.sim.data()`
 

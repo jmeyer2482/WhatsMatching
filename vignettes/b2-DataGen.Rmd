@@ -26,11 +26,11 @@ knitr::opts_chunk$set(
 
 ## Data Generation
 
-Click on the <i class="fas fa-cog"></i> to open up a modal that is displayed in the following figures. It gives the user access data from four different simulations and a real dataset. I will briefly outline each of the simulations below.
+Clicking on the <i class="fas fa-cog"></i> icon opens up a modal dialogue box that is displayed in the following figures. This modal gives the user access to data from four different simulations and a real dataset. I will briefly outline each of the simulations below.
 
 #### Simulation 1
 
-As noted above, this simulation is based on the data generation process by King and Neilsen[@King2019]. Essentially, it contains 3 hidden experiments - a fully matched randomised experiment, a random randomised experiment, and an imbalanced observational dataset. If you look at Figure 3, the first plot (top left) makes this clearer. The fully matched randomised experiment is in the top right corner of the plot which is demonstrated by the treated (red) and untreated (blue) units being virtually right on top of one another. The random randomised experiment is just below it in the bottom right corner of the plot and you can clearly see that the treated and control units are all over the place, completely random. The imbalanced observational data is represented by the placement of the untreated unit on the left of the plot.
+This simulation is based on the data generation process described by King and Neilsen[@King2019]. Essentially, it contains two experiments---a fully blocked randomised experiment and a completely randomised experiment---hidden within an imbalanced "observational" dataset. If you look at Figure 3, the first plot (top left) makes this clearer. The fully blocked randomised experiment is in the top right corner of the plot which is demonstrated by the treated (red) and untreated (blue) units being virtually right on top of one another. The completely randomised experiment is just below it in the bottom right corner of the plot and you can clearly see that there are similar numbers of treated and control units but they are not exactly matched. The imbalanced observational data is represented by the placement of the untreated unit on the left of the plot.
 
 ```{=html}
 <table style="border: none;">
@@ -40,13 +40,13 @@ As noted above, this simulation is based on the data generation process by King 
   </tr>
 </table>
 ```
-The purpose of this simulation in the paper was to demonstrate the ability of different matching methods to select the units in a logical order. Ideally, the data from the fully matched randomised experiment should be selected first, then the data from the random randomised experiment. It has been included in the app as it provides a clear demonstration of the performance of different types of matching.
+The purpose of this simulation in the paper was to demonstrate the ability of different matching methods to select the units in a logical order. Ideally, the data from the fully blocked randomised experiment should be matched first, then the data from the completely randomised experiment. It has been included in the app as it provides a clear demonstration of the performance of mahalanobis-based distance matching versus propensity score-based distance matching.
 
 In the app, you are able to change the treatment effect but that should not change the outcome of the matching process in any way, only the calculation of the treatment estimate.
 
 #### Simulation 2
 
-Simulation 2 is also taken from King and Neilsen[@King2019] however the data is very different. This simulation uses two uniform distributions that are both effected by the treatment variable. When visualising the the two covariates, `X1` and `X2`, on a two dimensional field, the data has the appearance of a square of treated units overlapped by a square of untreated units. This can be clearly seen in the top left plot in Figure 4 below.
+Simulation 2 is also taken from King and Neilsen[@King2019] however the data is very different. This simulation uses two overlapping uniform distributions that both affect the treatment received and the outcome. When visualising the two covariates, `X1` and `X2`, on a two dimensional field, the data has the appearance of a square of treated units overlapped by a square of untreated units. This can be clearly seen in the top left plot in Figure 4 below.
 
 ```{=html}
 <table style="border: none;">
@@ -56,11 +56,11 @@ Simulation 2 is also taken from King and Neilsen[@King2019] however the data is 
   </tr>
 </table>
 ```
-Users have the ability to change the range of the uniform distribution, the weight of the treatment variable (`t`) on `X1` and `X2`, and the treatment effect on the outcome (`y`). Probably the most useful illustration of this data is to compare the same method of matching but change whether replacement is used or not. It can be particularly striking if there is a strong effect of `t` on the covariates.
+Users have the ability to change the range of the uniform distribution, the strength of association between the covariates (`X1` and `X2`) and the treatment variable (`t`), and the treatment effect on the outcome (`y`). Probably the most useful illustration of this data is to compare the same method of matching but change whether replacement is used or not. It can be particularly striking if there is a strong association between the covariates and treatment.
 
 #### Simulation 3
 
-This simulation uses causal relationships to define the effects between the treatment, covariates, and outcome. There are five options available to the user that can change the how `X1` and `X2` effect or are effect by the treatment (`t)` and the outcome (`y`). Figure 5 demonstrates how each of the options fit into a causal diagram with an arrow pointing in the direction. of the effect.
+This simulation uses causal relationships to define the effects between the treatment, covariates, and outcome. There are five options available to the user that can change the data generation relationships between the treatment indicator `t`, the outcome `y` and two covariates `X1` and `X2`. Figure 5 demonstrates how each of the options fit into a causal diagram with an arrow pointing in the direction of the assumed effect in the data generation process. 
 
 ```{=html}
 <table style="border: none;">
