@@ -1,8 +1,8 @@
 ---
-title: "Vignette 2c - Matching"
+title: "Matching"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette 2c - Matching}
+  %\VignetteIndexEntry{Matching}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 bibliography: App_References.bib
@@ -41,7 +41,7 @@ As can be seen above, there are five settings that can be changed - *Matching Co
 
 #### Matching Covariates
 
-The user has the option to select the available covariates that they would like to match the treated and untreated units on. This will include `X1` and `X2` for the simulated data and `age`, `height` and `sex` for the `fev` data. There is also an `error` variable available in the simulated data but it is not recommended for matching on.
+The user has the option to select the available covariates that they would like to match the treated and untreated units on. This will include `X1` and `X2` for the simulated data and `age`, `height` and `sex` for the `fev` data. The matching cannot be completed without having selected at least one covariate for each method.
 
 #### Matching Distance
 
@@ -62,5 +62,3 @@ This is the formula that is used to calculate the treatment effect on the outcom
 After the user has selected the settings that they would like to compare, they can simply press the "Use these matching settings" button at the button and the app will begin its calculations.
 
 The output from the decision can take some 10s of seconds to be realised due to a combination of the extra data that needs to be generated for the cumulative plots and the processing to render the `plotly` object. Once rendered it will display four plots with a legend on the right and a slide bar down the bottom.
-
-## References

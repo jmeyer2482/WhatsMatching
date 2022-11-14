@@ -98,6 +98,7 @@ usethis::use_vignette("c-Applications", title="Vignette 3 - Applications")
 usethis::use_vignette("d-References", title="References")
 # usethis::use_vignette("-References", title="References")
 devtools::build_vignettes()
+usethis::use_vignette("Summary", title="Summary")
 
 
 

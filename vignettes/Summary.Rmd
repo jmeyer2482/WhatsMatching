@@ -1,0 +1,32 @@
+---
+title: "Summary"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Summary}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+## Summary  
+
+In summary, this application achieves the aims that were set out. It provides a simple space for users to be able to gain insights into the matching process through exploration. Users are able to pair any possible combination of data generation with the matching settings of their choosing.
+
+### A bit of a summary and recap of highlights of the app
+
+### Limitations  
+
+There are some limitations to the resources available in this suite. Firstly, users are limited to using only Propensity Score or Mahalanobis Distance. This has been a deliberate choice as the plotting interface is likely no able to produce the same information for other matching methods.
+
+Secondly, the package is only designed for gaining insights into matching, not performing statistical analysis. However, users may choose to run data through the package first to try and make better decisions about matching for their real analysis. 
+
+Thirdly, due to the processing power required to create and render the `plotly` plots, it is not particularly feasible to increase the amount of data the matching is done on. To give an example, for a dataset that returns 100 matches there will need to be 5050 rows times 2 just for generating the first two plots. 
+
+### A few possible extensions

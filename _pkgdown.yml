@@ -1,6 +1,56 @@
-url: ~
+url: https://jmeyer2482.github.io/WhatsMatching/
+
 template:
   bootstrap: 5
   bootswatch: yeti
+
 navbar:
   bg: dark
+  title: "WhatsMatching"
+  left:
+    - icon: fa-home fa-lg
+      href: index.html
+    - text: "Vignettes"
+      href: articles/index.html
+      menu:
+        - text: "Background"
+          href: articles/Background.html
+        - text: "Development"
+          href: articles/Development.html
+        - text: "The App"
+          href: articles/TheApp.html
+        - text: "Data Generation"
+          href: articles/DataGen.html
+        - text: "Matching"
+          href: articles/Matching.html
+        - text: "Examples"
+          href: articles/Examples.html
+        - text: "Summary"
+          href: articles/Summary.html
+
+    - text: "Functions"
+      href: reference/index.html
+    - text: "Packages Used"
+      menu:
+        - text: "plotly"
+          href: https://plotly-r.com
+        - text: "ggplot2"
+          href: https://ggplot2.tidyverse.org
+        - text: "dplyr"
+          href: https://CRAN.R-project.org/package=dplyr
+        - text: "shiny"
+          href: https://shiny.rstudio.com/
+        - text: "shinyjs"
+          href: https://deanattali.com/shinyjs/
+        - text: "shinyBS"
+          href: https://ebailey78.github.io/shinyBS/
+        - text: "golem"
+          href: https://engineering-shiny.org/
+        - text: "optmatch"
+          href: https://github.com/markmfredrickson/optmatch
+        - text: "pkgdown"
+          href: https://cran.r-project.org/package=pkgdown
+  right:
+   - icon: fa-github
+     href: https://github.com/jmeyer2482/WhatsMatching
+

@@ -1,8 +1,8 @@
 ---
-title: "Vignette 3 - Examples"
+title: "Examples"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette 3 - Examples}
+  %\VignetteIndexEntry{Examples}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 always_allow_html: true
@@ -18,18 +18,17 @@ knitr::opts_chunk$set(
 ```{=html}
 <script src="https://kit.fontawesome.com/e10eea7053.js" crossorigin="anonymous"></script>
 ```
-
 ## Overview
 
 In this vignette I present four examples of important lessons that can be interactively explored using the WhatsMatching app. These examples have been selected to highlight just a few of the ways the app can lift the lid on the black box of matching. The four examples are:
 
-* [Matching finds the experiment hidden in observational data](#example1)
+-   [Matching finds the experiment hidden in observational data](#example1)
 
-* [To Replace or Not to Replace](#example2)
+-   [To Replace or Not to Replace](#example2)
 
-* [Ordering changes unit selection](#example3)
+-   [Ordering changes unit selection](#example3)
 
-* [Covariate and Model Selection Matter](#example4)
+-   [Covariate and Model Selection Matter](#example4)
 
 This section concludes with some suggested future extensions of the WhatsMatching app.
 
@@ -78,33 +77,28 @@ The methods being compared in this example are the use of the Mahalanobis Distan
 ```
 **Take home message:** The propensity score is blind to the underlying values of the matching covariates and therefore may not be the best choice for achieving covariate balance, which is a primary aim of matching.
 
-<div style="display: block; border: 1px solid #3a3b3c; background-color:#f7f7f7; color:#3a3b3c; margin:20pt; padding:10pt">
+::: {style="display: block; border: 1px solid #3a3b3c; background-color:#f7f7f7; color:#3a3b3c; margin:20pt; padding:10pt"}
+::: {style="font-size:2em; float: left; margin-right: 1em;"}
+<a href='https://jmeyer2482.shinyapps.io/WhatsMatching/' target="_blank"> <img src="../man/figures/logo.png" style="border:2px solid #3a3b3c; width: 1cm;"/> </a>
+:::
 
-  <div style="font-size:2em; float: left; margin-right: 1em;">
-  
-  <a href='https://jmeyer2482.shinyapps.io/WhatsMatching/' target="_blank">
-    <img style="border:2px solid #3a3b3c; width: 1cm;" src="../man/figures/logo.png" />
-  </a>
-  
-  </div>
-
-<div style="display:block; margin-left: 3em;">
+::: {style="display:block; margin-left: 3em;"}
 **Run this example in the app:** [https://jmeyer2482.shinyapps.io/WhatsMatching/](https://jmeyer2482.shinyapps.io/WhatsMatching/){target="_blank"} <i class="fas fa-up-right-from-square"></i>
 
-* Click Settings <i class="fas fa-cog"></i> and choose Simulation 1
-* Optionally change the treatment effect and click Preview data
-* Click Use the data from Simulation 1
-* Use the default matching settings, comparing Mahalanobis-based distance matching to propensity score-based distance matching
-* Press play
-</div>
-
-</div>
+-   Click Settings <i class="fas fa-cog"></i> and choose *Simulation 1*
+-   Optionally change the treatment effect and click Preview data
+-   Click *Use the data from Simulation 1* below
+-   Update the matching settings as laid out above (Fig. 1)
+-   Click *Use these matching settings*  
+-   Press play
+:::
+:::
 
 ## To Replace or Not to Replace {#example2}
 
-We demonstrate in Fig. 3. that the intuitiveness behind using replacement may not be clear. This simulation is also from the King and Neilsen paper. The covariates `X1` and `X2` constitute two overlapping uniform distributions for the treated and control groups. There are 200 units in the dataset with 100 units in each group. In this example, the matching approach is always propensity score matching, we have only changed whether the matches are conducted with replacement (Method 1) or without replacement (Method 2).
+We demonstrate in Figure 2 that the intuitiveness behind using replacement may not be clear. This simulation is also from the King and Neilsen paper. The covariates `X1` and `X2` constitute two overlapping uniform distributions for the treated and control groups. There are 200 units in the dataset with 100 units in each group. In this example, the matching approach is always propensity score matching, we have only changed whether the matches are conducted with replacement (Method 1) or without replacement (Method 2).
 
-In Figure 2, you can clearly see that when the matching algorithm permits replacement there are several treated units matched to a single control unit. Comparing the balance in the matched dataset under the two approaches (Plot 3), you can see that as the matching proceeds the standardised mean distance between the treated and control units is stable when replacement is allowed but starts to deteriorate after about the 60th match when replacement is not allowed. Similarly, the estimated treatment effect (Plot 4) shows that propensity score with replacement results in an unbiased estimate of the known treatment effect, whereas the propensity score without replacement results in a highly biased estimate. These results reflect that, in the absence of replacement, the quality of matches deteriorates as the matching algorithm proceeds. In real life applications, a callipers to impose a minimum threshold in distance when making matches. 
+In Figure 2, you can clearly see that when the matching algorithm permits replacement there are several treated units matched to a single control unit. Comparing the balance in the matched dataset under the two approaches (Plot 3), you can see that as the matching proceeds the standardised mean distance between the treated and control units is stable when replacement is allowed but starts to deteriorate after about the 60th match when replacement is not allowed. Similarly, the estimated treatment effect (Plot 4) shows that propensity score with replacement results in an unbiased estimate of the known treatment effect, whereas the propensity score without replacement results in a highly biased estimate. These results reflect that, in the absence of replacement, the quality of matches deteriorates as the matching algorithm proceeds. In real life applications, a callipers to impose a minimum threshold in distance when making matches.
 
 ```{=html}
 <table style="border: none; text-align: center;">
@@ -145,33 +139,28 @@ In Figure 2, you can clearly see that when the matching algorithm permits replac
 ```
 **Take home message:** Datasets where the treated and control groups are approximately equal may require the consideration of different settings to achieve covariate balance and thus a more accurate estimate of the treatment effect.
 
-<div style="display: block; border: 1px solid #3a3b3c; background-color:#f7f7f7; color:#3a3b3c; margin:20pt; padding:10pt">
+::: {style="display: block; border: 1px solid #3a3b3c; background-color:#f7f7f7; color:#3a3b3c; margin:20pt; padding:10pt"}
+::: {style="font-size:2em; float: left; margin-right: 1em;"}
+<a href='https://jmeyer2482.shinyapps.io/WhatsMatching/' target="_blank"> <img src="../man/figures/logo.png" style="border:2px solid #3a3b3c; width: 1cm;"/> </a>
+:::
 
-  <div style="font-size:2em; float: left; margin-right: 1em;">
-  
-  <a href='https://jmeyer2482.shinyapps.io/WhatsMatching/' target="_blank">
-    <img style="border:2px solid #3a3b3c; width: 1cm;" src="../man/figures/logo.png" />
-  </a>
-  
-  </div>
-
-<div style="display:block; margin-left: 3em;">
+::: {style="display:block; margin-left: 3em;"}
 **Run this example in the app:** [https://jmeyer2482.shinyapps.io/WhatsMatching/](https://jmeyer2482.shinyapps.io/WhatsMatching/){target="_blank"} <i class="fas fa-up-right-from-square"></i>
 
-* Click Settings <i class="fas fa-cog"></i> and choose Simulation 2
-* X
-* Y
-* Z
-* Press play
-</div>
-
-</div>
+-   Click Settings <i class="fas fa-cog"></i> and choose Simulation 2
+-   Optionally change any of the settings and click *Preview Data* (leaving the settings unchanged will replicate above)  
+-   Click *Use the data from Simulation 2* below
+-   Update the matching settings as laid out above (Fig. 2)
+-   Click *Use these matching settings*  
+-   Press play
+:::
+:::
 
 ## Ordering changes unit selection {#example3}
 
-For this example we are using the same simulation as in Fig. 2 above. This time we are comparing the ordering of the matches: Method 1 starts matching from the largest propensity score and Method 2 starts matching from the smallest propensity score. This essentially boils down to matching the treated units with the highest probability of being treated first or starting with those with the lowest probability of being treated.
+For this example we are using the same simulation as in Figure 2 above. This time we are comparing the ordering of the matches: Method 1 starts matching from the largest propensity score and Method 2 starts matching from the smallest propensity score. This essentially boils down to matching the treated units with the highest probability of being treated first or starting with those with the lowest probability of being treated.
 
-We can see below in Fig. 4. that *Plot 1* has made some unusual pairings. This makes some sense as when you pair units that have the highest probability of being treated first then you quickly increase the distances between the remaining units that need to be paired. This means that the "good matches" are getting further and further away.
+We can see below in Figure 3 that *Plot 1* has made some unusual pairings. This makes some sense as when you pair units that have the highest probability of being treated first then you quickly increase the distances between the remaining units that need to be paired. This means that the "good matches" are getting further and further away.
 
 This is a problem that can occur for any matching method as most matching methods use nearest neighbour methodology. If the best nearest neighbour is already paired then the process just moves to the next available one no matter the distance. This further highlights the advantage of using replacement which conveniently ignores ordering and selects the nearest partner irrespective of if it is matched.
 
@@ -214,31 +203,26 @@ This is a problem that can occur for any matching method as most matching method
 ```
 **Take home message:** The ordering or optimisation method of how the matches are selected can impact what data is selected for analysis.
 
-<div style="display: block; border: 1px solid #3a3b3c; background-color:#f7f7f7; color:#3a3b3c; margin:20pt; padding:10pt">
+::: {style="display: block; border: 1px solid #3a3b3c; background-color:#f7f7f7; color:#3a3b3c; margin:20pt; padding:10pt"}
+::: {style="font-size:2em; float: left; margin-right: 1em;"}
+<a href='https://jmeyer2482.shinyapps.io/WhatsMatching/' target="_blank"> <img src="../man/figures/logo.png" style="border:2px solid #3a3b3c; width: 1cm;"/> </a>
+:::
 
-  <div style="font-size:2em; float: left; margin-right: 1em;">
-  
-  <a href='https://jmeyer2482.shinyapps.io/WhatsMatching/' target="_blank">
-    <img style="border:2px solid #3a3b3c; width: 1cm;" src="../man/figures/logo.png" />
-  </a>
-  
-  </div>
-
-<div style="display:block; margin-left: 3em;">
+::: {style="display:block; margin-left: 3em;"}
 **Run this example in the app:** [https://jmeyer2482.shinyapps.io/WhatsMatching/](https://jmeyer2482.shinyapps.io/WhatsMatching/){target="_blank"} <i class="fas fa-up-right-from-square"></i>
 
-* Click Settings <i class="fas fa-cog"></i> and choose Simulation 1
-* X
-* Y
-* Z
-* Press play
-</div>
-
-</div>
+-   Click Settings <i class="fas fa-cog"></i> and choose Simulation 1
+-   Optionally change any of the settings and click *Preview Data* (leaving the settings unchanged will replicate above)  
+-   Click *Use the data from Simulation 2* below
+-   Update the matching settings as laid out above (Fig. 2)
+-   Click *Use these matching settings*  
+-   Press play
+:::
+:::
 
 ## Covariate and Model Selection Matter {#example4}
 
-When undertaking matching it is necessary to specify two sets of  Covariate specification and model selection are important when undertaking matching. Ideally, the matching occurs in such a way that the model specification is less important (another problem for causal inference in observational data!) which will remove some of the bias. Simulation 4 has been used for this example with both `X1` and `X2` set to be strong confounders.
+When undertaking matching it is necessary to specify two sets of Covariate specification and model selection are important when undertaking matching. Ideally, the matching occurs in such a way that the model specification is less important (another problem for causal inference in observational data!) which will remove some of the bias. Simulation 4 has been used for this example with both `X1` and `X2` set to be strong confounders.
 
 Matching has been complete using either `X1` or `X2` as though we don't know which one is a confounder. `X1` has also been added to the formula to calculate the estimate. These setting have been selected to demonstrate the important of model and covariate selection when performing matching. As we can see below, the matching that was done with `X1` only performed as well as the raw estimate. Whereas, the model with `X2` performed much better.
 
@@ -253,12 +237,12 @@ Matching has been complete using either `X1` or `X2` as though we don't know whi
   <tr>
     <td style="text-align: left;">Matching Distance</td>
     <td>Mahalanobis Distance</td>
-    <td>Propensity Score</td>
+    <td>Mahalanobis Distance</td>
   </tr>
   <tr>
     <td style="text-align: left;">Matching Covariates</td>
     <td><code>X1</code></td>
-    <td><code>X1</code></td>
+    <td><code>X2</code></td>
   </tr>
   <tr>
     <td style="text-align: left;">Matching Order</td>
@@ -275,40 +259,25 @@ Matching has been complete using either `X1` or `X2` as though we don't know whi
     <td colspan="2"><code>y ~ t + X1</code></td>
   </tr>
   <tr>
-  	  <td colspan="3"><img src="../man/figures/Ex-Forgotten-confounder.PNG" border=0 width="100%"> </img></td>
+  	  <td colspan="3"><img src="../man/figures/Ex-specification.PNG" border=0 width="100%"> </img></td>
   </tr>
 </table>
 ```
 **Take home message:** Matching on a variable and then using it in the estimate of the treatment effect may not yield useful results.
 
-<div style="display: block; border: 1px solid #3a3b3c; background-color:#f7f7f7; color:#3a3b3c; margin:20pt; padding:10pt">
+::: {style="display: block; border: 1px solid #3a3b3c; background-color:#f7f7f7; color:#3a3b3c; margin:20pt; padding:10pt"}
+::: {style="font-size:2em; float: left; margin-right: 1em;"}
+<a href='https://jmeyer2482.shinyapps.io/WhatsMatching/' target="_blank"> <img src="../man/figures/logo.png" style="border:2px solid #3a3b3c; width: 1cm;"/> </a>
+:::
 
-  <div style="font-size:2em; float: left; margin-right: 1em;">
-  
-  <a href='https://jmeyer2482.shinyapps.io/WhatsMatching/' target="_blank">
-    <img style="border:2px solid #3a3b3c; width: 1cm;" src="../man/figures/logo.png" />
-  </a>
-  
-  </div>
-
-<div style="display:block; margin-left: 3em;">
+::: {style="display:block; margin-left: 3em;"}
 **Run this example in the app:** [https://jmeyer2482.shinyapps.io/WhatsMatching/](https://jmeyer2482.shinyapps.io/WhatsMatching/){target="_blank"} <i class="fas fa-up-right-from-square"></i>
 
-* Click Settings <i class="fas fa-cog"></i> and choose Simulation 4
-* X
-* Y
-* Z
-* Press play
-</div>
+-   Click Settings <i class="fas fa-cog"></i> and choose Simulation 4
+-   X
+-   Y
+-   Z
+-   Press play
+:::
+:::
 
-</div>
-
-*** 
-
-## Extensions
-
-### A bit of a summary and recap of highlights of the app
-
-### A bit of a summary of some main limitations
-
-### A few possible extensions

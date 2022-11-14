@@ -2,11 +2,15 @@ pandoc: '2.18'
 pkgdown: 2.0.6
 pkgdown_sha: ~
 articles:
-  a1-Background: a1-Background.html
-  a2-Development: a2-Development.html
-  b1-TheApp: b1-TheApp.html
-  b2-DataGen: b2-DataGen.html
-  b3-Matching: b3-Matching.html
-  c-Examples: c-Examples.html
-last_built: 2022-11-13T12:01Z
+  Background: Background.html
+  DataGen: DataGen.html
+  Development: Development.html
+  Examples: Examples.html
+  Matching: Matching.html
+  Summary: Summary.html
+  TheApp: TheApp.html
+last_built: 2022-11-14T13:32Z
+urls:
+  reference: https://jmeyer2482.github.io/WhatsMatching/reference
+  article: https://jmeyer2482.github.io/WhatsMatching/articles
 

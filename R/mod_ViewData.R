@@ -42,12 +42,13 @@ mod_ViewData_ui <- function(id){
       tabPanel("Caliper Insights", value="tabDist",
                fluidRow("There are four plots below. The top two show the actual distances between each matched pair by both the order of the sequential matches (left side) and by the order of the distance (ride side). The bottom two plots show a standardised difference which is measured by the number of standard deviations from zero the distance of each match is. The purpose of this data is to give insights into where the application of calipers may have some utility.",
                  plotlyOutput("distsPlot", height="600px")
-               )),
-  #distances by matched sequence
-      tabPanel("TBC", value="tabSeq",
-               fluidRow("",
-                        plotlyOutput("seqPlot", height="600px")
-               ))
+               ))#,
+
+  #would like comparison of estimate using different formulas
+      # tabPanel("TBC", value="tabSeq",
+      #          fluidRow("",
+      #                   plotlyOutput("seqPlot", height="600px")
+      #          ))
 
     )#close tabsetPanel
 

@@ -8,7 +8,7 @@
 #' @import markdown
 #' @rawNamespace import(plotly, except = last_plot)
 #' @import shinyBS
-#' @importFrom stats as.formula
+#' @importFrom stats as.formula sd
 #' @importFrom htmltools HTML
 #' @importFrom DT JS renderDT
 #' @importFrom utils data
@@ -263,15 +263,16 @@ app_server <- function(input, output, session) {
 
     ords <- cbind(m1$paired.data[c("d.order","dist", "distance")], Method="1") %>%
       rbind(cbind(m2$paired.data[c("d.order","dist", "distance")], Method="2")) %>%
-      group_by(Method) %>%
-      mutate(st =dist/sd(dist),
-             tt = paste0("Method ",Method,": ",distance,"<br>",
-                         "Pair Number: ", d.order,"<br>",
-                         "Distance: ", round(dist,3))) %>% ungroup()
+      group_by(.data$Method) %>%
+      mutate(st=.data$dist/stats::sd(.data$dist),
+             tt=paste0("Method ",.data$Method,": ",.data$distance,"<br>",
+                         "Pair Number: ", .data$d.order,"<br>",
+                         "Distance: ", round(.data$dist,3))) %>% ungroup()
 
 
-    ord.plot.raw <- ggplot(ords, aes(d.order, dist, color=Method, text=tt,
-                                     size=Method, shape=Method)) +
+    ord.plot.raw <- ggplot(ords, aes(.data$d.order, .data$dist, color=.data$Method,
+                                     text=.data$tt, size=.data$Method,
+                                     shape=.data$Method)) +
       geom_point() +
       labs(x = "Pairs Ordered by Distance", y = "Distance") +
       scale_color_manual(values=c("1"='#FED148', "2"='#B241B4'), name="Method") +
@@ -281,8 +282,9 @@ app_server <- function(input, output, session) {
 
     ord.plot.raw <- ord.plot.raw %>% ggplotly(tooltip = "text")
 
-    ord.plot.std <- ggplot(ords, aes(d.order, st, color=Method, text=tt,
-                                     size=Method, shape=Method)) +
+    ord.plot.std <- ggplot(ords, aes(.data$d.order, .data$st, color=.data$Method,
+                                     text=.data$tt, size=.data$Method,
+                                     shape=.data$Method)) +
       geom_point() +
       labs(x = "Pairs Ordered by Distance", y = "Stardard Deviations") +
       scale_color_manual(values=c("1"='#FED148', "2"='#B241B4'), name="Method") +
@@ -294,15 +296,16 @@ app_server <- function(input, output, session) {
 
     seqs <- cbind(m1$paired.data[c("seq.order","dist", "distance")], Method="1") %>%
       rbind(cbind(m2$paired.data[c("seq.order","dist", "distance")], Method="2")) %>%
-      group_by(Method) %>%
-      mutate(st =dist/sd(dist),
-             tt = paste0("Method ",Method,": ",distance,"<br>",
-                         "Pair Number: ", seq.order,"<br>",
-                         "Standard Deviations: ", round(st,3))) %>% ungroup()
+      group_by(.data$Method) %>%
+      mutate(st =.data$dist/stats::sd(.data$dist),
+             tt = paste0("Method ",.data$Method,": ",.data$distance,"<br>",
+                         "Pair Number: ", .data$seq.order,"<br>",
+                         "Standard Deviations: ", round(.data$st,3))) %>% ungroup()
 
 
-    seq.plot.raw <- ggplot(seqs, aes(seq.order, dist, color=Method, text=tt,
-                                     size=Method, shape=Method)) +
+    seq.plot.raw <- ggplot(seqs, aes(.data$seq.order, .data$dist, color=.data$Method,
+                                     text=.data$tt, size=.data$Method,
+                                     shape=.data$Method)) +
       geom_point() +
       labs(x = "Pairs Ordered by Sequence", y = "Distance") +
       scale_color_manual(values=c("1"='#FED148', "2"='#B241B4'), name="Method") +
@@ -312,8 +315,9 @@ app_server <- function(input, output, session) {
 
     seq.plot.raw <- seq.plot.raw %>% ggplotly(tooltip = "text")
 
-    seq.plot.std <- ggplot(seqs, aes(seq.order, st, color=Method, text=tt,
-                                     size=Method, shape=Method)) +
+    seq.plot.std <- ggplot(seqs, aes(.data$seq.order, .data$st, color=.data$Method,
+                                     text=.data$tt, size=.data$Method,
+                                     shape=.data$Method)) +
       geom_point() +
       labs(x = "Pairs Ordered by Sequence", y = "Stardard Deviations") +
       scale_color_manual(values=c("1"='#FED148', "2"='#B241B4'), name="Method") +
@@ -739,7 +743,7 @@ app_server <- function(input, output, session) {
 
     cols <- colnames(d)
 
-    opts <- cols[!cols %in% c("smoke", "fev", "t", "y", "Allocation", "te")]
+    opts <- cols[!cols %in% c("smoke", "fev", "t", "y", "Allocation", "error")]
 
     #get the non-treatment covariates out of the formula
     if(is.null(values$outcome.f)){
@@ -874,8 +878,13 @@ app_server <- function(input, output, session) {
   output$dataPlot <- plotly::renderPlotly({values$selected.p})
 
   #render data table of
-  output$dataTable <- DT::renderDT(
-    values$selected.d,
+  output$dataTable <- DT::renderDT({
+    d <- values$selected.d
+
+    if("error" %in% colnames(d)){ d[colnames(d)!="error"]
+    } else { d }
+
+    },
     options = list(
       pageLength = 25,
       initComplete = DT::JS("function(){$(this).addClass('compact');}")

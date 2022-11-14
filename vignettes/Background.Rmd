@@ -1,8 +1,8 @@
 ---
-title: "Vignette 1a - Background"
+title: "Background"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette 1a - Background}
+  %\VignetteIndexEntry{Background}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 bibliography: App_References.bib
@@ -21,15 +21,13 @@ knitr::opts_chunk$set(
 
 ## Abstract
 
-> MH Suggest having an abstract here (or in the README?). Rough outline suggested below
+**Background** Matching is a popular technique for improving covariate balance in observational data. Due it's simplistic implementation the inner workings are not necessarily clear to the analyst. Recent criticisms of Propensity Score Matching, in particular, have highlighted a need to give more insight and clarity to the black box that is Matching.
 
-**Background** Propensity score matching is a popular technique but it is blackbox with recent criticisms...
+**Aim** We set out to develop an interactive space where users can understand matching algorithms and compare results based on different user specifications. We wanted users to be able to compare methods of matching but more importantly, to compare the underlying settings that can be used to generate the matches. Settings needed to include the selection of covariates, the order the matches were conducted in, and whether or not replacement was used.
 
-**Aim** Want to develop an interactive space where users can understand matching algorithms and compare results based on different user specifications...
+**Solution** WhatsMatching is an interactive Shiny app that allows users to simulate data and watch matching algorithms dynamically unfold. It provides options for using the Propensity Score Distance and the Mahalanobis Distance to match on and includes all the settings laid out in the aim.
 
-**Solution** WhatsMatching is an interactive app that allows users to simulate data and watch matching algorithms dynamically unfold...
-
-**Dissemination** Built using the Golem framework.. Installable as an R package and deployed on shinyapps.io for access via a web browser, documentation and vignettes on package website, all code is opensource R code on GitHub..
+**Dissemination** The Golem framework has been the underpinning guide for development. This has allowed the provision of an installable R package, a Shiny app deployed on shinyapps.io, and all documentation and vignettes on a package website. All code is opensource and available on GitHub.
 
 ------------------------------------------------------------------------
 
@@ -37,11 +35,11 @@ knitr::opts_chunk$set(
 
 ### The problem and promise of observational data
 
-Estimating the causal effect of a treatment or intervention is a core task of health data science. Randomised control trials (RCTs) are the gold standard study design for estimating treatment effects, but in many contexts RCTs are not feasible, for logistic or ethical reasons. As a result, researchers often turn to observational data to address causal research aims. These data are not ideal because there is no control over who receives the treatment or exposure of interest and who does not, introducing potential selection and confounding biases. Nonetheless, observational data are a useful asset, being relatively cheap and easy to access, and for exposures that cannot ethically be manipulated, they offer the only possibility of investigating research questions of interest.[@CEinObsData; @rosenbaum1983central; @king_why_2019]
+Estimating the causal effect of a treatment or intervention is a core task of health data science. Randomised control trials (RCTs) are the gold standard study design for estimating treatment effects, but in many contexts RCTs are not feasible, for logistic or ethical reasons. As a result, researchers often turn to observational data to address causal research aims. These data are not ideal because there is no control over who receives the treatment or exposure of interest and who does not, introducing potential selection and confounding biases. Nonetheless, observational data are a useful asset, being relatively cheap and easy to access, and for exposures that cannot ethically be manipulated, they offer the only possibility of investigating research questions of interest.[@CEinObsData; @Rosenbaum1983; @King2019]
 
 ### Approaches to obtaining valid causal inferences from observational data
 
-It is still possible to obtain valid estimates of causal effects from observational data, provided the limitations of the data are addressed in the analysis. Many methodological approaches to address confounding bias have been proposed over the years, including stratification, regression adjustment, matching, applications of the propensity score and g-computation methods. The primary aim of these methods is to reduce bias in the estimation of the casual effect, especially confounding, by balancing the distribution of confounding variables in the treated and control groups.[@CEinObsData]
+It is still possible to obtain valid estimates of causal effects from observational data, provided the limitations of the data are addressed in the analysis. Many methodological approaches to address confounding bias have been proposed over the years, including stratification, regression adjustment, matching, applications of the propensity score and g-computation methods.[@CEinObsData; @Lunceford2004] The primary aim of these methods is to reduce bias in the estimation of the casual effect, especially confounding, by balancing the distribution of confounding variables in the treated and control groups.[@Rosenbaum2006; @Li2013]
 
 ### Matching methods
 
@@ -185,7 +183,7 @@ The authors postulated that this made matching on the propensity score inferior 
 
 Another issue that can arise generally with causal inference, but then also specifically with matching, is model dependence. This is essentially where the model selection still plays a large role in predicting the estimate of the treatment effect. This is a problem because that probably means that matching has not fixed the issue of confounding and now selection bias needs to be managed as well.
 
-***
+------------------------------------------------------------------------
 
 <br>
 
