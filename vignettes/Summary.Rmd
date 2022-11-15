@@ -14,19 +14,32 @@ knitr::opts_chunk$set(
 )
 ```
 
+## Summary
 
-## Summary  
+This application achieves the aims that were set out. It provides a simple space for users to be able to gain insights into the matching process through exploration. Users are able to pair any possible combination of data generation with the matching settings of their choosing.
 
-In summary, this application achieves the aims that were set out. It provides a simple space for users to be able to gain insights into the matching process through exploration. Users are able to pair any possible combination of data generation with the matching settings of their choosing.
+### Highlights
 
-### A bit of a summary and recap of highlights of the app
+The app has a friendly interface that allows users to easily manipulate data and matching settings to see if the outcomes match expectations. Technical jargon has been paired back in favour of lay descriptions and there are useful popovers to give additional information on many of the settings available.
 
-### Limitations  
+The four plot output from the app is clean and operates intuitively. The `plotly` interface make interacting with the plots clean. Additional information with on the plots from tooltips mean the visualisations aren't cluttered with too much information. A sidebar was added to give meaningful context without intruding on the main event.
+
+### Limitations
 
 There are some limitations to the resources available in this suite. Firstly, users are limited to using only Propensity Score or Mahalanobis Distance. This has been a deliberate choice as the plotting interface is likely no able to produce the same information for other matching methods.
 
-Secondly, the package is only designed for gaining insights into matching, not performing statistical analysis. However, users may choose to run data through the package first to try and make better decisions about matching for their real analysis. 
+Secondly, the package is only designed for gaining insights into matching, not performing statistical analysis. However, users may choose to run data through the package first to try and make better decisions about matching for their real analysis.
 
-Thirdly, due to the processing power required to create and render the `plotly` plots, it is not particularly feasible to increase the amount of data the matching is done on. To give an example, for a dataset that returns 100 matches there will need to be 5050 rows times 2 just for generating the first two plots. 
+Thirdly, due to the processing power required to create and render the `plotly` plots, it is not particularly feasible to increase the amount of data the matching is done on. To give an example, for a dataset that returns 100 matches there will need to be 5050 rows times 2 just for generating the first two plots.
 
-### A few possible extensions
+### Future Possibilities
+
+Where to from here? The app is functional and fit for purpose as is, even with the limitations listed above. Considerations for future development may include:
+
+-   extend the capability of the app to explore other matching methodologies
+
+-   increase the number of dimensions for viewing the matches, for example to include up to 3 or 4 variables
+
+-   add the capability to compare different formulas for estimating the outcome at the same time
+
+-   Add an option in for calliper adjustment (it is just a theoretical option to visualise at the moment)

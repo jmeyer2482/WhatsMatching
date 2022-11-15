@@ -453,6 +453,51 @@ app_server <- function(input, output, session) {
               ignoreNULL = T)
 
 
+
+  #model comparisons
+  models <- reactive({
+
+    #needed for weights to work within function
+    environment(f1) <- environment()
+
+    #assign data to variable
+    dt <- m$data
+
+    #vanilla model
+    mod <- lm(f1, dt)
+
+    #weighted model
+    mod.w <- lm(f1, dt, weights=m$wt.ATE)
+
+    #stratified model
+    max.strat <- max(as.numeric(m$stratification))
+
+    stratified <- sapply(
+      1:max.strat,
+      function(x) {
+        mod.s <- lm(f1, dt[m$stratification==x,])
+        return(cbind(coef(mod.s),confint(mod.s))["t",])
+      }
+    ) %>% as.data.frame() %>% apply(1, mean, na.rm=T)
+    #matched model
+    mod.m <- lm(f1, m$matched.data)
+
+    #put them all together for plotting
+    ests <- rbind(
+      cbind("Raw", coef(mod), confint(mod))["t",],
+      cbind("Weighted", coef(mod.w), confint(mod.w))["t",],
+      cbind("Stratified", t(stratified)),
+      cbind("Matched", coef(mod.m), confint(mod.m))["t",]
+    ) %>% as.data.frame() %>% mutate(across(c(2:4), as.numeric))
+
+    #update the column names for easy reference
+    colnames(ests) <- c("Model", "Estimate", "CI_L", "CI_H")
+
+
+
+  })
+
+
   #Reactive table with matching data to display
   #wasn't able to get the data I wanted in the format I want easily
   table.data <- reactive({

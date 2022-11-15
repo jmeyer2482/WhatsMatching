@@ -98,7 +98,7 @@ usethis::use_vignette("c-Applications", title="Vignette 3 - Applications")
 usethis::use_vignette("d-References", title="References")
 # usethis::use_vignette("-References", title="References")
 devtools::build_vignettes()
-usethis::use_vignette("Summary", title="Summary")
+usethis::use_vignette("functions", title="Using the functions")
 
 
 
@@ -151,7 +151,7 @@ rstudioapi::navigateToFile("dev/03_deploy.R")
 devtools::load_all()
 
 usethis::use_pkgdown()
-pkgdown::build_site(lazy=F)
+pkgdown::build_site()
 pkgdown::build_reference(lazy=F)
 pkgdown::build_articles(lazy=T)
 pkgdown::build_home()

@@ -15,7 +15,7 @@
 #' @rawNamespace import(plotly, except = last_plot)
 #' @importFrom stats coef
 #'
-#'
+#' @export
 #'
 
 combined.plot <- function(xvar, yvar, M1, M2, te=NULL,

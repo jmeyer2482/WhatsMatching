@@ -38,6 +38,7 @@ Imports:
     stats,
     utils
 Suggests: 
+    ggpubr,
     knitr,
     rmarkdown
 VignetteBuilder: 

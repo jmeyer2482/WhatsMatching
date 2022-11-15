@@ -57,6 +57,7 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-vignettes">Vignettes</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-vignettes">
+    <a class="dropdown-item" href="articles/index.html">All Vignettes</a>
     <a class="dropdown-item" href="articles/Background.html">Background</a>
     <a class="dropdown-item" href="articles/Development.html">Development</a>
     <a class="dropdown-item" href="articles/TheApp.html">The App</a>
@@ -109,15 +110,23 @@
 </div>
 <p>The WhatsMatching package provides a shiny app that demonstrates how propensity score matching and mahalanobis distance matching compare under different circumstances. The aim of the app is to provide educational insight into matching methods.</p>
 <div class="section level2">
-<h2 id="getting-started">Getting started<a class="anchor" aria-label="anchor" href="#getting-started"></a>
+<h2 id="getting-started">Getting Started<a class="anchor" aria-label="anchor" href="#getting-started"></a>
 </h2>
-<p>Check out the vignettes in the articles tab above to learn more about the motivation behind this app, the available features and functionality, and how the app can be used to explore matching techniques.</p>
+<p>Check out the vignettes in the navbar menu above to learn more about the motivation behind this app, the available features and functionality, and how the app can be used to explore matching techniques.</p>
 </div>
 <div class="section level2">
-<h2 id="accessing-the-app">Accessing the app<a class="anchor" aria-label="anchor" href="#accessing-the-app"></a>
+<h2 id="accessing-the-app">Accessing the App<a class="anchor" aria-label="anchor" href="#accessing-the-app"></a>
 </h2>
-<p>The app can be accessed at <a href="https://jmeyer2482.shinyapps.io/WhatsMatching/" target="_blank" class="external-link"> jmeyer2482.shinyapps.io/WhatsMatching </a>. A preview of the app is shown below.</p>
-<p><a href="https://jmeyer2482.shinyapps.io/WhatsMatching/" target="_blank" class="external-link"> <img style="border:2px solid black;" src="reference/figures/whatsMatchingDemo.gif"></a></p>
+<p>The Shiny app can be accessed at <a href="https://jmeyer2482.shinyapps.io/WhatsMatching/" target="_blank" class="external-link"> jmeyer2482.shinyapps.io/WhatsMatching </a>. A preview of the app is shown below.</p>
+<p><a href="https://jmeyer2482.shinyapps.io/WhatsMatching/" target="_blank" class="external-link"> <img src="reference/figures/whatsMatchingDemo.gif" style="border:2px solid black;"></a></p>
+</div>
+<div class="section level2">
+<h2 id="installing-the-app">Installing the App<a class="anchor" aria-label="anchor" href="#installing-the-app"></a>
+</h2>
+<p>Install the latest version of the app via <strong>GitHub</strong>. From the package you can access all the functions that are used to generate the data and matching processes/plots in the app.</p>
+<p>```{r install instructions, echo=TRUE, eval=FALSE}</p>
+<p>devtools::install_github(“jmeyer2482/WhatsMatching”)</p>
+<p>```</p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">

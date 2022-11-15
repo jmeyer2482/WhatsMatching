@@ -3,6 +3,8 @@ url: https://jmeyer2482.github.io/WhatsMatching/
 template:
   bootstrap: 5
   bootswatch: yeti
+  bslib:
+    font-size: 0.8em
 
 navbar:
   bg: dark
@@ -11,8 +13,9 @@ navbar:
     - icon: fa-home fa-lg
       href: index.html
     - text: "Vignettes"
-      href: articles/index.html
       menu:
+        - text: "All Vignettes"
+          href: articles/index.html
         - text: "Background"
           href: articles/Background.html
         - text: "Development"
@@ -25,9 +28,10 @@ navbar:
           href: articles/Matching.html
         - text: "Examples"
           href: articles/Examples.html
+        - text: "Using the Functions"
+          href: articles/functions.html
         - text: "Summary"
           href: articles/Summary.html
-
     - text: "Functions"
       href: reference/index.html
     - text: "Packages Used"
@@ -53,4 +57,8 @@ navbar:
   right:
    - icon: fa-github
      href: https://github.com/jmeyer2482/WhatsMatching
+
+home:
+  sidebar:
+    structure: [links, citation, authors, dev]
 
