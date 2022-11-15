@@ -110,13 +110,13 @@ std.means.plot <- function(M1, M2, xvar, yvar, treatment){
     ) %>%
     add_lines(data=s.means.cum, x=~n, legendgroup="raw",
               line=list(dash='dot', width=3), opacity = 0.6,
-              y=~full.smd.x, inherit = F, name=paste(xvar, "Raw SMD"), text=xvar, color=I("#272727"),
-              hovertemplate = "%{text} Raw SMD: %{y:>-0,.2f}<extra></extra>"
+              y=~full.smd.x, inherit = F, name=paste(xvar, "Unadjusted SMD"), text=xvar, color=I("#272727"),
+              hovertemplate = "%{text} Unadjusted SMD: %{y:>-0,.2f}<extra></extra>"
     ) %>%
     add_lines(data=s.means.cum, x=~n, legendgroup="raw",
               line=list(dash='dot', width=3), opacity = 0.6,
-              y=~full.smd.y, inherit = F, name=paste(yvar, "Raw SMD"), text=yvar, color=I("#272727"),
-              hovertemplate = "%{text} Raw SMD: %{y:>-0,.2f}<extra></extra>"
+              y=~full.smd.y, inherit = F, name=paste(yvar, "Unadjusted SMD"), text=yvar, color=I("#272727"),
+              hovertemplate = "%{text} Unadjusted SMD: %{y:>-0,.2f}<extra></extra>"
     ) %>%
     layout(showlegend = FALSE, annotations=a,
            xaxis = axis.settings("n observations"),
@@ -188,8 +188,8 @@ estimates.plot <- function(M1, M2, outcome.f, te){
 
   gg <- gg %>%
     add_lines(data=agg.ests, x=~n, y=~raw, inherit = F, line=list(dash='dot', width=3),
-              name = "Raw Estimate", color=I("#272727"), legendgroup="raw", opacity = 0.6,
-              hovertemplate="Raw Estimate: %{y:>-0,.2f}<extra></extra>") %>%
+              name = "Unadjusted Estimate", color=I("#272727"), legendgroup="raw", opacity = 0.6,
+              hovertemplate="Unadjusted Estimate: %{y:>-0,.2f}<extra></extra>") %>%
     add_lines(data=agg.ests, x=~n, y=~weighted, inherit = F, color=I("#009FB7"),
               name = "Weighted Estimate", line=list(dash='longdashdot', width=3),
               hovertemplate="Weighted Estimate: %{y:>-0,.2f}<extra></extra>",

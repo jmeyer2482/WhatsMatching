@@ -456,46 +456,150 @@ app_server <- function(input, output, session) {
 
   #model comparisons
   models <- reactive({
+    m1 <- values$M1
+    m2 <- values$M2
+    t.var <- m1$treatment
+    #assign data to variable
+    dt <- m1$data
 
     #needed for weights to work within function
-    environment(f1) <- environment()
 
-    #assign data to variable
-    dt <- m$data
+
+    fs <- switch(t.var,
+                 "smoke"=c(fev~smoke, fev~smoke+age, fev~smoke+height,
+                           fev~smoke+sex, fev~smoke+age+height,
+                           fev~smoke+age+sex, fev~smoke+height+sex,
+                           fev~smoke+height+age+sex),
+                 "t"=c(y~t, y~t+X1, y~t+X2, y~t+X1+X2))
+
+    environment(fs) <- environment()
+
+    #matched data 1 estimates
+    m1.ests <- sapply(fs,
+                   function(x) {
+                     mod.s <- lm(x, m1$matched.data)
+                     cci <- cbind(coef(mod.s)[[t.var]],
+                                  t(confint(mod.s)[t.var,]),
+                                  "Method 1", deparse(x))
+                     return(cci) }
+    ) %>% t() %>% as.data.frame() %>% mutate(across(c(1:3), as.numeric))
+
+
+    #matched data 2 estimates
+    m2.ests <- sapply(fs,
+                      function(x) {
+                        mod.s <- lm(x, m2$matched.data)
+                        cci <- cbind(coef(mod.s)[[t.var]],
+                                     t(confint(mod.s)[t.var,]),
+                                     "Method 2", deparse(x))
+                        return(cci) }
+    ) %>% t() %>% as.data.frame() %>% mutate(across(c(1:3), as.numeric))
+
 
     #vanilla model
-    mod <- lm(f1, dt)
+    raw.ests <- sapply(fs,
+              function(x) {
+                mod.s <- lm(x, dt)
+                cci <- cbind(coef(mod.s)[[t.var]],
+                             t(confint(mod.s)[t.var,]),
+                             "Unadjusted", deparse(x))
+                return(cci) }
+    ) %>% t() %>% as.data.frame() %>% mutate(across(c(1:3), as.numeric))
+
+
+
 
     #weighted model
-    mod.w <- lm(f1, dt, weights=m$wt.ATE)
+    wt.ests <- sapply(fs,
+                       function(x) {
+                         mod.s <- lm(x, dt, weights=m1$wt.ATT)
+                         cci <- cbind(coef(mod.s)[[t.var]],
+                                      t(confint(mod.s)[t.var,]),
+                                      "Weighted", deparse(x))
+                         return(cci) }
+    ) %>% t() %>% as.data.frame() %>% mutate(across(c(1:3), as.numeric))
+    # mod.w <- lm(f1, dt, weights=m$wt.ATE)
 
-    #stratified model
-    max.strat <- max(as.numeric(m$stratification))
-
-    stratified <- sapply(
-      1:max.strat,
-      function(x) {
-        mod.s <- lm(f1, dt[m$stratification==x,])
-        return(cbind(coef(mod.s),confint(mod.s))["t",])
-      }
-    ) %>% as.data.frame() %>% apply(1, mean, na.rm=T)
-    #matched model
-    mod.m <- lm(f1, m$matched.data)
-
-    #put them all together for plotting
-    ests <- rbind(
-      cbind("Raw", coef(mod), confint(mod))["t",],
-      cbind("Weighted", coef(mod.w), confint(mod.w))["t",],
-      cbind("Stratified", t(stratified)),
-      cbind("Matched", coef(mod.m), confint(mod.m))["t",]
-    ) %>% as.data.frame() %>% mutate(across(c(2:4), as.numeric))
-
-    #update the column names for easy reference
-    colnames(ests) <- c("Model", "Estimate", "CI_L", "CI_H")
+    #Stratified estimates
+    max.strat <- max(as.numeric(m1$stratification))
 
 
+    strat.ests <- sapply(fs,
+          function(y)
+            sapply(
+              1:max.strat,
+              function(x) {
+                mod.s <- lm(y, dt[m1$stratification==x,])
+                return(cbind(coef(mod.s),confint(mod.s))[t.var,])
+              }) %>% as.data.frame() %>% apply(1, mean, na.rm=T)
+
+          ) %>% t() %>% as.data.frame() %>%
+      mutate(across(c(1:3), as.numeric), Method="Stratified", Formula=fs,
+             )
+
+    # strat.ests <- sapply(fs, function(y)
+    #       sapply(
+    #         1:max.strat,
+    #         function(x) {
+    #           mod.s <- lm(y, dt[m1$stratification==x,])
+    #           return(cbind(coef(mod.s),confint(mod.s))["t",])
+    #         }
+    #       ) %>% as.data.frame() %>% apply(1, mean, na.rm=T) %>%
+    #         as.data.frame() %>%
+    #         mutate(Formula=deparse(y),Method="Stratified")
+    # ) %>% t() %>% as.data.frame() %>% mutate(across(c(1:3), as.numeric))
+    # #this has different col names to the other outputs.
+    # #updated for rbind.
+    colnames(strat.ests) <- paste0("V",c(1:5))
+
+    tot.ests <- rbind(m1.ests, m2.ests, raw.ests, wt.ests, strat.ests)
+
+    colnames(tot.ests) <- c("Estimate", "CI_L", "CI_H", "Model", "Formula")
+
+    filt <- input$methods
+
+    return(tot.ests[tot.ests$Model %in% filt,])
 
   })
+
+  #test to see if I could generate the data
+  # output$tblests <- renderTable({models()})
+
+
+  #plot the estimates
+  comp.plot <- reactive({
+
+    mod <- models()
+
+    true.est <- values$trueTE
+
+
+
+    p <- ggplot(mod,
+                aes(Estimate, paste(Model,"\n",Formula),
+                    colour=Model)) +
+      geom_point(size=2) +
+      geom_errorbarh(aes(xmin=CI_L, xmax=CI_H), height=0.25,
+                     lwd=1.5) +
+      geom_vline(xintercept = true.est, lty=2, colour="red") +
+      labs(x="Estimate of the Treatment Effect",
+           y="Model and Formula Used") +
+      scale_color_manual(values=c("Method 1"='#FED148',
+                                 "Method 2"='#B241B4',
+                                 "Unadjusted"="#272727",
+                                 "Weighted"="#009FB7",
+                                 "Stratified"="#696773"
+                                 )) +
+      theme_bw() +
+      theme(text = element_text(size = 18))
+
+
+    return(p)
+
+  }) %>%
+    bindEvent(input$butMethods)
+
+  output$ests.plot <- renderPlot({comp.plot()})
 
 
   #Reactive table with matching data to display
