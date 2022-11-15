@@ -395,6 +395,7 @@ app_server <- function(input, output, session) {
     if(is.null(d$error)){
 
       newTE <- "None"
+      values$trueTE <- NULL
 
     } else {
 
@@ -523,7 +524,6 @@ app_server <- function(input, output, session) {
     #Stratified estimates
     max.strat <- max(as.numeric(m1$stratification))
 
-
     strat.ests <- sapply(fs,
           function(y)
             sapply(
@@ -537,17 +537,6 @@ app_server <- function(input, output, session) {
       mutate(across(c(1:3), as.numeric), Method="Stratified", Formula=fs,
              )
 
-    # strat.ests <- sapply(fs, function(y)
-    #       sapply(
-    #         1:max.strat,
-    #         function(x) {
-    #           mod.s <- lm(y, dt[m1$stratification==x,])
-    #           return(cbind(coef(mod.s),confint(mod.s))["t",])
-    #         }
-    #       ) %>% as.data.frame() %>% apply(1, mean, na.rm=T) %>%
-    #         as.data.frame() %>%
-    #         mutate(Formula=deparse(y),Method="Stratified")
-    # ) %>% t() %>% as.data.frame() %>% mutate(across(c(1:3), as.numeric))
     # #this has different col names to the other outputs.
     # #updated for rbind.
     colnames(strat.ests) <- paste0("V",c(1:5))
@@ -581,7 +570,7 @@ app_server <- function(input, output, session) {
       geom_point(size=2) +
       geom_errorbarh(aes(xmin=CI_L, xmax=CI_H), height=0.25,
                      lwd=1.5) +
-      geom_vline(xintercept = true.est, lty=2, colour="red") +
+      geom_vline(xintercept=true.est, color="red", lty=2) +
       labs(x="Estimate of the Treatment Effect",
            y="Model and Formula Used") +
       scale_color_manual(values=c("Method 1"='#FED148',
@@ -591,7 +580,9 @@ app_server <- function(input, output, session) {
                                  "Stratified"="#696773"
                                  )) +
       theme_bw() +
-      theme(text = element_text(size = 18))
+      theme(text = element_text(size = 18), legend.position = "none")
+
+    # if()
 
 
     return(p)
@@ -1026,7 +1017,7 @@ app_server <- function(input, output, session) {
   #render data plots
   output$dataPlot <- plotly::renderPlotly({values$selected.p})
 
-  #render data table of
+  #render data table without the error variable
   output$dataTable <- DT::renderDT({
     d <- values$selected.d
 

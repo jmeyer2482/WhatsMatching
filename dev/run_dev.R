@@ -1,7 +1,7 @@
 # golem::setwd_golem(here::here())
 # golem::set_golem_wd()
 # Set options here
-options(golem.app.prod = F) # TRUE = production mode, FALSE = development mode
+options(golem.app.prod = T) # TRUE = production mode, FALSE = development mode
 
 # Detach all loaded packages and clean your environment
 golem::detach_all_attached()
