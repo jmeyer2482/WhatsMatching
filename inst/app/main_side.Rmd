@@ -10,18 +10,26 @@ knit: (function(inputFile, encoding) {
   })
 ---
 
-#### Overview ####  
+<br>
+
+#### `r shiny::icon("book-open")`  Overview ####  
 This app uses some basic matching principles to provide insights into matching methodology for educational purposes. The plots to the left demonstrate how matching methods work in practice. Generally, matching is used to assist in controlling confounding and bias in observational data prior to estimating the treatment effect. In most cases the treatment variable that is used for matching is binary, which is this case for the data avaiable in this app.  
   
 The simulated data used to compare matching methods include a treatment variable (`t`), covariates (`X1` and `X2`) and an outcome variable (`y`).
 
-#### Plot 1 and Plot 2 ####  
+<br>
+
+#### `r shiny::icon("chart-simple")`  Plot 1 and Plot 2 ####  
 Plot 1 and 2 show the actual data the matches were performed on. A frame by frame progression of how the matches occurred for two methods specified by the user are shown. Blue triangles represent the treated group, red triangles the control group. When matching occurs, every treated unit is paired with a control.  
   
-#### Plot 3 - Standardised Mean Difference (SMD) ####   
+<br>
+
+#### `r shiny::icon("chart-simple")` Plot 3 - Standardised Mean Difference (SMD) ####   
 Plot 3 shows the SMD between each of the covariates for the raw values and each of the matching methods. Each frame shows the changes in the SMD for the matched data in Plot 1 and Plot 2. The raw SMD does not change as the underlying data does not change.  
   
-#### Plot 4 - Estimates of the Treatment Effect ####  
+<br>
+  
+#### `r shiny::icon("chart-simple")` Plot 4 - Estimates of the Treatment Effect ####  
 Plot 4 shows the estimates of the treatment effect for:  
 -   the unadjusted linear regression (Raw)  
 -   propensity score stratification  
