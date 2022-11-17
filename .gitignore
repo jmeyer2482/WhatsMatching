@@ -55,3 +55,6 @@ po/*~
 # /Meta/
 # docs
 inst/doc
+/doc/
+/Meta/
+docs

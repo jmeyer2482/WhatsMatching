@@ -58,6 +58,7 @@
     <a class="dropdown-item" href="../articles/DataGen.html">Data Generation</a>
     <a class="dropdown-item" href="../articles/Matching.html">Matching</a>
     <a class="dropdown-item" href="../articles/Examples.html">Examples</a>
+    <a class="dropdown-item" href="../articles/functions.html">Using the Functions</a>
     <a class="dropdown-item" href="../articles/Summary.html">Summary</a>
   </div>
 </li>
@@ -177,14 +178,13 @@ confounding variables in the treated and control groups.<span class="citation"><
 </h3>
 <p>Matching is a general pre-processing technique used to improve causal
 estimates from observational data by matching treated individuals to
-untreated individuals with the same or similar background
+untreated individuals (controls) with the same or similar background
 characteristics. The objective of matching is to balance key background
-characteristics in the treated and untreated groups. In an RCT this
-balance is achieved through randomisation; the intuitive appeal of
-matching is as a simple way to find an RCT “hidden” in an observational
-dataset.<span class="citation"><sup><a href="#ref-King2019" role="doc-biblioref">4</a></sup></span></p>
+characteristics in the treated and control groups. In a RCT this balance
+is achieved through randomisation; the intuitive appeal of matching is
+as a simple way to find a RCT “hidden” in an observational dataset.<span class="citation"><sup><a href="#ref-King2019" role="doc-biblioref">4</a></sup></span></p>
 <p>The most basic form of matching is exact matching. This is where
-treated and untreated groups have their key characteristics matched
+treated and control groups have their key characteristics matched
 exactly. For example, if matching is done on age and sex, a treated 45
 year old male will be matched with an untreated 45 year old male. When
 there are a small number of matching variables and the pool of potential
@@ -204,15 +204,15 @@ Distance-based matching proceeds by matching treated and untreated
 individuals based on some distance metric that quantifies the similarity
 between each pair of individuals in the dataset. Perhaps the most widely
 used distance metric is the propensity score, defined as the probability
-of an individual receiving the treatment. Another possible distance
-metric is the Mahalanobis distance, which is analogous to a multivariate
-Euclidean distance.<span class="citation"><sup><a href="#ref-King2019" role="doc-biblioref">4</a></sup></span></p>
+of an individual receiving the treatment.<span class="citation"><sup><a href="#ref-Rosenbaum1983" role="doc-biblioref">11</a></sup></span>
+Another possible distance metric is the Mahalanobis distance, which is
+analogous to a multivariate Euclidean distance.<span class="citation"><sup><a href="#ref-King2019" role="doc-biblioref">4</a></sup></span></p>
 <p>The advantage of both the propensity score and the Mahalanobis
 distance metrics is that the multidimensional covariate space is reduced
 to a single dimension: matching can be undertaken on the univariate
 distance measure rather than attempting to match each individual
 covariate. The covariates that define the distance metric are balanced
-between the treated and untreated groups, on average, in the resulting
+between the treated and control groups, on average, in the resulting
 matched dataset.</p>
 </div>
 <div class="section level3">
@@ -253,10 +253,10 @@ stratification<a class="anchor" aria-label="anchor" href="#applications-of-prope
 </h4>
 <p>A common application of the propensity score is as a distance metric
 in distance-based matching. The distance between two individuals is
-defined as the absolute difference in their propensity scores <span class="math inline">\(|e(x_1) - e(x_2)|\)</span>. Treated individuals
+defined as the absolute difference in their propensity scores <span class="math inline">\(|e(x_1) - e(x_0)|\)</span>. Treated individuals
 are matched to untreated individuals with similar propensity scores, and
 in doing so the covariates that are used in the propensity score
-estimation should be balanced on average in the treated and untreated
+estimation should be balanced on average in the treated and control
 groups.</p>
 <p>Many packages in <code>R</code> that perform matching analysis also
 automate the process of estimating the propensity score. Once the

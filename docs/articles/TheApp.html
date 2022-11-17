@@ -58,6 +58,7 @@
     <a class="dropdown-item" href="../articles/DataGen.html">Data Generation</a>
     <a class="dropdown-item" href="../articles/Matching.html">Matching</a>
     <a class="dropdown-item" href="../articles/Examples.html">Examples</a>
+    <a class="dropdown-item" href="../articles/functions.html">Using the Functions</a>
     <a class="dropdown-item" href="../articles/Summary.html">Summary</a>
   </div>
 </li>
@@ -112,23 +113,24 @@
     
     
 <script src="https://kit.fontawesome.com/e10eea7053.js" crossorigin="anonymous"></script><div class="section level2">
-<h2 id="the-app">The App<a class="anchor" aria-label="anchor" href="#the-app"></a>
+<h2 id="the-app-interface">The App Interface<a class="anchor" aria-label="anchor" href="#the-app-interface"></a>
 </h2>
+<p>The front end of the app has been design to be minimalist but with
+enough information available to the user to work out what’s going on.
+Figure 1 below shows the main area of the app that’s visible on
+loading.</p>
 <table style="border: none;" class="table">
 <caption style="text-align:left; caption-side:top;"> Figure 1. The App</caption>
   <tr>
 <td style="text-align:center"><img src="../reference/figures/App_Main.jpeg" border="0" width="100%"></td>
   </tr>
 </table>
-<p>The front end of the app has been design to be minimalist but with
-enough information available to the user to work out what’s going on.
-Figure 1 above shows the main area of the app that’s visible on loading.
-When the app loads, the first simulation is run meaning that as soon as
-a user opens the app they are presented with a standard presentation of
-matched data to investigate. The full home screen of the app also
-contains a sidebar panel on the right with some additional information
-for users. Table 1 below outlines some of the options that users have to
-access through the app.</p>
+<p>When the app loads, the first simulation is run. This means that as
+soon as a user opens the app they are presented with a standard
+presentation of matched data to investigate. The full home screen of the
+app also contains a sidebar panel on the right with some additional
+information for users. Table 1 below outlines some of the options that
+users have to access through the app.</p>
 <div class="center">
 
 The four buttons under the main title each serve a different function outlined in the table below.<br><table style="border: none;" class="table">
@@ -151,19 +153,39 @@ The four buttons under the main title each serve a different function outlined i
 </tr>
 </table>
 </div>
-<p>There is further information available about the options available
-for the cog icon in the <em>Data Generation</em> vignette. The second
-option, displaying the table icon, takes you to a model display with
-various information about the data that has been generated. This
-includes some basic plots of the data; a table of the data; information
-about the match settings (also visible on the main page); and insights
-about setting a calliper. The calliper plots mirror those laid out in
-<em>Background</em> vignette.</p>
-<p>The third option, displaying the shuffle icon, is a random data and
-match settings generator. If the user doesn’t have any ideas about what
-to investigate then they can push this button and the app with decide.
-It has been designed so that Method 1 and Method 2 will always be
-different. The fourth button opens this website to the homepage.</p>
+<p>The <i class="fas fa-cog"></i> opens up to options for data
+generation and settings for matching. There is further information
+available about the options available here
+<code><a href="../articles/DataGen.html">vignette("DataGen", "WhatsMatching")</a></code>.</p>
+<p>The second option, <i class="fas fa-table"></i>, takes you to a modal
+display with various information about the data that has been generated.
+This includes the same plots that are in the <a href="DataGen.html"><em>Data Generation</em></a>section. There is also a
+table of the data available; information about the match settings (also
+visible on the main page); insights about setting a calliper; and
+insights into the estimates of all methods with other regression model
+settings.</p>
+<p>The calliper plots are similar to those laid out in
+<code><a href="../articles/Background.html">vignette("Background", "WhatsMatching")</a></code>. There are four
+plots that show the distances between matched pairs in an unadjusted
+format (top row) and a standardised format (bottom row). The
+standardised plots are measured in the number of standard deviations
+above zero. The plots on the left show the distances in the order they
+were matched while the plots on the right show them in order from
+closest to the furthest distance. If you want to apply a calliper to the
+matched data, find the observation that you think is the beginning of
+the outlier group you’d like to remove. Subtract one from that number
+and go to that frame using the slider on the main screen.</p>
+<p>The plot of the estimates is similar to one shown in the <a href="functions.html"><em>Functions</em></a> vignette. The user has the
+option of specifying which method they would like to see the estimates
+for. When <em>Apply</em> is click, the plot will generate the estimates
+with the 95% confidence intervals for all possible regression formulas
+for those methods for easy comparison.</p>
+<p>The third option, <i class="fas fa-shuffle"></i>, is a random data
+and match settings generator. If the user doesn’t have any ideas about
+what to investigate then they can push this button and the app with
+decide. It has been designed so that Method 1 and Method 2 will always
+be different. The <i class="fas fa-info"></i> opens this website to the
+homepage.</p>
 <p>In terms of the general user interface, <code>plotly</code> has some
 very nice and intuitive options for navigating visual data. Users are
 able to easily zoom in to plot areas and reset them using the buttons

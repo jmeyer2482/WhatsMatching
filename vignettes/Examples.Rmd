@@ -42,6 +42,9 @@ The methods being compared in this example are the use of the Mahalanobis Distan
 <table style="border: none; text-align: center;">
   <caption style="text-align:left; caption-side:top;"> Figure 1. Fully Blocked Experiment</caption>
   <tr>
+  	  <td colspan="3"><img src="../man/figures/Ex-fullyblocked.PNG" border=0 width="100%"> </img></td>
+  </tr> 
+  <tr>
     <th style="text-align: left;">Setting</th>
     <th>Method 1</th>
     <th>Method 2</th>
@@ -70,9 +73,7 @@ The methods being compared in this example are the use of the Mahalanobis Distan
     <td style="text-align: left;">Treatment Effect on the Outcome</td>
     <td colspan="2"><code>y ~ t</code></td>
   </tr>
-  <tr>
-  	  <td colspan="3"><img src="../man/figures/Ex-fullyblocked.PNG" border=0 width="100%"> </img></td>
-  </tr>
+
 </table>
 ```
 **Take home message:** The propensity score is blind to the underlying values of the matching covariates and therefore may not be the best choice for achieving covariate balance, which is a primary aim of matching.
@@ -89,7 +90,7 @@ The methods being compared in this example are the use of the Mahalanobis Distan
 -   Optionally change the treatment effect and click Preview data
 -   Click *Use the data from Simulation 1* below
 -   Update the matching settings as laid out above (Fig. 1)
--   Click *Use these matching settings*  
+-   Click *Use these matching settings*\
 -   Press play
 :::
 :::
@@ -103,6 +104,9 @@ In Figure 2, you can clearly see that when the matching algorithm permits replac
 ```{=html}
 <table style="border: none; text-align: center;">
   <caption style="text-align:left; caption-side:top;"> Figure 2. Replacement</caption>
+  <tr>
+  	  <td colspan="3"><img src="../man/figures/Ex-replacement.PNG" border=0 width="100%"> </img></td>
+  </tr> 
   <tr>
     <th style="text-align: left;">Setting</th>
     <th>Method 1</th>
@@ -132,9 +136,7 @@ In Figure 2, you can clearly see that when the matching algorithm permits replac
     <td style="text-align: left;">Treatment Effect on the Outcome</td>
     <td colspan="2"><code>y ~ t</code></td>
   </tr>
-  <tr>
-  	  <td colspan="3""><img src="../man/figures/Ex-replacement.PNG" border=0 width="100%"> </img></td>
-  </tr>
+  
 </table>
 ```
 **Take home message:** Datasets where the treated and control groups are approximately equal may require the consideration of different settings to achieve covariate balance and thus a more accurate estimate of the treatment effect.
@@ -148,10 +150,10 @@ In Figure 2, you can clearly see that when the matching algorithm permits replac
 **Run this example in the app:** [https://jmeyer2482.shinyapps.io/WhatsMatching/](https://jmeyer2482.shinyapps.io/WhatsMatching/){target="_blank"} <i class="fas fa-up-right-from-square"></i>
 
 -   Click Settings <i class="fas fa-cog"></i> and choose Simulation 2
--   Optionally change any of the settings and click *Preview Data* (leaving the settings unchanged will replicate above)  
+-   Optionally change any of the settings and click *Preview Data* (leaving the settings unchanged will replicate above)\
 -   Click *Use the data from Simulation 2* below
 -   Update the matching settings as laid out above (Fig. 2)
--   Click *Use these matching settings*  
+-   Click *Use these matching settings*\
 -   Press play
 :::
 :::
@@ -167,6 +169,9 @@ This is a problem that can occur for any matching method as most matching method
 ```{=html}
 <table style="border: none; text-align: center;">
   <caption style="text-align:left; caption-side:top;"> Figure 3. Ordering</caption>
+   <tr>
+  	  <td colspan="3"><img src="../man/figures/Ex-ordering.PNG" border=0 width="100%"> </img></td>
+  </tr> 
   <tr>
     <th style="text-align: left;">Setting</th>
     <th>Method 1</th>
@@ -196,9 +201,7 @@ This is a problem that can occur for any matching method as most matching method
     <td style="text-align: left;">Treatment Effect on the Outcome</td>
     <td colspan="2"><code>y ~ t</code></td>
   </tr>
-  <tr>
-  	  <td colspan="3"><img src="../man/figures/Ex-ordering.PNG" border=0 width="100%"> </img></td>
-  </tr>
+
 </table>
 ```
 **Take home message:** The ordering or optimisation method of how the matches are selected can impact what data is selected for analysis.
@@ -212,23 +215,26 @@ This is a problem that can occur for any matching method as most matching method
 **Run this example in the app:** [https://jmeyer2482.shinyapps.io/WhatsMatching/](https://jmeyer2482.shinyapps.io/WhatsMatching/){target="_blank"} <i class="fas fa-up-right-from-square"></i>
 
 -   Click Settings <i class="fas fa-cog"></i> and choose Simulation 1
--   Optionally change any of the settings and click *Preview Data* (leaving the settings unchanged will replicate above)  
+-   Optionally change any of the settings and click *Preview Data* (leaving the settings unchanged will replicate above)\
 -   Click *Use the data from Simulation 2* below
 -   Update the matching settings as laid out above (Fig. 2)
--   Click *Use these matching settings*  
+-   Click *Use these matching settings*\
 -   Press play
 :::
 :::
 
 ## Covariate and Model Selection Matter {#example4}
 
-When undertaking matching it is necessary to specify two sets of Covariate specification and model selection are important when undertaking matching. Ideally, the matching occurs in such a way that the model specification is less important (another problem for causal inference in observational data!) which will remove some of the bias. Simulation 4 has been used for this example with both `X1` and `X2` set to be strong confounders.
+Covariate specification and model selection are important when undertaking matching. Ideally, the matching occurs in such a way that the model specification is less important (another problem for causal inference in observational data!) which will remove some of the bias. Simulation 4 has been used for this example with both `X1` and `X2` set to be strong confounders.
 
-Matching has been complete using either `X1` or `X2` as though we don't know which one is a confounder. `X1` has also been added to the formula to calculate the estimate. These setting have been selected to demonstrate the important of model and covariate selection when performing matching. As we can see below, the matching that was done with `X1` only performed as well as the raw estimate. Whereas, the model with `X2` performed much better.
+Matching has been completed using either `X1` or `X2` as though we don't know which one is a confounder. `X1` has also been added to the formula to calculate the estimate. These setting have been selected to demonstrate the importance of model and covariate selection when performing matching. As we can see below, the matching that was done with `X1` only performed as well as the raw estimate. Whereas, the model with `X2` performed much better.
 
 ```{=html}
 <table style="border: none; text-align: center;">
   <caption style="text-align:left; caption-side:top;"> Figure 4. Missed confounder</caption>
+  <tr>
+  	  <td colspan="3"><img src="../man/figures/Ex-specification.PNG" border=0 width="100%"> </img></td>
+  </tr>  
   <tr>
     <th style="text-align: left;">Setting</th>
     <th>Method 1</th>
@@ -258,12 +264,11 @@ Matching has been complete using either `X1` or `X2` as though we don't know whi
     <td style="text-align: left;">Treatment Effect on the Outcome</td>
     <td colspan="2"><code>y ~ t + X1</code></td>
   </tr>
-  <tr>
-  	  <td colspan="3"><img src="../man/figures/Ex-specification.PNG" border=0 width="100%"> </img></td>
-  </tr>
+
 </table>
 ```
-**Take home message:** Matching on a variable and then using it in the estimate of the treatment effect may not yield useful results.
+
+**Take home message:** The treatment effect will be improved as along as both variables are accounted for in either the matching or the regression model.
 
 ::: {style="display: block; border: 1px solid #3a3b3c; background-color:#f7f7f7; color:#3a3b3c; margin:20pt; padding:10pt"}
 ::: {style="font-size:2em; float: left; margin-right: 1em;"}
@@ -273,11 +278,11 @@ Matching has been complete using either `X1` or `X2` as though we don't know whi
 ::: {style="display:block; margin-left: 3em;"}
 **Run this example in the app:** [https://jmeyer2482.shinyapps.io/WhatsMatching/](https://jmeyer2482.shinyapps.io/WhatsMatching/){target="_blank"} <i class="fas fa-up-right-from-square"></i>
 
--   Click Settings <i class="fas fa-cog"></i> and choose Simulation 4
--   X
--   Y
--   Z
+-   Click Settings <i class="fas fa-cog"></i> and choose Simulation 4  
+-   Set the effect on treatment to 1 for both `X1` and `X2`  
+-   Set the effect on outcome to 1 for both `X1` and `X2`  
+-   Other settings can be changed as desired  
+-   Set matching settings as laid out above
 -   Press play
 :::
 :::
-

@@ -40,8 +40,8 @@ mod_ViewData_ui <- function(id){
       ),
 
   #distances
-      tabPanel("Caliper Insights", value="tabDist",
-           fluidRow("There are four plots below. The top two show the actual distances between each matched pair by both the order of the sequential matches (left side) and by the order of the distance (ride side). The bottom two plots show a standardised difference which is measured by the number of standard deviations from zero the distance of each match is. The purpose of this data is to give insights into where the application of calipers may have some utility.",
+      tabPanel("Calliper Insights", value="tabDist",
+           fluidRow("The application of a calliper is generally to attempt to remove outlying matches that may not improve covariate balance. The plots below show the distance between pairs in an unadjusted and standardised form. It also shows them in both the order they were matched in, and the order of their distance from closest to furthest.",br()," To see how your estimate would be changed by removing the outliers, take note of the number of the first match you want to remove, then go back to the main screen and move the slider into number prior to that position. This will give you some insight into how callipers work. Did it improve your estimate?", br(),
              plotlyOutput("distsPlot", height="600px")
            )),
 
@@ -52,7 +52,8 @@ mod_ViewData_ui <- function(id){
          fluidRow(
            column(8,
                   selectizeInput("methods", NULL,
-                                 choices=c("Method 1", "Method 2", "Unadjusted", "Weighted", "Stratified"),
+                                 choices=c("Method 1", "Method 2", "Stratified",
+                                           "Unadjusted", "Weighted"),
                                  selected=c("Method 1", "Method 2", "Unadjusted"),
                                  multiple=T, width="100%")),
            column(4, actionButton("butMethods", "Apply"))),

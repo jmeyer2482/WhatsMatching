@@ -203,9 +203,9 @@ WhatsMatching::matching.plot(m1, "X1","X2") %>%
   plotly::layout(title="Figure 7. Interactive Plot of Matches")
 ```
 
-And here's the main plot from the app.
+And here's the code for the main plot from the app. We won't run it here as the interface is too small to use it appreciably. I recommend running it in the R console and opening it out to it's own window.  
 
-```{r combined plot, warning=FALSE, message=FALSE}
+```{r combined plot, warning=FALSE, message=FALSE, eval=FALSE}
 #get the true estimate for comparison
 # default for function is null if you don't have it.
 true.est <- 2 + mean(dt$error[dt$t==1])-mean(dt$error[dt$t==0])

@@ -23,7 +23,9 @@ knitr::opts_chunk$set(
 ```{=html}
 <script src="https://kit.fontawesome.com/e10eea7053.js" crossorigin="anonymous"></script>
 ```
-## The App
+## The App Interface
+
+The front end of the app has been design to be minimalist but with enough information available to the user to work out what's going on. Figure 1 below shows the main area of the app that's visible on loading.
 
 ```{=html}
 <table style="border: none;">
@@ -33,7 +35,7 @@ knitr::opts_chunk$set(
   </tr>
 </table>
 ```
-The front end of the app has been design to be minimalist but with enough information available to the user to work out what's going on. Figure 1 above shows the main area of the app that's visible on loading. When the app loads, the first simulation is run meaning that as soon as a user opens the app they are presented with a standard presentation of matched data to investigate. The full home screen of the app also contains a sidebar panel on the right with some additional information for users. Table 1 below outlines some of the options that users have to access through the app.
+When the app loads, the first simulation is run. This means that as soon as a user opens the app they are presented with a standard presentation of matched data to investigate. The full home screen of the app also contains a sidebar panel on the right with some additional information for users. Table 1 below outlines some of the options that users have to access through the app.
 
 ::: center
 ```{=html}
@@ -60,9 +62,15 @@ The four buttons under the main title each serve a different function outlined i
 ```
 :::
 
-There is further information available about the options available for the cog icon in the *Data Generation* vignette. The second option, displaying the table icon, takes you to a model display with various information about the data that has been generated. This includes some basic plots of the data; a table of the data; information about the match settings (also visible on the main page); and insights about setting a calliper. The calliper plots mirror those laid out in *Background* vignette.
+The <i class="fas fa-cog"></i> opens up to options for data generation and settings for matching. There is further information available about the options available here `vignette("DataGen", "WhatsMatching")`.
 
-The third option, displaying the shuffle icon, is a random data and match settings generator. If the user doesn't have any ideas about what to investigate then they can push this button and the app with decide. It has been designed so that Method 1 and Method 2 will always be different. The fourth button opens this website to the homepage.
+The second option, <i class="fas fa-table"></i>, takes you to a modal display with various information about the data that has been generated. This includes the same plots that are in the [*Data Generation*](DataGen.html)section. There is also a table of the data available; information about the match settings (also visible on the main page); insights about setting a calliper; and insights into the estimates of all methods with other regression model settings.
+
+The calliper plots are similar to those laid out in `vignette("Background", "WhatsMatching")`. There are four plots that show the distances between matched pairs in an unadjusted format (top row) and a standardised format (bottom row). The standardised plots are measured in the number of standard deviations above zero. The plots on the left show the distances in the order they were matched while the plots on the right show them in order from closest to the furthest distance. If you want to apply a calliper to the matched data, find the observation that you think is the beginning of the outlier group you'd like to remove. Subtract one from that number and go to that frame using the slider on the main screen.
+
+The plot of the estimates is similar to one shown in the [*Functions*](functions.html) vignette. The user has the option of specifying which method they would like to see the estimates for. When *Apply* is click, the plot will generate the estimates with the 95% confidence intervals for all possible regression formulas for those methods for easy comparison.
+
+The third option, <i class="fas fa-shuffle"></i>, is a random data and match settings generator. If the user doesn't have any ideas about what to investigate then they can push this button and the app with decide. It has been designed so that Method 1 and Method 2 will always be different. The <i class="fas fa-info"></i> opens this website to the homepage.
 
 In terms of the general user interface, `plotly` has some very nice and intuitive options for navigating visual data. Users are able to easily zoom in to plot areas and reset them using the buttons available on the top left of the plot. The items in the legend can be toggled out of the plot area to make visualising things easier. The slider can be moved about as the user wishes.
 

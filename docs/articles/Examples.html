@@ -58,6 +58,7 @@
     <a class="dropdown-item" href="../articles/DataGen.html">Data Generation</a>
     <a class="dropdown-item" href="../articles/Matching.html">Matching</a>
     <a class="dropdown-item" href="../articles/Examples.html">Examples</a>
+    <a class="dropdown-item" href="../articles/functions.html">Using the Functions</a>
     <a class="dropdown-item" href="../articles/Summary.html">Summary</a>
   </div>
 </li>
@@ -152,6 +153,9 @@ on their observed covariates.</p>
 <table style="border: none; text-align: center;" class="table">
 <caption style="text-align:left; caption-side:top;"> Figure 1. Fully Blocked Experiment</caption>
   <tr>
+<td colspan="3"><img src="../reference/figures/Ex-fullyblocked.PNG" border="0" width="100%"></td>
+  </tr>
+<tr>
 <th style="text-align: left;">Setting</th>
     <th>Method 1</th>
     <th>Method 2</th>
@@ -183,9 +187,6 @@ on their observed covariates.</p>
 <tr>
 <td style="text-align: left;">Treatment Effect on the Outcome</td>
     <td colspan="2"><code>y ~ t</code></td>
-  </tr>
-<tr>
-<td colspan="3"><img src="../reference/figures/Ex-fullyblocked.PNG" border="0" width="100%"></td>
   </tr>
 </table>
 <p><strong>Take home message:</strong> The propensity score is blind to
@@ -242,6 +243,9 @@ distance when making matches.</p>
 <table style="border: none; text-align: center;" class="table">
 <caption style="text-align:left; caption-side:top;"> Figure 2. Replacement</caption>
   <tr>
+<td colspan="3"><img src="../reference/figures/Ex-replacement.PNG" border="0" width="100%"></td>
+  </tr>
+<tr>
 <th style="text-align: left;">Setting</th>
     <th>Method 1</th>
     <th>Method 2</th>
@@ -273,9 +277,6 @@ distance when making matches.</p>
 <tr>
 <td style="text-align: left;">Treatment Effect on the Outcome</td>
     <td colspan="2"><code>y ~ t</code></td>
-  </tr>
-<tr>
-<td colspan="3"><img src="../reference/figures/Ex-replacement.PNG" border="0" width="100%"></td>
   </tr>
 </table>
 <p><strong>Take home message:</strong> Datasets where the treated and
@@ -328,7 +329,10 @@ advantage of using replacement which conveniently ignores ordering and
 selects the nearest partner irrespective of if it is matched.</p>
 <table style="border: none; text-align: center;" class="table">
 <caption style="text-align:left; caption-side:top;"> Figure 3. Ordering</caption>
-  <tr>
+   <tr>
+<td colspan="3"><img src="../reference/figures/Ex-ordering.PNG" border="0" width="100%"></td>
+  </tr>
+<tr>
 <th style="text-align: left;">Setting</th>
     <th>Method 1</th>
     <th>Method 2</th>
@@ -361,9 +365,6 @@ selects the nearest partner irrespective of if it is matched.</p>
 <td style="text-align: left;">Treatment Effect on the Outcome</td>
     <td colspan="2"><code>y ~ t</code></td>
   </tr>
-<tr>
-<td colspan="3"><img src="../reference/figures/Ex-ordering.PNG" border="0" width="100%"></td>
-  </tr>
 </table>
 <p><strong>Take home message:</strong> The ordering or optimisation
 method of how the matches are selected can impact what data is selected
@@ -394,17 +395,16 @@ Data</em> (leaving the settings unchanged will replicate above)<br>
 <div class="section level2">
 <h2 id="example4">Covariate and Model Selection Matter<a class="anchor" aria-label="anchor" href="#example4"></a>
 </h2>
-<p>When undertaking matching it is necessary to specify two sets of
-Covariate specification and model selection are important when
+<p>Covariate specification and model selection are important when
 undertaking matching. Ideally, the matching occurs in such a way that
 the model specification is less important (another problem for causal
 inference in observational data!) which will remove some of the bias.
 Simulation 4 has been used for this example with both <code>X1</code>
 and <code>X2</code> set to be strong confounders.</p>
-<p>Matching has been complete using either <code>X1</code> or
+<p>Matching has been completed using either <code>X1</code> or
 <code>X2</code> as though we don’t know which one is a confounder.
 <code>X1</code> has also been added to the formula to calculate the
-estimate. These setting have been selected to demonstrate the important
+estimate. These setting have been selected to demonstrate the importance
 of model and covariate selection when performing matching. As we can see
 below, the matching that was done with <code>X1</code> only performed as
 well as the raw estimate. Whereas, the model with <code>X2</code>
@@ -412,6 +412,9 @@ performed much better.</p>
 <table style="border: none; text-align: center;" class="table">
 <caption style="text-align:left; caption-side:top;"> Figure 4. Missed confounder</caption>
   <tr>
+<td colspan="3"><img src="../reference/figures/Ex-specification.PNG" border="0" width="100%"></td>
+  </tr>
+<tr>
 <th style="text-align: left;">Setting</th>
     <th>Method 1</th>
     <th>Method 2</th>
@@ -440,13 +443,10 @@ performed much better.</p>
 <td style="text-align: left;">Treatment Effect on the Outcome</td>
     <td colspan="2"><code>y ~ t + X1</code></td>
   </tr>
-<tr>
-<td colspan="3"><img src="../reference/figures/Ex-specification.PNG" border="0" width="100%"></td>
-  </tr>
 </table>
-<p><strong>Take home message:</strong> Matching on a variable and then
-using it in the estimate of the treatment effect may not yield useful
-results.</p>
+<p><strong>Take home message:</strong> The treatment effect will be
+improved as along as both variables are accounted for in either the
+matching or the regression model.</p>
 <div style="display: block; border: 1px solid #3a3b3c; background-color:#f7f7f7; color:#3a3b3c; margin:20pt; padding:10pt">
 <div style="font-size:2em; float: left; margin-right: 1em;">
 <p><a href="https://jmeyer2482.shinyapps.io/WhatsMatching/" target="_blank" class="external-link">
@@ -457,10 +457,17 @@ results.</p>
 <i class="fas fa-up-right-from-square"></i></p>
 <ul>
 <li>Click Settings <i class="fas fa-cog"></i> and choose Simulation
-4</li>
-<li>X</li>
-<li>Y</li>
-<li>Z</li>
+4<br>
+</li>
+<li>Set the effect on treatment to 1 for both <code>X1</code> and
+<code>X2</code><br>
+</li>
+<li>Set the effect on outcome to 1 for both <code>X1</code> and
+<code>X2</code><br>
+</li>
+<li>Other settings can be changed as desired<br>
+</li>
+<li>Set matching settings as laid out above</li>
 <li>Press play</li>
 </ul>
 </div>

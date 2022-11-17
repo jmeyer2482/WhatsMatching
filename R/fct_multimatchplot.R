@@ -206,27 +206,21 @@ estimates.plot <- function(M1, M2, outcome.f, te){
 }
 
 
-wt_lm <- function(f, data, wts) {
-  ff <- as.formula(f)
-  environment(ff) <- environment()
-  lm(formula = ff, data = data,
-     weights = wts)
-}
-
-
 get.estimates <- function(match.data, f) {
 
   treatment <- match.data$treatment
 
   d <- match.data$data
 
+  #assign current environment to function so weights work
+  environment(f) <- environment()
+
   #raw
   mod.v <- lm(f, d)
   raw <- coef(mod.v)[[treatment]]
 
   #weighted
-  wtd <- cbind(d,wts=match.data$wt.ATE)
-  mod.w <- wt_lm(f, wtd, wts = wtd$wts)
+  mod.w <- lm(f, d, weights = match.data$wt.ATE)
   weighted <- coef(mod.w)[[treatment]]
 
   #stratified
@@ -256,7 +250,6 @@ get.estimates <- function(match.data, f) {
 
 
 matching.ests <- function(match.data, f){
-
 
   d <- accumulate_by(match.data$matched.data, ~ord)
   treatment <- match.data$treatment

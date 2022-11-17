@@ -24,7 +24,6 @@ knitr::opts_chunk$set(
 <script src="https://kit.fontawesome.com/e10eea7053.js" crossorigin="anonymous"></script>
 ```
 
-## Data Generation
 
 From the main page, clicking on the <i class="fas fa-cog"></i> icon under the title opens up a modal dialogue box that is displayed in the following figures. This modal gives the user access to data from four different simulations and a real dataset. I will briefly outline each of the simulations below.
 

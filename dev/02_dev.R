@@ -21,23 +21,23 @@ devtools::document()
 
 
 ## Add modules ----
-## Create a module infrastructure in R/
-golem::add_module(name = "landing", with_test = F) # Name of the module
-golem::add_module(name = "Info", with_test = F)
-golem::add_module(name = "RealData", with_test = F)
-golem::add_module(name = "SimData", with_test = F)
-
-golem::add_module(name = "ViewData")
-
-golem::add_module(name = "MatchSettings", with_test = F)
-# golem::add_module(name = "name_of_module2", with_test = TRUE) # Name of the module
-
-## Add helper functions ----
-## Creates fct_* and utils_*
-golem::add_fct("simulations", with_test = F)
-golem::add_fct("matches", with_test = F)
-golem::add_fct("matchplot", with_test = F)
-golem::add_fct("multimatchplot", with_test = F)
+# ## Create a module infrastructure in R/
+# golem::add_module(name = "landing", with_test = F) # Name of the module
+# golem::add_module(name = "Info", with_test = F)
+# golem::add_module(name = "RealData", with_test = F)
+# golem::add_module(name = "SimData", with_test = F)
+#
+# golem::add_module(name = "ViewData")
+#
+# golem::add_module(name = "MatchSettings", with_test = F)
+# # golem::add_module(name = "name_of_module2", with_test = TRUE) # Name of the module
+#
+# ## Add helper functions ----
+# ## Creates fct_* and utils_*
+# golem::add_fct("simulations", with_test = F)
+# golem::add_fct("matches", with_test = F)
+# golem::add_fct("matchplot", with_test = F)
+# golem::add_fct("multimatchplot", with_test = F)
 
 
 # golem::add_utils("helpers", with_test = TRUE)
@@ -92,13 +92,13 @@ golem::add_fct("multimatchplot", with_test = F)
 # usethis::use_vignette("WhatsMatching-Theory")
 # usethis::use_vignette("WhatsMatching-HowTo")
 
-usethis::use_vignette("a-Background", title="Vignette 1 - Background")
-usethis::use_vignette("b-TheApp", title="Vignette 2 - The App")
-usethis::use_vignette("c-Applications", title="Vignette 3 - Applications")
-usethis::use_vignette("d-References", title="References")
-# usethis::use_vignette("-References", title="References")
-devtools::build_vignettes()
-usethis::use_vignette("functions", title="Using the functions")
+# usethis::use_vignette("a-Background", title="Vignette 1 - Background")
+# usethis::use_vignette("b-TheApp", title="Vignette 2 - The App")
+# usethis::use_vignette("c-Applications", title="Vignette 3 - Applications")
+# usethis::use_vignette("d-References", title="References")
+# # usethis::use_vignette("-References", title="References")
+# devtools::build_vignettes()
+# usethis::use_vignette("functions", title="Using the functions")
 
 
 

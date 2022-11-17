@@ -258,20 +258,28 @@ app_server <- function(input, output, session) {
 
   dist.plots <- reactive({
 
+    # get the matched data
     m1 <- values$M1
     m2 <- values$M2
 
+    # put the data in the same order in a
     ords <- cbind(m1$paired.data[c("d.order","dist", "distance")], Method="1") %>%
       rbind(cbind(m2$paired.data[c("d.order","dist", "distance")], Method="2")) %>%
       group_by(.data$Method) %>%
       mutate(st=.data$dist/stats::sd(.data$dist),
-             tt=paste0("Method ",.data$Method,": ",.data$distance,"<br>",
+             ord.t=paste0("<b>Ordered by Matching Distance</b><br>",
+                          "Method ",.data$Method,": ",.data$distance,"<br>",
                          "Pair Number: ", .data$d.order,"<br>",
-                         "Distance: ", round(.data$dist,3))) %>% ungroup()
+                         "Distance: ", round(.data$dist,3)),
+             st.t=paste0("<b>Ordered by Matching Distance</b><br>",
+                         "Method ",.data$Method,": ",.data$distance,"<br>",
+                          "Pair Number: ", .data$d.order,"<br>",
+                          "Standard Deviations from zero: ", round(.data$st,3))) %>%
+      ungroup()
 
 
     ord.plot.raw <- ggplot(ords, aes(.data$d.order, .data$dist, color=.data$Method,
-                                     text=.data$tt, size=.data$Method,
+                                     text=.data$ord.t, size=.data$Method,
                                      shape=.data$Method)) +
       geom_point() +
       labs(x = "Pairs Ordered by Distance", y = "Distance") +
@@ -283,7 +291,7 @@ app_server <- function(input, output, session) {
     ord.plot.raw <- ord.plot.raw %>% ggplotly(tooltip = "text")
 
     ord.plot.std <- ggplot(ords, aes(.data$d.order, .data$st, color=.data$Method,
-                                     text=.data$tt, size=.data$Method,
+                                     text=.data$st.t, size=.data$Method,
                                      shape=.data$Method)) +
       geom_point() +
       labs(x = "Pairs Ordered by Distance", y = "Stardard Deviations") +
@@ -298,13 +306,19 @@ app_server <- function(input, output, session) {
       rbind(cbind(m2$paired.data[c("seq.order","dist", "distance")], Method="2")) %>%
       group_by(.data$Method) %>%
       mutate(st =.data$dist/stats::sd(.data$dist),
-             tt = paste0("Method ",.data$Method,": ",.data$distance,"<br>",
+             ord.t = paste0("<b>Ordered by Matching Sequence</b><br>",
+                            "Method ",.data$Method,": ",.data$distance,"<br>",
                          "Pair Number: ", .data$seq.order,"<br>",
-                         "Standard Deviations: ", round(.data$st,3))) %>% ungroup()
+                         "Distancet: ", round(.data$st,3)),
+             st.t=paste0("<b>Ordered by Matching Sequence</b><br>",
+                         "Method ",.data$Method,": ",.data$distance,"<br>",
+                         "Pair Number: ", .data$seq.order,"<br>",
+                         "Standard Deviations from zero: ", round(.data$st,3))) %>%
+      ungroup()
 
 
     seq.plot.raw <- ggplot(seqs, aes(.data$seq.order, .data$dist, color=.data$Method,
-                                     text=.data$tt, size=.data$Method,
+                                     text=.data$ord.t, size=.data$Method,
                                      shape=.data$Method)) +
       geom_point() +
       labs(x = "Pairs Ordered by Sequence", y = "Distance") +
@@ -316,7 +330,7 @@ app_server <- function(input, output, session) {
     seq.plot.raw <- seq.plot.raw %>% ggplotly(tooltip = "text")
 
     seq.plot.std <- ggplot(seqs, aes(.data$seq.order, .data$st, color=.data$Method,
-                                     text=.data$tt, size=.data$Method,
+                                     text=.data$st.t, size=.data$Method,
                                      shape=.data$Method)) +
       geom_point() +
       labs(x = "Pairs Ordered by Sequence", y = "Stardard Deviations") +
@@ -365,7 +379,7 @@ app_server <- function(input, output, session) {
     t.f1 <- as.formula(paste(t.y[1], "~",paste(sel.t1, collapse = " + ")))
     t.f2 <- as.formula(paste(t.y[1], "~",paste(sel.t2, collapse = " + ")))
 
-    #assign from reactivevalues to ensure values are static
+    #assign from reactive values
     txt.o.f <- values$outcome.f
     o.f <- stats::as.formula(txt.o.f)
     TE <- values$TE
@@ -545,6 +559,12 @@ app_server <- function(input, output, session) {
 
     colnames(tot.ests) <- c("Estimate", "CI_L", "CI_H", "Model", "Formula")
 
+    #m.f added for sorting and plotting.
+    tot.ests <- tot.ests %>%
+      arrange(desc(Model), desc(nchar(Formula)), desc(Formula)) %>%
+      mutate(m.f=factor(paste0(Model,"\n",Formula),
+                        levels=paste0(Model,"\n",Formula)))
+
     filt <- input$methods
 
     return(tot.ests[tot.ests$Model %in% filt,])
@@ -562,28 +582,24 @@ app_server <- function(input, output, session) {
 
     true.est <- values$trueTE
 
-
-
-    p <- ggplot(mod,
-                aes(Estimate, paste(Model,"\n",Formula),
-                    colour=Model)) +
-      geom_point(size=2) +
-      geom_errorbarh(aes(xmin=CI_L, xmax=CI_H), height=0.25,
-                     lwd=1.5) +
-      geom_vline(xintercept=true.est, color="red", lty=2) +
-      labs(x="Estimate of the Treatment Effect",
-           y="Model and Formula Used") +
-      scale_color_manual(values=c("Method 1"='#FED148',
-                                 "Method 2"='#B241B4',
-                                 "Unadjusted"="#272727",
-                                 "Weighted"="#009FB7",
-                                 "Stratified"="#696773"
-                                 )) +
-      theme_bw() +
-      theme(text = element_text(size = 18), legend.position = "none")
-
-    # if()
-
+    p <-  ggplot(mod, aes(y=m.f, x=Estimate, colour=Model, lty=Model)) +
+        geom_point(size=3) +
+        geom_errorbarh(aes(xmin=CI_L, xmax=CI_H), height=0.25, lwd=1.5) +
+        geom_vline(xintercept=true.est, color="red", lty=2) +
+        labs(x="Estimate of the Treatment Effect",
+             y="Model and Formula Used") +
+        scale_color_manual(values=c("Method 1"='#FED148',
+                                    "Method 2"='#B241B4',
+                                    "Unadjusted"="#272727",
+                                    "Weighted"="#009FB7",
+                                    "Stratified"="#696773")) +
+        scale_linetype_manual(values=c("Method 1"='solid',
+                                       "Method 2"='dashed',
+                                       "Unadjusted"="dotted",
+                                       "Weighted"="dotdash",
+                                       "Stratified"="twodash")) +
+        theme_bw() +
+        theme(text = element_text(size = 18), legend.position = "none")
 
     return(p)
 

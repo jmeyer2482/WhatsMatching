@@ -23,13 +23,14 @@ knitr::opts_chunk$set(
 ```{=html}
 <script src="https://kit.fontawesome.com/e10eea7053.js" crossorigin="anonymous"></script>
 ```
-## Development
+
+## Project Development  
 
 This project has been developed as a Shiny app using the Golem framework[@Fay2021] to support it's production. There are a number of key functions that have been implemented to generate the data and matching processes. Let's have a look in a bit more detail.
 
 ### The golem framework
 
-The <a href="https://golemverse.org/" target="_blank">Golem framework</a> is the brain child of Colin Fay. In essence, Shiny apps are ideal for development as a R package. That is to say that, the package structure lends itself well to the development of production grade Shiny[@Shiny] apps.
+The <a href="https://golemverse.org/" target="_blank">Golem framework</a> is the brain child of Colin Fay. In essence, Shiny apps are ideal for development as a R package. That is to say that, the package structure is well suited to the development of production grade Shiny[@Shiny] apps.
 
 The `golem` package itself provides functions and helpers to generate and create the framework that can be used for the development of the Shiny app and package. In addition, there are <a href="https://engineering-shiny.org/" target="_blank"> theoretical underpinnings and best practice advice</a> provided to give the best chance of developing a high quality application.
 

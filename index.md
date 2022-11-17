@@ -16,8 +16,4 @@ The Shiny app can be accessed at <a href="https://jmeyer2482.shinyapps.io/WhatsM
 
 Install the latest version of the app via **GitHub**. From the package you can access all the functions that are used to generate the data and matching processes/plots in the app.
 
-```{r install instructions, echo=TRUE, eval=FALSE}
-
-devtools::install_github("jmeyer2482/WhatsMatching")
-
-```
+`devtools::install_github("jmeyer2482/WhatsMatching")`
