@@ -43,7 +43,7 @@ app_ui <- function(request) {
       ),
 
       #Settings
-      bsPopover(id="butGetData",title=HTML(paste(strong("Data and Match Settings"))),
+      bsPopover(id="butGetData",title=HTML(paste(icon('circle-info'), strong("Data and Match Settings"))),
                 content="Change the data and match settings that have informed the plot",
                 "right",options = list(container = "body")),
       bsModal(id="modGetData", title="Data and Match Settings", trigger="butGetData",
@@ -56,7 +56,7 @@ app_ui <- function(request) {
       ),
 
       #View data
-      bsPopover(id="butViewData",title=HTML(paste(strong("Data and Insights"))),
+      bsPopover(id="butViewData",title=HTML(paste(icon('circle-info'), strong("Data and Insights"))),
                 content="View the data, match settings, and other insights about the matched data.",
                 "right",options = list(container = "body")),
       bsModal(id="modViewData", title="Data and Insights", trigger = "butViewData",
@@ -65,23 +65,23 @@ app_ui <- function(request) {
       ),
 
       #Random matches
-      bsPopover(id="butRandom",title=HTML(paste(strong("Random Matching"))),
+      bsPopover(id="butRandom",title=HTML(paste(icon('circle-info'), strong("Random Matching"))),
                 content="Generate a random simulated data set for matching. Warning: will overwrite whatever is currently loaded",
                 "right",options = list(container = "body")
       ),
 
       #Info - links to pkgdown webpage
-      bsPopover(id="butInfo",title=HTML(paste(strong("App Information"))),
+      bsPopover(id="butInfo",title=HTML(paste(icon('circle-info'), strong("App Information"))),
                 content="See all the information about the app and the research that underpins it.",
                 "right",options = list(container = "body")),
 
   shiny::sidebarLayout(position="right",
 
-    shiny::sidebarPanel(width = 3,
-        h4("Treatment Effect Settings"),
+    shiny::sidebarPanel(width = 3, style = "height: 90vh; overflow-y: auto;",
+                h4(HTML(paste(shiny::icon("sliders"),"Treatment Effect Settings"))),
         "Estimate Formula: ", htmlOutput("txt.M.o.f", inline = T), br(),
-        "Actual Treatment Effect: ", textOutput("txt.M.TE", inline = T), br(),
-        h4("Match settings"),
+        "Actual Treatment Effect: ", textOutput("txt.M.TE", inline = T), br(), br(),
+        h4(HTML(paste(shiny::icon("circle-nodes"),"Match settings"))),
         htmlOutput("m.info"),
         includeMarkdown("inst/app/www/main_side.html")
     ),

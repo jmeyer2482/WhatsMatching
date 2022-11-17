@@ -105,7 +105,7 @@ plot.data <- function(d) {
 
 random.msg <- function() {
 
-  sample(c(
+msg <- sample(c(
     paste(
       "In 2019, King and Neilsen identified a paradox when using",
       "the propensity score for matching and demonstrated that",
@@ -113,12 +113,12 @@ random.msg <- function() {
       "bias despite improving covariate balance."
     ),
     paste(
-      "The propensity score can be used in multiple way to achieve",
-      "this, notably matching, weighting and stratification (aka",
+      "The propensity score can be used in multiple ways,",
+      "notably matching, weighting and stratification (aka",
       "subclassification)"
     ),
     paste(
-      "Matching requires that a type of distance between units",
+      "Distance-based matching requires that some distance between units",
       "is calculated. This distance is then used to pair or match",
       "units that are close together while discarding or pruning",
       "those that are not."
@@ -155,6 +155,9 @@ random.msg <- function() {
       "comparison between treated and untreated units."
     )),
   1)
+
+HTML(paste(icon('lightbulb', style="color:#FFAE42;"), msg))
+
 }
 
 
@@ -346,7 +349,7 @@ app_server <- function(input, output, session) {
     #is turned off at the end of end of the process
     #ensures nothing else happens while the data is loading.
     showModal(modalDialog(
-      title = "Loading",
+      title = HTML(paste("Loading", icon('hourglass', style="color:#d3d3d3"))),
       easyClose = F,
       random.msg(),
       footer = tagList()
