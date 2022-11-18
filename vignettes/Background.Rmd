@@ -21,9 +21,9 @@ knitr::opts_chunk$set(
 
 ## Abstract
 
-**Background** Matching is a popular technique for improving covariate balance in observational data. Due it's simplistic implementation the inner workings are not necessarily clear to the analyst. Recent criticisms of Propensity Score Matching, in particular, have highlighted a need to give more insight and clarity to the black box that is Matching.
+**Background** Matching is a popular technique for improving covariate balance in observational data. Because the method has been fully implemented in a variety of software packages, the inner workings are not necessarily clear to the analyst. Recent criticisms of Propensity Score Matching, in particular, have highlighted a need to give more insight and clarity to the black box that is Matching.
 
-**Aim** We set out to develop an interactive space where users can understand matching algorithms and compare results based on different user specifications. We wanted users to be able to compare methods of matching but more importantly, to compare the underlying settings that can be used to generate the matches. Settings needed to include the selection of covariates, the order the matches were conducted in, and whether or not replacement was used.
+**Aim** We set out to develop an interactive space where users can understand matching algorithms and compare results based on different user specifications. We wanted users to be able to compare methods of matching but more importantly, to compare the underlying settings that can be used to generate the matches, including the selection of matching covariates, the order the matches were conducted in, and whether or not replacement was used.
 
 **Solution** WhatsMatching is an interactive Shiny app that allows users to simulate data and watch matching algorithms dynamically unfold. It provides options for using the Propensity Score Distance and the Mahalanobis Distance to match on and includes all the settings laid out in the aim.
 

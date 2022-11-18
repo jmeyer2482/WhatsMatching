@@ -82,28 +82,28 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">create.sim.data</span><span class="op">(</span></span>
-<span>  sim <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  te <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>  jitter <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  cov_min <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  cov_max <span class="op">=</span> <span class="fl">5</span>,</span>
-<span>  wt_X1 <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  wt_X2 <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  n <span class="op">=</span> <span class="fl">200</span>,</span>
-<span>  mean1 <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  mean2 <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  sd1 <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  sd2 <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  rho <span class="op">=</span> <span class="fl">0.2</span>,</span>
-<span>  weight_t1 <span class="op">=</span> <span class="op">-</span><span class="fl">1</span>,</span>
-<span>  weight_t2 <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  weight_y0 <span class="op">=</span> <span class="fl">5</span>,</span>
-<span>  weight_y1 <span class="op">=</span> <span class="op">-</span><span class="fl">1</span>,</span>
-<span>  weight_y2 <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  relX1 <span class="op">=</span> <span class="st">"Mediator"</span>,</span>
-<span>  relX2 <span class="op">=</span> <span class="st">"Confounder"</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">create.sim.data</span><span class="op">(</span>
+  sim <span class="op">=</span> <span class="fl">1</span>,
+  te <span class="op">=</span> <span class="fl">2</span>,
+  jitter <span class="op">=</span> <span class="fl">1</span>,
+  cov_min <span class="op">=</span> <span class="fl">0</span>,
+  cov_max <span class="op">=</span> <span class="fl">5</span>,
+  wt_X1 <span class="op">=</span> <span class="fl">1</span>,
+  wt_X2 <span class="op">=</span> <span class="fl">1</span>,
+  n <span class="op">=</span> <span class="fl">200</span>,
+  mean1 <span class="op">=</span> <span class="fl">0</span>,
+  mean2 <span class="op">=</span> <span class="fl">0</span>,
+  sd1 <span class="op">=</span> <span class="fl">1</span>,
+  sd2 <span class="op">=</span> <span class="fl">1</span>,
+  rho <span class="op">=</span> <span class="fl">0.2</span>,
+  weight_t1 <span class="op">=</span> <span class="op">-</span><span class="fl">1</span>,
+  weight_t2 <span class="op">=</span> <span class="fl">1</span>,
+  weight_y0 <span class="op">=</span> <span class="fl">5</span>,
+  weight_y1 <span class="op">=</span> <span class="op">-</span><span class="fl">1</span>,
+  weight_y2 <span class="op">=</span> <span class="fl">1</span>,
+  relX1 <span class="op">=</span> <span class="st">"Mediator"</span>,
+  relX2 <span class="op">=</span> <span class="st">"Confounder"</span>
+<span class="op">)</span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -197,16 +197,16 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># generate a simulated dataframe</span></span></span>
-<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu">create.sim.data</span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># generate a simulated dataframe</span></span>
+<span class="r-in"><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu">create.sim.data</span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   t Allocation     X1     X2      y  error</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0    Control  1.039 -1.491 -0.576 -0.124</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 0    Control -1.167  1.401  1.257  1.023</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 0    Control  1.503  0.399  3.439  1.537</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 0    Control -1.225 -1.550 -3.728 -0.953</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 0    Control  1.177 -0.519  1.175  0.517</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 0    Control  1.084  0.552  1.296 -0.341</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 0    Control  0.793 -0.436 -2.147 -2.503</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 0    Control -0.976 -0.733 -1.206  0.502</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 0    Control -1.992 -0.346 -3.144 -0.806</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 0    Control -0.423 -1.300 -1.303  0.420</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 0    Control  1.522  0.034 -0.519 -2.076</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 0    Control -1.649 -0.675 -3.169 -0.844</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 
 ## The functions
 
-You can access the documentation for the functions from the navbar above. There are essentially four functions that carry the package with the fifth being the shiny app. In this vignette I will briefly go through the basic data generation and matching process to demonstrate the functionality of the package.
+You can access the [documentation](reference/index.html) for the functions from the navbar above. There are essentially four functions that carry the package with the fifth being the shiny app. In this vignette I will briefly go through the basic data generation and matching process to demonstrate the functionality of the package for advanced users who wish to use the WhatsMatching functionality outside of the app.
 
 ### Data Generation
 
@@ -35,15 +35,15 @@ dt <- create.sim.data()
 head(dt)
 ```
 
-Ok, we've loaded the package and used the most simplistic operation of the `create.sim.data()` function. This will generate the plot that you may have seen in the other vignettes for *Simulation 1*. You will note the inclusion of an additional `error` variable in output above. This variable can be ignored generally, it is the value that is added to `y` within the function and represents random error. You can adjust the amount of "error" in the output by changing the value of the `jitter` variable (see [documentation](reference/create.sim.data.html) for more details).
+Ok, we've loaded the package and used the most simplistic operation of the `create.sim.data()` function to simulate some random data. This will generate the plot that you may have seen in the other vignettes for *Simulation 1*. You will note the inclusion of an additional `error` variable in the output above. This variable can be ignored generally, it is the value that is added to `y` within the function and represents random error. You can adjust the amount of "error" in the output by changing the value of the `jitter` variable (see [documentation](reference/create.sim.data.html) for more details).
 
 ### Matching
 
-Matching using generated data (or any data) is very straight forward as you'll see below. You'll see I've specified an interaction term on `X2`, this is purely for illustrative purposes.
+Matching using generated data (or any data) is achieved using the `matched.data()` function. You'll see I've specified an interaction term on `X2`, this is purely for illustrative purposes.
 
 ```{r match}
-#a forumla is required to perform the matches
-#the left side must contain the treament variable
+#a formula is required to perform the matches
+#the left side must contain the treatment variable
 #the right side must be the covariates of interest
 #you can specify any interactions you like
 f <- t ~ X1 + I(X2^2)
@@ -104,7 +104,7 @@ p3 <- m1$paired.data %>%
 p3
 ```
 
-That looks pretty meaningless. I'm going to add Mahalanobis matched data to illustrate the point.
+To illustrate the point I will add the Mahalanobis matched data to the plot.
 
 ```{r plot multiple distances}
 #use the same formula and data as previous match
@@ -203,7 +203,9 @@ WhatsMatching::matching.plot(m1, "X1","X2") %>%
   plotly::layout(title="Figure 7. Interactive Plot of Matches")
 ```
 
-And here's the code for the main plot from the app. We won't run it here as the interface is too small to use it appreciably. I recommend running it in the R console and opening it out to it's own window.  
+_This plot is interactive if viewed on the website---try pressing play or dragging the slider!_
+
+Below is the code to generate the main plot for the app. We won't run it here as the interface is too small to use it appreciably. I recommend running it in the R console and opening it out to it's own window.  
 
 ```{r combined plot, warning=FALSE, message=FALSE, eval=FALSE}
 #get the true estimate for comparison
