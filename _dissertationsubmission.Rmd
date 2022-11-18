@@ -1,0 +1,58 @@
+---
+title: "Dissertation - WhatsMatching"
+author: "Jason Meyer, z5242267"
+date: "2022-11-18"
+output: 
+  pdf_document:
+    latex_engine: xelatex
+bibliography: vignettes/App_References.bib
+csl: vignettes/ama.csl
+link-citations: yes
+linkcolor: blue
+nocite: '@*'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Preface {.unnumbered}
+
+This project has been formally titled "What's Matching". This document represents the formal submission via *turnitin* for the dissertation component of the Master of Health Data Science Degree at UNSW (HDAT9900-HDAT9901-HDAT9902-HDAT: Dissertation). The full and properly formatted outputs for the assignment can be accessed in the following places:\
+- [WhatsMatching Website](https://jmeyer2482.github.io/WhatsMatching)\
+- [WhatsMatching Shiny App](https://jmeyer2482.shinyapps.io/WhatsMatching)\
+- [WhatsMatching Github Repository](https://github.com/jmeyer2482/WhatsMatching)
+
+```{r child='index.md'}
+
+```
+
+```{r child='vignettes/Background.rmd'}
+
+```
+
+```{r child='vignettes/Development.rmd'}
+
+```
+
+```{r child='vignettes/TheApp.rmd'}
+
+```
+
+```{r child='vignettes/DataGen.rmd'}
+
+```
+
+```{r child='vignettes/Matching.rmd'}
+
+```
+
+```{r child='vignettes/Examples.rmd'}
+
+```
+
+```{r child='vignettes/Summary.rmd'}
+
+```
+
+## References
