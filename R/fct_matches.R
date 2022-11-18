@@ -1,4 +1,4 @@
-#' matches
+#' Generate outputs from matching and propensity score methods.
 #'
 #' @md
 #'
@@ -17,22 +17,22 @@
 #' @return A list of items that are generated from the matching process
 #'
 #' @details
-#' The output contains the following items:
-#' * $paired.data a dataframe of the matched pairs of data (prefix t. for treated group and c. for control group) with the calculated distance and order of matching
-#' * $matched.data a dataframe with the matched data ready for analysis
-#' * $data a dataframe of the original data
-#' * $formula the formula used for matching
-#' * $distance the distance used for matching
-#' * $propensity a numeric vector of propensity scores in the same order as the original data
-#' * $stratification a factored vector which has stratified the propensity score into groups (between 5 and 10)
-#' * $wt.ATE a numeric vector of the average treatment effect based on the propensity score
-#' * $wt.ATT a numeric vector of the average treatment effect on the treated based on the propensity score
-#' * $wt.Matched a vector of weights based on how the matching occurred
-#' * $d.m the 'DenseMatrix' output from the [optmatch::match_on()] function used for matching
-#' * $pairs a dataframe with the row labels for each treated unit and it's matched control with the calculated distance between them
-#' * $treatment the treatment variable
-#' * $order the order the matches were conducted in
-#' * $replacement was replacement used to match, TRUE or FALSE
+#' The output is a list containing the following:
+#' * `paired.data` a dataframe of the matched pairs of data (prefix t. for treated group and c. for control group) with the calculated distance and order of matching
+#' * `matched.data` a dataframe with the matched data ready for analysis
+#' * `data` a dataframe of the original data
+#' * `formula` the formula used for matching
+#' * `distance` the distance used for matching
+#' * `propensity` a numeric vector of propensity scores in the same order as the original data
+#' * `stratification` a factored vector which has stratified the propensity score into groups (between 5 and 10)
+#' * `wt.ATE` a numeric vector of the average treatment effect based on the propensity score
+#' * `wt.ATT` a numeric vector of the average treatment effect on the treated based on the propensity score
+#' * `wt.Matched` a vector of weights based on how the matching occurred
+#' * `d.m` the 'DenseMatrix' output from the [optmatch::match_on()] function used for matching
+#' * `pairs` a dataframe with the row labels for each treated unit and it's matched control with the calculated distance between them
+#' * `treatment` the treatment variable
+#' * `order` the order the matches were conducted in
+#' * `replacement` was replacement used to match, TRUE or FALSE
 #'
 #'
 #' @import dplyr

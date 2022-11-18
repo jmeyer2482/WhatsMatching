@@ -2,7 +2,7 @@
 % Please edit documentation in R/fct_matches.R
 \name{matched.data}
 \alias{matched.data}
-\title{matches}
+\title{Generate outputs from matching and propensity score methods.}
 \usage{
 matched.data(f, data, dist, order = "data", replace = FALSE)
 }
@@ -30,23 +30,23 @@ A list of items that are generated from the matching process
 A function for simulating data
 }
 \details{
-The output contains the following items:
+The output is a list containing the following:
 \itemize{
-\item $paired.data a dataframe of the matched pairs of data (prefix t. for treated group and c. for control group) with the calculated distance and order of matching
-\item $matched.data a dataframe with the matched data ready for analysis
-\item $data a dataframe of the original data
-\item $formula the formula used for matching
-\item $distance the distance used for matching
-\item $propensity a numeric vector of propensity scores in the same order as the original data
-\item $stratification a factored vector which has stratified the propensity score into groups (between 5 and 10)
-\item $wt.ATE a numeric vector of the average treatment effect based on the propensity score
-\item $wt.ATT a numeric vector of the average treatment effect on the treated based on the propensity score
-\item $wt.Matched a vector of weights based on how the matching occurred
-\item $d.m the 'DenseMatrix' output from the \code{\link[optmatch:match_on-methods]{optmatch::match_on()}} function used for matching
-\item $pairs a dataframe with the row labels for each treated unit and it's matched control with the calculated distance between them
-\item $treatment the treatment variable
-\item $order the order the matches were conducted in
-\item $replacement was replacement used to match, TRUE or FALSE
+\item \code{paired.data} a dataframe of the matched pairs of data (prefix t. for treated group and c. for control group) with the calculated distance and order of matching
+\item \code{matched.data} a dataframe with the matched data ready for analysis
+\item \code{data} a dataframe of the original data
+\item \code{formula} the formula used for matching
+\item \code{distance} the distance used for matching
+\item \code{propensity} a numeric vector of propensity scores in the same order as the original data
+\item \code{stratification} a factored vector which has stratified the propensity score into groups (between 5 and 10)
+\item \code{wt.ATE} a numeric vector of the average treatment effect based on the propensity score
+\item \code{wt.ATT} a numeric vector of the average treatment effect on the treated based on the propensity score
+\item \code{wt.Matched} a vector of weights based on how the matching occurred
+\item \code{d.m} the 'DenseMatrix' output from the \code{\link[optmatch:match_on-methods]{optmatch::match_on()}} function used for matching
+\item \code{pairs} a dataframe with the row labels for each treated unit and it's matched control with the calculated distance between them
+\item \code{treatment} the treatment variable
+\item \code{order} the order the matches were conducted in
+\item \code{replacement} was replacement used to match, TRUE or FALSE
 }
 }
 \examples{

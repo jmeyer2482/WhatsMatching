@@ -105,56 +105,28 @@ plot.data <- function(d) {
 
 random.msg <- function() {
 
-msg <- sample(c(
-    paste(
-      "In 2019, King and Neilsen identified a paradox when using",
-      "the propensity score for matching and demonstrated that",
-      "extensive matching on the propensity score can increase",
-      "bias despite improving covariate balance."
-    ),
-    paste(
-      "The propensity score can be used in multiple ways,",
-      "notably matching, weighting and stratification (aka",
-      "subclassification)"
-    ),
-    paste(
-      "Distance-based matching requires that some distance between units",
-      "is calculated. This distance is then used to pair or match",
-      "units that are close together while discarding or pruning",
-      "those that are not."
-    ),
-    paste(
-      "Weighting with the propensity score differs from matching",
-      "as no units are pruned from the dataset. This is an advantage",
-      "over matching in the sense that all data can remain in the",
-      "analysis, giving the opportunity to calculate the average",
-      "treatment effect on all units, as opposed to only the treated ones."
-    ),
-    paste(
-      "Stratification relies on the use of the propensity score to group",
-      "units into quantiles. Once the number of groups has been",
-      "established, usually between 5 and 10, the treatment",
-      "effect is estimated across the groups and then averaged to",
-      "give a mean difference average treatment effect."
-    ),
-    paste(
-      "Rosenbaum and Rubin (1983) defined the propensity score as",
-      "the 'conditional probability of assignment to a particular",
-      "treatment given a vector of observed covariates'. It is one",
-      "of the most widely used statistical methods when analysing",
-      "observational data."
-    ),
-    paste(
-      "In most cases, the propensity score is estimated from",
-      "available data using a simple logistic regression on a binary",
-      "treatment assignment indicator."
-    ),
-    paste(
-      "The propensity score is the probability of receiving treatment which",
-      "reduces a multidimensional space to a single dimension for easy",
-      "comparison between treated and untreated units."
-    )),
-  1)
+msg <- sample(
+  c("In 2019, King and Neilsen identified a paradox when using the propensity score for matching and demonstrated that extensive matching on the propensity score can increase bias despite improving covariate balance.",
+
+    "The propensity score can be used in multiple ways, notably matching, weighting and stratification (aka subclassification)",
+
+    "Distance-based matching requires that some distance between units is calculated. This distance is then used to pair or match units that are close together while discarding or pruning those that are not.",
+
+    "Weighting with the propensity score differs from matching as no units are pruned from the dataset. This is an advantage over matching in the sense that all data can remain in the analysis, giving the opportunity to calculate the average treatment effect on all units, as opposed to only the treated ones.",
+
+    "Stratification relies on the use of the propensity score to group units into quantiles. Once the number of groups has been established, usually between 5 and 10, the treatment effect is estimated across the groups and then averaged to  give a mean difference average treatment effect.",
+
+    "Rosenbaum and Rubin (1983) defined the propensity score as the 'conditional probability of assignment to a particular treatment given a vector of observed covariates'. It is one of the most widely used statistical methods when analysing observational data.",
+
+    "In most cases, the propensity score is estimated from available data using a simple logistic regression on a binary treatment assignment indicator.",
+
+    "The propensity score is the probability of receiving treatment which reduces a multidimensional space to a single dimension for easy comparison between treated and untreated units.",
+
+    "If you go to the Data and Insights tab you can see how callipers may be applied to matching methods. There is also more information about estimating the treatment effect.",
+
+    "Don't forget that all the plots are interactive!",
+
+    "Use the Random Matching button to generate random matches and see if you can understand what's going on. It might be a situation you hadn't considered."), 1)
 
 HTML(paste(icon('lightbulb', style="color:#FFAE42;"), msg))
 
@@ -474,6 +446,7 @@ app_server <- function(input, output, session) {
 
   #model comparisons
   models <- reactive({
+
     m1 <- values$M1
     m2 <- values$M2
     t.var <- m1$treatment
@@ -566,7 +539,10 @@ app_server <- function(input, output, session) {
     tot.ests <- tot.ests %>%
       arrange(desc(Model), desc(nchar(Formula)), desc(Formula)) %>%
       mutate(m.f=factor(paste0(Model,"\n",Formula),
-                        levels=paste0(Model,"\n",Formula)))
+                        levels=paste0(Model,"\n",Formula)),
+             text=paste0(Model, " using: ", Formula, "<br>",
+               "<b>Estimate:</b> ", round(Estimate,3), "<br>",
+               "<b>95% CI:</b> ", round(CI_L,3), " - ", round(CI_H,3)))
 
     filt <- input$methods
 
@@ -585,10 +561,10 @@ app_server <- function(input, output, session) {
 
     true.est <- values$trueTE
 
-    p <-  ggplot(mod, aes(y=m.f, x=Estimate, colour=Model, lty=Model)) +
+    p <-  ggplot(mod, aes(y=.data$m.f, x=.data$Estimate,
+                          colour=.data$Model, text=.data$text)) +
         geom_point(size=3) +
-        geom_errorbarh(aes(xmin=CI_L, xmax=CI_H), height=0.25, lwd=1.5) +
-        geom_vline(xintercept=true.est, color="red", lty=2) +
+        geom_errorbarh(aes(xmin=CI_L, xmax=CI_H), height=0.25, lwd=1.5)  +
         labs(x="Estimate of the Treatment Effect",
              y="Model and Formula Used") +
         scale_color_manual(values=c("Method 1"='#FED148',
@@ -596,20 +572,22 @@ app_server <- function(input, output, session) {
                                     "Unadjusted"="#272727",
                                     "Weighted"="#009FB7",
                                     "Stratified"="#696773")) +
-        scale_linetype_manual(values=c("Method 1"='solid',
-                                       "Method 2"='dashed',
-                                       "Unadjusted"="dotted",
-                                       "Weighted"="dotdash",
-                                       "Stratified"="twodash")) +
         theme_bw() +
         theme(text = element_text(size = 18), legend.position = "none")
+
+    #plotly doesn't like it if the value is null
+    #only add if there's a value.
+    if(!is.null(true.est)) p <- p +
+      geom_vline(xintercept=true.est, color="red", lty=2)
+
+    p <- ggplotly(p, tooltip = "text")
 
     return(p)
 
   }) %>%
     bindEvent(input$butMethods)
 
-  output$ests.plot <- renderPlot({comp.plot()})
+  output$ests.plot <- renderPlotly({comp.plot()})
 
 
   #Reactive table with matching data to display
@@ -691,15 +669,6 @@ app_server <- function(input, output, session) {
   output$sim1plot <- plotly::renderPlotly(plot1.data())
 
 
-  observe({
-    Val <- max(input$sim2.X1.val) - min(input$sim2.X1.val)
-
-    updateSliderInput(session, "sim2.x.overlap", min = 0, max = Val)
-    updateSliderInput(session, "sim2.y.overlap", min = 0, max = Val)
-
-  }) %>%
-    bindEvent(input$sim2.X1.val)
-
 #create plot for simulation 2
   #also store data in values
   #and update the label for the usedata button
@@ -707,9 +676,8 @@ app_server <- function(input, output, session) {
     TE <- input$sim2.TE
     val.min <- min(input$sim2.X1.val)
     val.max <- max(input$sim2.X1.val)
-    diff <- val.max - val.min
-    wt.X1 <- diff - input$sim2.x.overlap
-    wt.X2 <- diff - input$sim2.y.overlap
+    wt.X1 <- input$sim2.x.overlap
+    wt.X2 <- input$sim2.y.overlap
 
     d <- create.sim.data(
       sim = 2,

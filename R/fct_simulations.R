@@ -1,4 +1,4 @@
-#' simulations
+#' Simulate data
 #'
 #' @description A function for simulating data
 #'

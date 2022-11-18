@@ -57,7 +57,7 @@ mod_ViewData_ui <- function(id){
                                  selected=c("Method 1", "Method 2", "Unadjusted"),
                                  multiple=T, width="100%")),
            column(4, actionButton("butMethods", "Apply"))),
-                  plotOutput("ests.plot", height="700px")
+                  plotlyOutput("ests.plot", height="700px")
                )
 
     )#close tabsetPanel

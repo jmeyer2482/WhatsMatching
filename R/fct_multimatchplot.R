@@ -1,4 +1,4 @@
-#' multimatchplot
+#' Plot and visualise a comparison between matching methods.
 #'
 #' @description ReA fct function
 #'

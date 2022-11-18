@@ -2,7 +2,7 @@
 % Please edit documentation in R/fct_multimatchplot.R
 \name{combined.plot}
 \alias{combined.plot}
-\title{multimatchplot}
+\title{Plot and visualise a comparison between matching methods.}
 \usage{
 combined.plot(xvar, yvar, M1, M2, te = NULL, outcome.f = y ~ t)
 }

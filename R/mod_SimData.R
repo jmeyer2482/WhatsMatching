@@ -16,8 +16,7 @@ X2.t <- code("X2")
 t.t <- code("t")
 y.t <- code("y")
 
-te.txt <- HTML(
-  paste0("The treatment effect controls the effect that the treatment will have on the outcome (", y.t, ")."))
+te.txt <- HTML("The treatment effect controls the effect that the treatment will have on the outcome (<code>y</code>).")
 
 rho.txt <- HTML(
   paste0("The covariate correlation is used to determine the strength of the correlation between ", X1.t, " and ", X2.t, ". Select 0 for no correlation or a positive or negative value for a positive or negative correlation between ", X1.t, " and ", X2.t, "."))
@@ -26,8 +25,7 @@ xt.txt <- HTML(
     paste0("The effect on treatment controls the degree to which ", X1.t, " and ", X2.t, " change the chance of being treated. When set to a value other than 0, it can be used to replicate a confounding variable."))
 
 xy.txt <- HTML(
-  paste0("The effect on outcome controls the degree to which ", X1.t, " and ", X2.t,
-    " change the outcome. When set to 0 there is no effect on the outcome."))
+  paste0("The effect on outcome controls the degree to which ", X1.t, " and ", X2.t, " change the outcome. When set to 0 there is no effect on the outcome."))
 
 y.txt <-
   HTML(
@@ -37,23 +35,26 @@ range.txt <- HTML(
   paste0("This will set the range of a uniform distribution for both ", X1.t, " and ", X2.t, "."))
 
 overlap.txt <- HTML(
-  paste0("Use these sliders to adjust the amount of overlap between the treated and control groups. Selecting 0 represents no overlapSelect a value to set the mean value for the normally distributed variables ", X1.t, " and ", X2.t, "."))
+  paste0("Use these sliders to adjust the effect that treatment has on ", X1.t, " and ", X2.t, ". The seperation between the treated and untreated groups will increases the further this is from zero (in either direction)."))
 
 rel.txt <- HTML(
   paste0("These two variable control how ", X1.t, " and ", X2.t, " are related to ", t.t, " and ", y.t, ". The direction of these relationsips is outlined below.",
          br(), br(),
-         "Confounder: ", t.t, " &lArr; variable &rArr; ", y.t, br(),
-         "Mediator: ", t.t, " &rArr; variable &rArr; ", y.t, br(),
-         "Collider: ", t.t, " &rArr; variable &lArr; ", y.t, br(),
-         "Ancenstor of t: variable &rArr; ", t.t, br(),
-         "Ancestor of y: variable &rArr; ", y.t))
+         "Confounder: ", t.t, " &#129120; variable &#129122; ", y.t, br(),
+         "Mediator: ", t.t, " &#129122; variable &#129120; ", y.t, br(),
+         "Collider: ", t.t, " &#129122; variable &#129120; ", y.t, br(),
+         "Ancenstor of t: variable &#129122; ", t.t, br(),
+         "Ancestor of y: variable &#129122; ", y.t))
 
 
 mod_SimData_ui <- function(id) {
+
+
+
   ns <- NS(id)
   tagList(fluidPage(
     h3("Data Generation", style="margin-top: 0.2em;"),
-    HTML("There are 2 options for data gerneration - simulated data, or the forced expiratory volume (FEV) data set. All of the data simulations contain the same variables - <code>t</code>: a binary treatment, <code>X1</code> and <code>X2</code>: covariates, <code>y</code>: a continuous outcome, and <code>error</code>: the value of the estimation error.Each simulation has it's own particular settings to change and can be better at demonstrating different matching effects."), br(), br(),
+    HTML("There are 2 options for data generation - simulated data, or the forced expiratory volume (FEV) data set. All of the data simulations contain the same variables - <code>t</code>: a binary treatment, <code>X1</code> and <code>X2</code>: covariates, and <code>y</code>: a continuous outcome. Each simulation has it's own particular settings to change and can be better at demonstrating different matching effects."), br(), br(),
 
     tabsetPanel(
       #type = "pills",
@@ -68,15 +69,10 @@ mod_SimData_ui <- function(id) {
             HTML("This simulation is based on one done by King and Neilsen in their 2019 paper on the propensity score paradox. It contains three groups; one representing a randomised experiment, one representing a random experiment, and one representing a control group. This simulation highlights the difference in matches between the mahalanobis distance and the propensity score."), br(), br(),
 
             fluidRow(
-              bsPopover(
-                id = ns("S.te1"),
-                title = "<strong>Treatment Effect on Outcome</strong>",
-                content = te.txt,
-                "right",
-                options = list(container = "body")
-              ),
               strong("Treatment Effect"),
-              icon("question-sign", lib = "glyphicon", id = ns("S.te1"))
+              shinyBS::popify(icon(name="question-sign", lib = "glyphicon", inputId = ns("S.te1")),
+                title = "<b>Treatment Effect on Outcome</b>",
+                content = te.txt,"right",options = list(container = "body"))
             ),
             fluidRow(column(
               12,
@@ -109,13 +105,12 @@ mod_SimData_ui <- function(id) {
             HTML("Like Simulation 1, this simulation is also based on one done by King and Neilsen. It generates two groups, treated and control, that overlap on the uniformly distributed covarties <code>X1</code> and <code>X2</code>. You can adjust the amount of overlap and range of the data. This simulations demonstrates the effect of replacement well."), br(), br(),
 
           fluidRow(
-             bsPopover(id = ns("S.range"),
-                       title = "<strong>Range of Uniform Distribution</strong>",
-                       content = range.txt,
-                       "right", options = list(container = "body")
-             ),
             strong("Range of Uniform Distribution"),
-            icon("question-sign", lib = "glyphicon", id = ns("S.range"))
+
+            shinyBS::popify(icon(name="question-sign", lib = "glyphicon", inputId = ns("S.range")),
+                            title = "<b>Range of Uniform Distribution</b>",
+                            content = range.txt,
+                            "right", options = list(container = "body"))
           ),
 
             fluidRow(column(
@@ -123,8 +118,8 @@ mod_SimData_ui <- function(id) {
               sliderInput(
                 "sim2.X1.val",
                 NULL,
-                min = -25,
-                max = 25,
+                min = -10,
+                max = 10,
                 value = c(0, 5),
                 step = 1,
                 ticks = F
@@ -132,25 +127,30 @@ mod_SimData_ui <- function(id) {
             )),
 
           fluidRow(
-            bsPopover(
+            shinyBS::bsPopover(
               id = ns("S.overlap"),
-              title = "<strong>Treatment effect on Covariates</strong>",
+              title = "<b>Treatment Effect on Covariates</b>",
               content = overlap.txt,
               "right",
               options = list(container = "body")
             ),
-              strong("Treatment effect on Covariates"),
-              icon("question-sign", lib = "glyphicon", id = ns("S.overlap"))
+              strong("Effect on Covariates"),
+              shinyBS::popify(icon("question-sign", lib = "glyphicon", inputId = ns("S.overlap")),
+                              title = "<b>Treatment Effect on Covariates</b>",
+                              content = overlap.txt,
+                              "right",
+                              options = list(container = "body")
+                              )
             ),
 
             fluidRow(column(
               6,
               sliderInput(
                 "sim2.x.overlap",
-                "X1",
-                min = 0,
-                max = 25,
-                value = 4,
+                "<b>X1</b>",
+                min = -5,
+                max = 5,
+                value = 1,
                 step = 1,
                 ticks = F
               )
@@ -159,25 +159,23 @@ mod_SimData_ui <- function(id) {
               6,
               sliderInput(
                 "sim2.y.overlap",
-                "X2",
-                min = 0,
-                max = 25,
-                value = 4,
+                "<b>X2</b>",
+                min = -5,
+                max = 5,
+                value = 1,
                 step = 1,
                 ticks = F
               )
             )),
 
             fluidRow(
-              bsPopover(
-                id = ns("S.te2"),
-                title = "<strong>Treatment Effect on Outcome</strong>",
-                content = te.txt,
-                "right",
-                options = list(container = "body")
-              ),
               strong("Treatment Effect on Outcome"),
-              icon("question-sign", lib = "glyphicon", id = ns("S.te2"))
+              shinyBS::popify(icon("question-sign", lib = "glyphicon", inputId = ns("S.te2")),
+                              title = "<b>Treatment Effect on Outcome</b>",
+                              content = te.txt,
+                              "right",
+                              options = list(container = "body")
+                              )
             ),
             fluidRow(column(
               12,
@@ -212,16 +210,12 @@ mod_SimData_ui <- function(id) {
             br(), br(),
 
             fluidRow(
-              bsPopover(
-                id = ns("S.rel"),
-                title = "<strong>Causal Relationship</strong>",
-                content = rel.txt ,
-                "right",
-                options = list(container = "body")
-              ),
               strong("Relationships"),
-              icon("question-sign", lib = "glyphicon", id =
-                     ns("S.rel"))
+              shinyBS::popify(icon("question-sign", lib = "glyphicon", inputId = ns("S.rel")),
+                              title = "<b>Causal Relationship</b>",
+                              content = rel.txt ,
+                              "right",
+                              options = list(container = "body"))
             ),
             fluidRow(column(12,
                             selectInput(
@@ -236,15 +230,13 @@ mod_SimData_ui <- function(id) {
                                 "Collider", "Ancestor of t", "Ancestor of y")
                             ))),
             fluidRow(
-              bsPopover(
-                id = ns("S.te3"),
-                title = "<strong>Treatment Effect on Outcome</strong>",
-                content = te.txt ,
-                "right",
-                options = list(container = "body")
-              ),
               strong("Treatment Effect"),
-              icon("question-sign", lib = "glyphicon", id = ns("S.te3"))
+              shinyBS::popify(icon("question-sign", lib = "glyphicon", inputId = ns("S.te3")),
+                              title = "<b>Treatment Effect on Outcome</b>",
+                              content = te.txt ,
+                              "right",
+                              options = list(container = "body")
+                              )
             ),
             fluidRow(column(
               12,
@@ -280,15 +272,13 @@ mod_SimData_ui <- function(id) {
 
         #covariate correlation
             fluidRow(
-              bsPopover(
-                id = ns("S.rho"),
-                title = "<strong>Covariate Correlation</strong>",
-                content = rho.txt ,
-                "right",
-                options = list(container = "body")
-              ),
               strong("Covariate Correlation"),
-              icon("question-sign", lib = "glyphicon", id = ns("S.rho"))
+              shinyBS::popify(icon("question-sign", lib = "glyphicon", inputId = ns("S.rho")),
+                              title = "<b>Covariate Correlation</b>",
+                              content = rho.txt ,
+                              "right",
+                              options = list(container = "body")
+                              )
             ),
             fluidRow(column(
               12,
@@ -305,15 +295,13 @@ mod_SimData_ui <- function(id) {
 
         #effect on treatment
             fluidRow(
-              bsPopover(
-                id = ns("S.xt"),
-                title = "<strong>Covariate Effect on Treatment</strong>",
-                content = xt.txt,
-                "right",
-                options = list(container = "body")
-              ),
               strong("Effect on treatment"),
-              icon("question-sign", lib = "glyphicon", id = ns("S.xt"))
+              shinyBS::popify(icon("question-sign", lib = "glyphicon", inputId = ns("S.xt")),
+                              title = "<b>Covariate Effect on Treatment</b>",
+                              content = xt.txt,
+                              "right",
+                              options = list(container = "body")
+                              )
             ),
             fluidRow(column(
               6,
@@ -343,15 +331,13 @@ mod_SimData_ui <- function(id) {
 
       #Effect on y
           fluidRow(
-            bsPopover(
-              id = ns("S.xy"),
-              title = "<strong>Covariate Effect on Outcome</strong>",
-              content = xy.txt,
-              "right",
-              options = list(container = "body")
-            ),
               strong("Effect on outcome"),
-              icon("question-sign", lib = "glyphicon", id = ns("S.xy"))
+              shinyBS::popify(icon("question-sign", lib = "glyphicon", inputId = ns("S.xy")),
+                              title = "<b>Covariate Effect on Outcome</b>",
+                              content = xy.txt,
+                              "right",
+                              options = list(container = "body")
+                              )
             ),
             fluidRow(column(
               6,
@@ -380,15 +366,13 @@ mod_SimData_ui <- function(id) {
 
       #Treatment effect on y
       fluidRow(
-        bsPopover(
-          id = ns("S.te4"),
-          title = "<strong>Treatment Effect</strong>",
-          content = te.txt ,
-          "right",
-          options = list(container = "body")
-        ),
         strong("Treatment Effect"),
-        icon("question-sign", lib = "glyphicon", id = ns("S.te4"))
+        shinyBS::popify(icon("question-sign", lib = "glyphicon", inputId = ns("S.te4")),
+                        title = "<b>Treatment Effect</b>",
+                        content = te.txt ,
+                        "right",
+                        options = list(container = "body")
+                        )
       ),
       fluidRow(column(
         12,
@@ -420,13 +404,6 @@ mod_SimData_ui <- function(id) {
                    HTML("This data set consists of 654 observations on youths aged 3 to 19 from East Boston recorded duing the middle to late 1970's. Forced expiratory volume (<code>fev</code>), a measure of lung capacity, is the variable of interest. <code>age</code> and <code>height</code> are two continuous predictors. <code>sex</code> and <code>smoke</code> are two categorical predictors. For the purpose of this exercise, <code>smoke</code> is being considered the treatment variable."),
                    br(), br(),
 
-                     # bsPopover(
-                     #   id = ns("S.fev.desc"),
-                     #   title = "<strong>FEV</strong>",
-                     #   content = HTML("This is a dataset from the <code>mplot</code> package. It has 5 observations and 614 individuals. The observations include <code>smoke</code>, <code>sex</code>, <code>age</code>, <code>height</code>, and <code>fev</code>."),
-                     #   "right",
-                     #   options = list(container = "body")
-                     # ),
                    fluidRow(column(
                      12, align = "right",
                      actionButton("applyFEV", "Preview Data")
@@ -459,6 +436,7 @@ mod_SimData_server <- function(id) {
     ns <- session$ns
 
   })
+
 }
 
 ## To be copied in the UI

@@ -20,59 +20,65 @@ mod_MatchSettings_ui <- function(id){
       hr(),
 
 ##Popovers
-      bsPopover(
-        id = ns("M.tf"),
-        title = "<strong>Matching Covariates</strong>",
-        content = "Select the covariates you would like to match on. At least one must be selected.",
-        placement = "right",
-        options = list(container = "body")
-      ),
-        bsPopover(
-          id = ns("M.distance"),
-          title = "<strong>Matching Distance</strong>",
-          content = "Select the distance type you would like to match with. The options are 'Propensity Score' or 'Mahalanobis'.",
-          placement = "right",
-          options = list(container = "body")
-        ),
-      bsPopover(
-        id = ns("M.ord"),
-        title = "<strong>Matching Distance</strong>",
-        content = "Select the order you would like to have the matches conducted in. Options are 'data', 'largest', 'smallest', 'random'.",
-        placement = "right",
-        options = list(container = "body")
-      ),
-      bsPopover(
-        id = ns("M.rep"),
-        title = "<strong>Use Replacement</strong>",
-        content = "Select whether or not to use replacement with the matches.",
-        placement = "right",
-        options = list(container = "body")
-      ),
-      bsPopover(
-        id = ns("M.outcome"),
-        title = "<strong>Outcome Formula</strong>",
-        content = "This is the forumula that is used to estimate the outcome using linear regression.",
-        placement = "right",
-        options = list(container = "body")
-      ),
+      # bsPopover(
+      #   id = ns("M.tf"),
+      #   title = "<strong>Matching Covariates</strong>",
+      #   content = "Select the covariates you would like to match on. At least one must be selected.",
+      #   placement = "right",
+      #   options = list(container = "body")
+      # ),
+        # bsPopover(
+        #   id = ns("M.distance"),
+        #   title = "<strong>Matching Distance</strong>",
+        #   content = "Select the distance type you would like to match with. The options are 'Propensity Score' or 'Mahalanobis'.",
+        #   placement = "right",
+        #   options = list(container = "body")
+        # ),
+      # bsPopover(
+      #   id = ns("M.ord"),
+      #   title = "<strong>Matching Distance</strong>",
+      #   content = "Select the order you would like to have the matches conducted in. Options are 'data', 'largest', 'smallest', 'random'.",
+      #   placement = "right",
+      #   options = list(container = "body")
+      # ),
+      # bsPopover(
+      #   id = ns("M.rep"),
+      #   title = "<strong>Use Replacement</strong>",
+      #   content = "Select whether or not to use replacement with the matches.",
+      #   placement = "right",
+      #   options = list(container = "body")
+      # ),
+      # bsPopover(
+      #   id = ns("M.outcome"),
+      #   title = "<strong>Outcome Formula</strong>",
+      #   content = "This is the forumula that is used to estimate the outcome using linear regression.",
+      #   placement = "right",
+      #   options = list(container = "body")
+      # ),
 
       fluidRow(column(4, h4("Matching Method 1"), align="left", offset = 3),
                column(4, h4("Matching Method 2"), align="left")),
 
       fluidRow(
         column(3, strong("Matching Covariates"),
-               icon("question-sign", lib = "glyphicon", id = ns("M.tf")),
+               shinyBS::popify(icon("question-sign", lib = "glyphicon", inputId = ns("M.tf")),
+                               title = "<b>Matching Covariates</b>",
+                               content = "Select the covariates you would like to match on. At least one must be selected.",
+                               placement = "right",
+                               options = list(container = "body"))
                ),
 
-        column(4, selectizeInput("treat.f1", NULL,#span("Formula: ",htmlOutput("t.formula1", inline = T)),
-                                 c("X1", "X2"), c("X1","X2"), multiple = T)),
-        column(4, selectizeInput("treat.f2", NULL, #span("Formula: ",htmlOutput("t.formula2", inline = T)),
-                                 c("X1", "X2"), c("X1","X2"), multiple = T))),
+        column(4, selectizeInput("treat.f1", NULL, c("X1", "X2"), c("X1","X2"), multiple = T)),
+        column(4, selectizeInput("treat.f2", NULL, c("X1", "X2"), c("X1","X2"), multiple = T))),
 
 
       fluidRow(
                column(3, strong("Matching Distance"),
-               icon("question-sign", lib = "glyphicon", id = ns("M.distance")),
+                      shinyBS::popify(icon("question-sign", lib = "glyphicon", inputId = ns("M.distance")),
+                                      title = "<b>Matching Distance</b>",
+                                      content = 'Select the distance type you would like to match with. The options are "Propensity Score" or "Mahalanobis".',
+                                      placement = "right",
+                                      options = list(container = "body"))
                ),
 
                column(4, selectInput("Dist1", NULL,#"First Matching Distance",
@@ -83,7 +89,11 @@ mod_MatchSettings_ui <- function(id){
                                      "Propensity Score"))),
 
       fluidRow(column(3, strong("Matching Order"),
-                      icon("question-sign", lib = "glyphicon", id = ns("M.ord")),
+                      shinyBS::popify(icon("question-sign", lib = "glyphicon", inputId = ns("M.order")),
+                                      title = "<b>Matching Distance</b>",
+                                      content = 'Select the order you would like to have the matches conducted in. Options are "data", "largest", "smallest", "random".',
+                                      placement = "right",
+                                      options = list(container = "body"))
                       ),
                column(4, selectInput("Ord1", NULL,#"First Matching Order",
                                      c("data", "largest", "smallest", "random"),
@@ -93,14 +103,23 @@ mod_MatchSettings_ui <- function(id){
                                      "data"))),
 
       fluidRow(column(3, strong("Use Replacement"),
-                      icon("question-sign", lib = "glyphicon", id = ns("M.rep")),
+                      shinyBS::popify(icon("question-sign", lib = "glyphicon", inputId = ns("M.replace")),
+                                      title = "<b>Use Replacement</b>",
+                                      content = "Select whether or not to use replacement with the matches.",
+                                      placement = "right",
+                                      options = list(container = "body"))
                       ),
                column(4,  checkboxInput("Rep1", NULL)),
                column(4, checkboxInput("Rep2", NULL))),
 
       fluidRow(
         column(3, strong("Outcome Formula"),
-               icon("question-sign", lib = "glyphicon", id = ns("M.outcome"))),
+               shinyBS::popify(icon("question-sign", lib = "glyphicon", inputId = ns("M.outcome")),
+                               title = "<b>Outcome Formula</b>",
+                               content = "This is the forumula that is used to estimate the outcome using linear regression.",
+                               placement = "right",
+                               options = list(container = "body"))
+               ),
         column(4, selectizeInput("outcome.f", NULL,
                                  c("X1", "X2"), multiple=T)),
         column(4, strong("Formula: "), htmlOutput("y.formula", inline = T))

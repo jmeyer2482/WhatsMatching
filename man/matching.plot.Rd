@@ -2,7 +2,7 @@
 % Please edit documentation in R/fct_matchplot.R
 \name{matching.plot}
 \alias{matching.plot}
-\title{matchplot}
+\title{Plot and visualise matches from [matched.data()]}
 \usage{
 matching.plot(match.data, xvar, yvar, multi = F, plot.n = 1)
 }

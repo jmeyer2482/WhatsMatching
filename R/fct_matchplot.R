@@ -1,4 +1,4 @@
-#' matchplot
+#' Plot and visualise matches from [matched.data()]
 #'
 #' @description A fct function
 #'

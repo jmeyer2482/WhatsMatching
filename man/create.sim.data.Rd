@@ -2,7 +2,7 @@
 % Please edit documentation in R/fct_simulations.R
 \name{create.sim.data}
 \alias{create.sim.data}
-\title{simulations}
+\title{Simulate data}
 \usage{
 create.sim.data(
   sim = 1,

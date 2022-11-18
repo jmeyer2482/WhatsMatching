@@ -52,14 +52,20 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-vignettes">Vignettes</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-vignettes">
     <a class="dropdown-item" href="../articles/index.html">All Vignettes</a>
+    <div class="dropdown-divider"></div>
+    <h6 class="dropdown-header" data-toc-skip>The Project</h6>
     <a class="dropdown-item" href="../articles/Background.html">Background</a>
     <a class="dropdown-item" href="../articles/Development.html">Development</a>
+    <a class="dropdown-item" href="../articles/Summary.html">Summary</a>
+    <div class="dropdown-divider"></div>
+    <h6 class="dropdown-header" data-toc-skip>The Shiny App</h6>
     <a class="dropdown-item" href="../articles/TheApp.html">The App</a>
     <a class="dropdown-item" href="../articles/DataGen.html">Data Generation</a>
     <a class="dropdown-item" href="../articles/Matching.html">Matching</a>
     <a class="dropdown-item" href="../articles/Examples.html">Examples</a>
+    <div class="dropdown-divider"></div>
+    <h6 class="dropdown-header" data-toc-skip>The Package</h6>
     <a class="dropdown-item" href="../articles/functions.html">Using the Functions</a>
-    <a class="dropdown-item" href="../articles/Summary.html">Summary</a>
   </div>
 </li>
 <li class="nav-item">
@@ -117,11 +123,11 @@ under the title opens up a modal dialogue box that is displayed in the
 following figures. This modal gives the user access to data from four
 different simulations and a real dataset. I will briefly outline each of
 the simulations below.</p>
-<div class="section level3">
-<h3 id="simulation-1">Simulation 1<a class="anchor" aria-label="anchor" href="#simulation-1"></a>
-</h3>
+<div class="section level4">
+<h4 id="simulation-1">Simulation 1<a class="anchor" aria-label="anchor" href="#simulation-1"></a>
+</h4>
 <p>This simulation is based on the data generation process described by
-King and Neilsen<span class="citation"><sup><a href="#ref-King2019" role="doc-biblioref">2</a></sup></span>. Essentially, it contains two
+King and Neilsen<span class="citation"><sup><a href="#ref-King2019" role="doc-biblioref">1</a></sup></span>. Essentially, it contains two
 experiments—a fully blocked randomised experiment and a completely
 randomised experiment—hidden within an imbalanced “observational”
 dataset. If you look at Figure 3, the first plot (top left) makes this
@@ -130,37 +136,36 @@ corner of the plot which is demonstrated by the treated (red) and
 untreated (blue) units being virtually right on top of one another. The
 completely randomised experiment is just below it in the bottom right
 corner of the plot and you can clearly see that there are similar
-numbers of treated and control units which are balanced on average but
-not exactly matched. The imbalanced observational data is represented by
-the placement of additional untreated units on the left of the plot.</p>
+numbers of treated and control units but they are not exactly matched.
+The imbalanced observational data is represented by the placement of the
+untreated unit on the left of the plot.</p>
 <table style="border: none;" class="table">
 <caption style="text-align:left; caption-side:top;"> Figure 1. Simulation 1 Preview</caption>
   <tr>
 <td style="text-align:center"><img src="../reference/figures/App_Sim1.png" border="0" width="100%"></td>
   </tr>
 </table>
-<p>King and Neilsen<span class="citation"><sup><a href="#ref-King2019" role="doc-biblioref">2</a></sup></span> use this simulation to
-demonstrate the ability of different matching methods to select the
-units in a logical order. Ideally, the data from the fully blocked
-randomised experiment should be matched first, then the data from the
-completely randomised experiment. It has been included in the app as it
-provides a clear demonstration of the performance of Mahalanobis-based
-distance matching versus propensity score-based distance matching.</p>
+<p>The purpose of this simulation in the paper was to demonstrate the
+ability of different matching methods to select the units in a logical
+order. Ideally, the data from the fully blocked randomised experiment
+should be matched first, then the data from the completely randomised
+experiment. It has been included in the app as it provides a clear
+demonstration of the performance of mahalanobis-based distance matching
+versus propensity score-based distance matching.</p>
 <p>In the app, you are able to change the treatment effect but that
 should not change the outcome of the matching process in any way, only
 the calculation of the treatment estimate.</p>
 </div>
-<div class="section level3">
-<h3 id="simulation-2">Simulation 2<a class="anchor" aria-label="anchor" href="#simulation-2"></a>
-</h3>
-<p>Simulation 2 is also taken from King and Neilsen<span class="citation"><sup><a href="#ref-King2019" role="doc-biblioref">2</a></sup></span> however the data are very
+<div class="section level4">
+<h4 id="simulation-2">Simulation 2<a class="anchor" aria-label="anchor" href="#simulation-2"></a>
+</h4>
+<p>Simulation 2 is also taken from King and Neilsen<span class="citation"><sup><a href="#ref-King2019" role="doc-biblioref">1</a></sup></span> however the data is very
 different. This simulation uses two overlapping uniform distributions
-defined by two continuous covariates, <code>X1</code> and
-<code>X2</code>, that both affect the treatment received and the
-outcome. When visualising the two covariates, <code>X1</code> and
-<code>X2</code>, on a two dimensional field, the data has the appearance
-of a square of treated units overlapped by a square of untreated units.
-This can be clearly seen in the top left plot in Figure 4 below.</p>
+that both affect the treatment received and the outcome. When
+visualising the two covariates, <code>X1</code> and <code>X2</code>, on
+a two dimensional field, the data has the appearance of a square of
+treated units overlapped by a square of untreated units. This can be
+clearly seen in the top left plot in Figure 4 below.</p>
 <table style="border: none;" class="table">
 <caption style="text-align:left; caption-side:top;"> Figure 2. Simulation 2 Preview</caption>
   <tr>
@@ -171,23 +176,22 @@ This can be clearly seen in the top left plot in Figure 4 below.</p>
 distribution, the strength of association between the covariates
 (<code>X1</code> and <code>X2</code>) and the treatment variable
 (<code>t</code>), and the treatment effect on the outcome
-(<code>y</code>). A useful application of this simulation is to compare
-what happens when the matching algorithm is with or without replacement,
-particularly if there is a strong association between the covariates and
-treatment (see the example <a href="Examples.html#example2"><em>To
-Replace or Not to Replace</em></a> in the Examples vignette.</p>
+(<code>y</code>). Probably the most useful illustration of this data is
+to compare the same method of matching but change whether replacement is
+used or not. It can be particularly striking if there is a strong
+association between the covariates and treatment.</p>
 </div>
-<div class="section level3">
-<h3 id="simulation-3">Simulation 3<a class="anchor" aria-label="anchor" href="#simulation-3"></a>
-</h3>
+<div class="section level4">
+<h4 id="simulation-3">Simulation 3<a class="anchor" aria-label="anchor" href="#simulation-3"></a>
+</h4>
 <p>This simulation uses causal relationships to define the effects
 between the treatment, covariates, and outcome. There are five options
-available to the user that can change the relationships between the
-treatment indicator <code>t</code>, the outcome <code>y</code> and two
-covariates <code>X1</code> and <code>X2</code>. Figure 5 represents
-these possible relationships using a causal diagram with an arrow
-pointing in the direction of the assumed effect in the data generation
-process.</p>
+available to the user that can change the data generation relationships
+between the treatment indicator <code>t</code>, the outcome
+<code>y</code> and two covariates <code>X1</code> and <code>X2</code>.
+Figure 5 demonstrates how each of the options fit into a causal diagram
+with an arrow pointing in the direction of the assumed effect in the
+data generation process.</p>
 <table style="border: none;" class="table">
 <caption style="text-align:left; caption-side:top;">Figure 3. Simulation 3 Casual Relationships</caption>
   <tr>
@@ -195,19 +199,17 @@ process.</p>
   </tr>
 </table>
 <p>To generate the data, first we create the covariates, <code>X1</code>
-and <code>X2</code>, as a bivariate normal distribution with a
+and <code>X2</code>, as a bivariate normal distribution with a covariate
 correlation of 0.2. The treatment variable is then generated based on
 the selection after which the function then iteratively works through
 the selected options and applies changes to the data as appropriate. It
 should be noted that the user can not change the strength of the effects
 in this simulation. Nor can the relationship between <code>t</code> and
 <code>y</code> be changed, although they can both be altered via
-<code>X1</code> and <code>X2</code>. Other than the causal
-relationships, only the treatment effect can be modified. This has been
-done to allow for simple data generation. Figure 6 below provides an
-example of data generated using this simulation, with <code>X1</code>
-and <code>X2</code> both defined as mediators between treatment
-<code>t</code> and outcome <code>y</code>.</p>
+<code>X1</code> and <code>X2</code>. Other than the causal relationship,
+only the treatment effect can be modified. This has been done to allow
+for simple data generation. Figure 6 below gives an overview of what the
+generated data may look like.</p>
 <table style="border: none;" class="table">
 <caption style="text-align:left; caption-side:top;">Figure 4. Simulation 3 Preview</caption>
   <tr>
@@ -215,18 +217,18 @@ and <code>X2</code> both defined as mediators between treatment
   </tr>
 </table>
 </div>
-<div class="section level3">
-<h3 id="simulation-4">Simulation 4<a class="anchor" aria-label="anchor" href="#simulation-4"></a>
-</h3>
+<div class="section level4">
+<h4 id="simulation-4">Simulation 4<a class="anchor" aria-label="anchor" href="#simulation-4"></a>
+</h4>
 <p>This is the last simulation. Like simulation 3, <code>X1</code> and
 <code>X2</code> are taken from a bivariate normal distribution. However,
-in this simulation, <code>X1</code> and <code>X2</code> act as a
-confounder, an ancestor of <code>t</code>, or an ancestor of
+in this simulation, <code>X1</code> and <code>X2</code> can effectively
+act as confounder, an ancestor of <code>t</code>, or an ancestor of
 <code>y</code>. This is achieved by altering the weights of the effect
-on the treatment <code>t</code> and the outcome <code>y</code>. In this
-simulation it is also possible to change the covariance between
-<code>X1</code> and <code>X2</code>. See Figure 7 below for an example
-of data generated using simulation 4.</p>
+on the treatment or the effect on the outcome. In addition, you can
+change the covariance correlation which will increase the correlation of
+<code>X1</code> and <code>X2</code>. See Figure 7 below for a preview of
+what the data from Simulation 4 may look like.</p>
 <table style="border: none;" class="table">
 <caption style="text-align:left; caption-side:top;">Figure 5. Simulation 4 Preview</caption>
   <tr>
@@ -234,45 +236,35 @@ of data generated using simulation 4.</p>
   </tr>
 </table>
 </div>
-<div class="section level3">
-<h3 id="real-data---fev">Real Data - FEV<a class="anchor" aria-label="anchor" href="#real-data---fev"></a>
-</h3>
+<div class="section level4">
+<h4 id="real-data---fev">Real Data - FEV<a class="anchor" aria-label="anchor" href="#real-data---fev"></a>
+</h4>
 <p>The <em>Forced Expiratory Volume</em> dataset is available from the
-<code>mplot</code><span class="citation"><sup><a href="#ref-mplot" role="doc-biblioref">3</a></sup></span> package. For the purposes of the
+<code>mplot</code><span class="citation"><sup><a href="#ref-mplot" role="doc-biblioref">2</a></sup></span> package. For the purposes of the
 app, it has been utilised to demonstrate how matching works on real data
 using <code>smoke</code> as the treatment variable and <code>fev</code>
 as the outcome. This dataset was ideal for this project because it was
 relatively small, contains only a few variables, and contains a
-treatment and outcome variable. A preview of the dataset is presented in
-Figure 8.</p>
+treatment and outcome variable. A preview of the data is below in Figure
+8.</p>
 <table style="border: none;" class="table">
 <caption style="text-align:left; caption-side:top;">Figure 6. Forced Expiratory Volume Preview</caption>
   <tr>
 <td style="text-align:center"><img src="../reference/figures/App_fev.png" border="0" width="100%"></td>
   </tr>
 </table>
-<p>This is a useful teaching dataset<span class="citation"><sup><a href="#ref-kahn2005exhalent" role="doc-biblioref">1</a></sup></span>
-because the “treatment” of smoking and the outcome of forced expiratory
-volume are highly confounded by age. Younger children are less likely to
-smoke but also have lower respiratory volume by dent of being physically
-smaller. Thus a naive analysis of the associations in the data would
-suggest that non-smokers have <em>reduced</em> lung capacity.</p>
 </div>
 <div class="section level2 unnumbered">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <div id="refs" class="references csl-bib-body hanging-indent">
-<div id="ref-kahn2005exhalent" class="csl-entry">
-1. Kahn M. An exhalent problem for teaching statistics. <em>Journal of
-Statistics Education</em>. 2005;13(2).
-</div>
 <div id="ref-King2019" class="csl-entry">
-2. King G, Nielsen R. <span class="nocase">Why Propensity Scores Should
+1. King G, Nielsen R. <span class="nocase">Why Propensity Scores Should
 Not Be Used for Matching</span>. <em>Political Analysis</em>.
 2019;27(4):435-454. doi:<a href="https://doi.org/10.1017/pan.2019.11" class="external-link">10.1017/pan.2019.11</a>
 </div>
 <div id="ref-mplot" class="csl-entry">
-3. Tarr G, Müller S, Welsh AH. <span class="nocase">mplot</span>: An
+2. Tarr G, Müller S, Welsh AH. <span class="nocase">mplot</span>: An
 <span>R</span> package for graphical model stability and variable
 selection procedures. <em>Journal of Statistical Software</em>.
 2018;83(9):1-28. doi:<a href="https://doi.org/10.18637/jss.v083.i09" class="external-link">10.18637/jss.v083.i09</a>

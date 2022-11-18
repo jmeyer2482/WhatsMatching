@@ -19,6 +19,7 @@ attachment::att_amend_desc()
 devtools::document()
 # attachment::att_from_namespace()
 
+devtools::build_manual()
 
 ## Add modules ----
 # ## Create a module infrastructure in R/
@@ -160,7 +161,6 @@ pkgdown::cl
 
 pkgdown::build_favicons(overwrite = T)
 
-pkgdown::build_home_index()
 
 pkgdown::build_home_index()
 pkgdown::init_site()

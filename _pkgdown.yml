@@ -10,29 +10,36 @@ navbar:
   left:
     - icon: fa-home fa-lg
       href: index.html
-    - text: "Vignettes"
+    - text: Vignettes
       menu:
-        - text: "All Vignettes"
+        - text: All Vignettes
           href: articles/index.html
-        - text: "Background"
+        - text: "---------"
+        - text: The Project
+          icon: fa-book-open
+        - text: Background
           href: articles/Background.html
-        - text: "Development"
+        - text: Development
           href: articles/Development.html
-        - text: "The App"
-          href: articles/TheApp.html
-        - text: "Data Generation"
-          href: articles/DataGen.html
-        - text: "Matching"
-          href: articles/Matching.html
-        - text: "Examples"
-          href: articles/Examples.html
-        - text: "Using the Functions"
-          href: articles/functions.html
-        - text: "Summary"
+        - text: Summary
           href: articles/Summary.html
-    - text: "Functions"
+        - text: "---------"
+        - text: The Shiny App
+        - text: The App
+          href: articles/TheApp.html
+        - text: Data Generation
+          href: articles/DataGen.html
+        - text: Matching
+          href: articles/Matching.html
+        - text: Examples
+          href: articles/Examples.html
+        - text: "---------"
+        - text: The Package
+        - text: Using the Functions
+          href: articles/functions.html
+    - text: Functions
       href: reference/index.html
-    - text: "Packages Used"
+    - text: Packages Used
       menu:
         - text: "plotly"
           href: https://plotly-r.com
@@ -59,4 +66,26 @@ navbar:
 home:
   sidebar:
     structure: [links, citation, authors, dev]
+
+articles:
+  - title: "The Project"
+    desc: >
+      These vignettes provide an introduction to matching, the reasons behind this project and how it was developed.
+    contents:
+      - Background
+      - Development
+      - Summary
+  - title: "The Shiny App"
+    desc: >
+      The below vignettes detail what the app looks like and how it works with some examples of how to use it.
+    contents:
+      - TheApp
+      - DataGen
+      - Matching
+      - Examples
+  - title: "The Package"
+    desc: >
+      Here you can find some simple example of how to use the package.
+    contents:
+      - functions
 
