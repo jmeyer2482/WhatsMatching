@@ -5,16 +5,17 @@
 <div id="overview" class="section level4">
 <h4><i class="fas fa-book-open" role="presentation" aria-label="book-open icon"></i>
 Overview</h4>
-<p>This app uses some basic matching principles to provide insights into
-matching methodology for educational purposes. The plots to the left
-demonstrate how matching methods work in practice. Generally, matching
-is used to assist in controlling confounding and bias in observational
-data prior to estimating the treatment effect. In most cases the
-treatment variable that is used for matching is binary, which is this
-case for the data avaiable in this app.</p>
+<p>Matching is used to minimise bias in observational studies prior to
+estimating a treatment effect. This app aims to provide insights into
+distance-based matching methods. The four plots to the left reveal what
+is happening on a match-by-match basis when using the Mahalanobis
+distance or propensity score to match treated and control units.</p>
 <p>The simulated data used to compare matching methods include a
-treatment variable (<code>t</code>), covariates (<code>X1</code> and
-<code>X2</code>) and an outcome variable (<code>y</code>).</p>
+treatment indicator variable (<code>t</code>), covariates
+(<code>X1</code> and <code>X2</code>) and an outcome variable
+(<code>y</code>). In most cases the treatment variable that is used for
+matching is binary, which is this case for the data available in this
+app.</p>
 <p><br></p>
 </div>
 <div id="plot-1-and-plot-2" class="section level4">
@@ -22,29 +23,33 @@ treatment variable (<code>t</code>), covariates (<code>X1</code> and
 Plot 1 and Plot 2</h4>
 <p>Plot 1 and 2 show the actual data the matches were performed on. A
 frame by frame progression of how the matches occurred for two methods
-specified by the user are shown. Blue triangles represent the treated
-group, red triangles the control group. When matching occurs, every
-treated unit is paired with a control.</p>
+specified by the user is shown. The <span style="color:#3772ff; font-weight: bold;">blue</span> triangles
+represent treated individuals and <span style="color:#df2935; font-weight: bold;">red</span> triangles
+represented untreated or control individuals. When matching occurs,
+every treated unit is paired with a control.</p>
 <p><br></p>
 </div>
-<div id="plot-3---standardised-mean-difference-smd" class="section level4">
-<h4><i class="fas fa-chart-simple" role="presentation" aria-label="chart-simple icon"></i>
-Plot 3 - Standardised Mean Difference (SMD)</h4>
-<p>Plot 3 shows the SMD between each of the covariates for the raw
-values and each of the matching methods. Each frame shows the changes in
-the SMD for the matched data in Plot 1 and Plot 2. The raw SMD does not
-change as the underlying data does not change.</p>
+<div id="plot-3---standardised-mean-difference" class="section level4">
+<h4><i class="fa fa-chart-simple" role="presentation" aria-label="chart-simple icon"></i>
+Plot 3 - Standardised Mean Difference</h4>
+<p>Plot 3 shows the Standardised Mean Difference (SMD) between each of
+the covariates for the unadjusted values and each of the matching methods. Each
+frame shows the updated SMD for the matched data in Plot 1 and Plot 2
+based on the matches made up until that point. Note that the unadjusted SMD
+does not change because the underlying data does not change.</p>
 <p><br></p>
 </div>
 <div id="plot-4---estimates-of-the-treatment-effect" class="section level4">
 <h4><i class="fas fa-chart-simple" role="presentation" aria-label="chart-simple icon"></i>
 Plot 4 - Estimates of the Treatment Effect</h4>
 <p>Plot 4 shows the estimates of the treatment effect for:<br />
-- the unadjusted linear regression (Raw)<br />
-- propensity score stratification<br />
-- propensity score weighting<br />
+- the unadjusted linear regression (raw estimate)<br />
 - the two pre-specified matching methods<br />
 - the actual treatment effect (only applicable in simulated data)</p>
+<p>The user can optionally overlay estimates based on other applications
+of the distance metric, which do not involve matching: - propensity
+score stratification<br />
+- propensity score weighting</p>
 <p>The cumulative effect of the estimates as units are added to the data
 is also visible in relation to the matches seen in Plot 1 and 2. The
 formula and the treatment effect used to simulate the outcome is the

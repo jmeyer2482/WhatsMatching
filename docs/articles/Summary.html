@@ -113,45 +113,49 @@
     
     
 <div class="section level2">
-<h2 id="summary">Summary<a class="anchor" aria-label="anchor" href="#summary"></a>
+<h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p>This application achieves the aims that were set out. It provides a
-simple space for users to be able to gain insights into the matching
-process through exploration. Users are able to pair any possible
-combination of data generation with the matching settings of their
-choosing.</p>
+<p>The WhatsMatching app provides a simple space for users to gain
+insights into the matching process through open-ended exploration. Users
+are able to pair any possible combination of data generation with the
+matching settings of their choosing, then visualise the matching
+algorithms unfold, frame-by-frame.</p>
 <div class="section level3">
 <h3 id="highlights">Highlights<a class="anchor" aria-label="anchor" href="#highlights"></a>
 </h3>
-<p>The app has a friendly interface that allows users to easily
+<p>The app has a user-friendly interface that allows users to easily
 manipulate data and matching settings to see if the outcomes match
-expectations. Technical jargon has been paired back in favour of lay
-descriptions and there are useful popovers to give additional
-information on many of the settings available.</p>
-<p>The four plot output from the app is clean and operates intuitively.
-The <code>plotly</code> interface make interacting with the plots clean.
-Additional information with on the plots from tooltips mean the
-visualisations aren’t cluttered with too much information. A sidebar was
+expectations. Technical jargon has been avoided where possible in favour
+of plain language descriptions. Hover-overs have been used to give
+additional information on many of the settings available, without
+cluttering the main interface.</p>
+<p>The main plot interface is clean and intuitive. The interactive
+<code>plotly</code> interface allows users to explore the output of the
+matching algorithms by zooming, panning, selecting subsets of the data
+and optionally adding or removing various plot elements. Tooltips have
+been used to provide additional information on the plotted data points
+without overwhelming the user with visual information. A sidebar was
 added to give meaningful context without intruding on the main
-event.</p>
+interface.</p>
 </div>
 <div class="section level3">
 <h3 id="limitations">Limitations<a class="anchor" aria-label="anchor" href="#limitations"></a>
 </h3>
-<p>There are some limitations to the resources available in this suite.
-Firstly, users are limited to using only Propensity Score or Mahalanobis
-Distance. This has been a deliberate choice as the plotting interface is
-likely no able to produce the same information for other matching
-methods.</p>
+<p>There are some limitations to the features available in the
+WhatsMatching package and app. Firstly, users are limited to using only
+Propensity Score or Mahalanobis-based distance matching. This has been a
+deliberate choice as the frame-by-frame output is most useful to
+distance-based matching.</p>
 <p>Secondly, the package is only designed for gaining insights into
-matching, not performing statistical analysis. However, users may choose
-to run data through the package first to try and make better decisions
-about matching for their real analysis.</p>
+matching in an educational setting, but not for performing statistical
+analysis with real-world data. However, users may choose to run data
+through the package first to try and make better decisions about
+matching for their real analysis.</p>
 <p>Thirdly, due to the processing power required to create and render
 the <code>plotly</code> plots, it is not particularly feasible to
-increase the amount of data the matching is done on. To give an example,
-for a dataset that returns 100 matches there will need to be 5050 rows
-times 2 just for generating the first two plots.</p>
+increase the amount of data used to illustrate matching. To give an
+example, for a dataset that returns 100 matches there will need to be
+5050 rows × 2 just to generate the first two plots.</p>
 </div>
 <div class="section level3">
 <h3 id="future-possibilities">Future Possibilities<a class="anchor" aria-label="anchor" href="#future-possibilities"></a>
@@ -160,14 +164,17 @@ times 2 just for generating the first two plots.</p>
 even with the limitations listed above. Considerations for future
 development may include:</p>
 <ul>
-<li><p>extend the capability of the app to explore other matching
-methodologies</p></li>
-<li><p>increase the number of dimensions for viewing the matches, for
-example to include up to 3 or 4 variables</p></li>
-<li><p>add the capability to compare different formulas for estimating
-the outcome at the same time</p></li>
-<li><p>Add an option in for calliper adjustment (it is just a
-theoretical option to visualise at the moment)</p></li>
+<li><p>Extending the capability of the app to explore other matching
+methodologies;</p></li>
+<li><p>Increasing the number of dimensions for viewing the matches, for
+example to include visualisations for matching on multiple
+variables;</p></li>
+<li><p>Adding the capability to compare different model specifications
+for estimating the outcome at the same time, rather than having to use
+the same analysis formula for the two matching mehtods being
+compared;</p></li>
+<li><p>Adding an option for calliper adjustment (it is just a
+theoretical option to visualise at the moment).</p></li>
 </ul>
 </div>
 </div>

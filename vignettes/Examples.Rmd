@@ -30,8 +30,6 @@ In this vignette I present four examples of important lessons that can be intera
 
 -   [Covariate and Model Selection Matter](#example4)
 
-This section concludes with some suggested future extensions of the WhatsMatching app.
-
 ## Matching finds the experiment hidden in observational data {#example1}
 
 This example uses simulation 1, which generates two experiments "hidden" within an unbalanced dataset---a fully blocked randomised experiment and a fully randomised experiment. Covariates `X1` and `X2` are generated with the fully blocked experiment being almost identically paired between treated and control units; the random experiment group has randomly placed treated and control units; and imbalanced control group consists of only control units and no treated units.

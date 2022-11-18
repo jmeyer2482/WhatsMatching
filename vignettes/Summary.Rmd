@@ -14,32 +14,32 @@ knitr::opts_chunk$set(
 )
 ```
 
-## Summary
+## Overview
 
-This application achieves the aims that were set out. It provides a simple space for users to be able to gain insights into the matching process through exploration. Users are able to pair any possible combination of data generation with the matching settings of their choosing.
+The WhatsMatching app provides a simple space for users to gain insights into the matching process through open-ended exploration. Users are able to pair any possible combination of data generation with the matching settings of their choosing, then visualise the matching algorithms unfold, frame-by-frame.
 
 ### Highlights
 
-The app has a friendly interface that allows users to easily manipulate data and matching settings to see if the outcomes match expectations. Technical jargon has been paired back in favour of lay descriptions and there are useful popovers to give additional information on many of the settings available.
+The app has a user-friendly interface that allows users to easily manipulate data and matching settings to see if the outcomes match expectations. Technical jargon has been avoided where possible in favour of plain language descriptions. Hover-overs have been used to give additional information on many of the settings available, without cluttering the main interface.
 
-The four plot output from the app is clean and operates intuitively. The `plotly` interface make interacting with the plots clean. Additional information with on the plots from tooltips mean the visualisations aren't cluttered with too much information. A sidebar was added to give meaningful context without intruding on the main event.
+The main plot interface is clean and intuitive. The interactive `plotly` interface allows users to explore the output of the matching algorithms by zooming, panning, selecting subsets of the data and optionally adding or removing  various plot elements. Tooltips have been used to provide additional information on the plotted data points without overwhelming the user with visual information. A sidebar was added to give meaningful context without intruding on the main interface.
 
 ### Limitations
 
-There are some limitations to the resources available in this suite. Firstly, users are limited to using only Propensity Score or Mahalanobis Distance. This has been a deliberate choice as the plotting interface is likely no able to produce the same information for other matching methods.
+There are some limitations to the features available in the WhatsMatching package and app. Firstly, users are limited to using only Propensity Score or Mahalanobis-based distance matching. This has been a deliberate choice as the frame-by-frame output is most useful to distance-based matching. 
 
-Secondly, the package is only designed for gaining insights into matching, not performing statistical analysis. However, users may choose to run data through the package first to try and make better decisions about matching for their real analysis.
+Secondly, the package is only designed for gaining insights into matching in an educational setting, but not for performing statistical analysis with real-world data. However, users may choose to run data through the package first to try and make better decisions about matching for their real analysis.
 
-Thirdly, due to the processing power required to create and render the `plotly` plots, it is not particularly feasible to increase the amount of data the matching is done on. To give an example, for a dataset that returns 100 matches there will need to be 5050 rows times 2 just for generating the first two plots.
+Thirdly, due to the processing power required to create and render the `plotly` plots, it is not particularly feasible to increase the amount of data used to illustrate matching. To give an example, for a dataset that returns 100 matches there will need to be 5050 rows &times; 2 just to generate the first two plots.
 
 ### Future Possibilities
 
 Where to from here? The app is functional and fit for purpose as is, even with the limitations listed above. Considerations for future development may include:
 
--   extend the capability of the app to explore other matching methodologies
+-   Extending the capability of the app to explore other matching methodologies;
 
--   increase the number of dimensions for viewing the matches, for example to include up to 3 or 4 variables
+-   Increasing the number of dimensions for viewing the matches, for example to include visualisations for matching on multiple variables;
 
--   add the capability to compare different formulas for estimating the outcome at the same time
+-   Adding the capability to compare different model specifications for estimating the outcome at the same time, rather than having to use the same analysis formula for the two matching mehtods being compared;
 
--   Add an option in for calliper adjustment (it is just a theoretical option to visualise at the moment)
+-   Adding an option for calliper adjustment (it is just a theoretical option to visualise at the moment).
